@@ -3,10 +3,11 @@ import { readdirSync, cpSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
-// The editor loads its JS/CSS as raw static files (assets/js/editor-panel.js,
-// assets/js/site-settings.js, assets/css/site.css). Vite only copies public/
-// to dist/, so this plugin mirrors the project-root assets/ tree into dist/
-// after every build to keep those <script>/<link> references working.
+// The editor entry (assets/js/editor.js) is bundled by Rollup, but the classic
+// assets/js/site-settings.js and assets/css/site.css are still loaded as raw
+// static files. Vite only copies public/ to dist/, so this plugin mirrors the
+// project-root assets/ tree into dist/ after every build to keep those
+// <script>/<link> references working.
 function copyRootAssets() {
     const src = resolve('assets');
     const dest = resolve('dist/assets');
