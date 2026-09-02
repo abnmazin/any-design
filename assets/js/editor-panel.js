@@ -835,16 +835,17 @@
     }
 
     function insertMockup(id) {
-        const frame = insertMockupFragment(id);
-        if (!frame) return;
-        selectElement(frame, true);
-        renderLayers();
-        updateCanvasScale();
-        if (document.getElementById('mockupGrid')) {
-            document.querySelectorAll('.mockup-item').forEach((x) => {
-                x.classList.toggle('active', x.dataset.mock === id);
-            });
-        }
+        insertMockupFragment(id).then((frame) => {
+            if (!frame) return;
+            selectElement(frame, true);
+            renderLayers();
+            updateCanvasScale();
+            if (document.getElementById('mockupGrid')) {
+                document.querySelectorAll('.mockup-item').forEach((x) => {
+                    x.classList.toggle('active', x.dataset.mock === id);
+                });
+            }
+        });
     }
 
     async function insertMockupFragment(id) {
