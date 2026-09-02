@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم — المركزية الحديثة</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .studio-card {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 16px;
+      padding: 24px; text-align: center; transition: 0.2s ease; color: var(--text);
+      display: block;
+    }
+    .studio-card:hover { transform: translateY(-4px); border-color: var(--cyan); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5); }
+    .studio-card .em { font-size: 2.4rem; line-height: 1.2; }
+    .studio-card h3 { margin: 14px 0 6px; font-size: 1.15rem; font-weight: 800; }
+    .studio-card .muted { font-size: 0.85rem; line-height: 1.6; color: var(--muted); }
+    .studio-card .size { display: inline-block; margin-top: 12px; padding: 4px 12px; border-radius: 999px;
+      border: 1px solid var(--line); color: var(--cyan); font-size: 0.75rem; font-weight: 700; }
+  </style>
+  <link rel="stylesheet" crossorigin href="/assets/site-D78fNVxH.css">
+</head>
+<body>
+
+  <div class="container">
+    <header class="dashhead">
+      <a class="brand" href="#/studio"><i class="fas fa-palette"></i> المركزية <b>الحديثة</b></a>
+      <nav class="nav">
+        <a href="../index.html"><i class="fas fa-house"></i> الرئيسية</a>
+        <a href="index.html" class="btn"><i class="fas fa-right-from-bracket"></i> خروج</a>
+      </nav>
+    </header>
+
+    <div style="padding: 26px 0 10px;">
+      <h1 class="greeting">أهلاً بك</h1>
+      <p class="sub">اختر قالباً وابدأ التعديل — كل نص قابل للتحرير، وكل عنصر قابل للنقل والتكبير.</p>
+    </div>
+
+    <div class="templates-grid" id="studioGrid"></div>
+  </div>
+
+  <script>
+    var TEMPLATES = [
+      {
+        id: 'wedding',
+        name: 'بطاقة زفاف',
+        icon: '\uD83D\uDC8D',
+        size: '1080 × 1920',
+        desc: 'دعوة زفاف فاخرة بموديل راقٍ — نص وألوان قابلة للتحرير.',
+        file: '../templates/wedding/wedding.html'
+      },
+      {
+        id: 'story',
+        name: 'ستوري إعلاني',
+        icon: '\uD83D\uDCF1',
+        size: '1080 × 1920',
+        desc: 'ستوري دفتر الديون مع رفع صورة للتطبيق.',
+        file: '../templates/story/story.html'
+      },
+      {
+        id: 'bento',
+        name: 'Bento Board',
+        icon: '\uD83D\uDDC2\uFE0F',
+        size: '1080 × 1500',
+        desc: 'عروض وباقات بأسلوب البن تو.',
+        file: '../templates/bento/bento.html'
+      },
+      {
+        id: 'studio',
+        name: 'سجل الديون',
+        icon: '\uD83D\uDCD2',
+        size: '900 × 1280',
+        desc: 'سجل ذمم سريع وقابل للتعديل.',
+        file: '../templates/debt-ledger/studio.html'
+      },
+      {
+        id: 'windows-1',
+        name: 'Windows 1',
+        icon: '\uD83D\uDDA5\uFE0F',
+        size: '1600 × 900',
+        desc: 'إعلان Bento Grid للموبايل ولوحة التحكم على شاشة الحاسوب.',
+        file: '../templates/windows-1/windows-1.html'
+      },
+      {
+        id: 'windows-2',
+        name: 'Windows 2',
+        icon: '\uD83D\uDDA5\uFE0F',
+        size: '1600 × 900',
+        desc: 'إعلان ثلاثي الأبعاد بشاشة ديسكتوب وبوديوم احترافي.',
+        file: '../templates/windows-2/windows-2.html'
+      },
+      {
+        id: 'phone-1',
+        name: 'Phone 1',
+        icon: '\uD83D\uDCF1',
+        size: '1080 × 1920',
+        desc: 'ستوري بلمسة توركوازية مع صورة التطبيق وشرائح المزايا.',
+        file: '../templates/phone-1/phone-1.html'
+      },
+      {
+        id: 'phone-2',
+        name: 'Phone 2',
+        icon: '\uD83D\uDCF1',
+        size: '1080 × 1920',
+        desc: 'ستوري داكن بتنسيق مضغوط مع رفع صورة التطبيق.',
+        file: '../templates/phone-2/phone-2.html'
+      }
+    ];
+
+    var VIEWS = {
+      '#/studio': 'studio'
+    };
+
+    function renderStudio() {
+      var grid = document.getElementById('studioGrid');
+      grid.innerHTML = '';
+      TEMPLATES.forEach(function (t) {
+        var a = document.createElement('a');
+        a.className = 'studio-card';
+        a.href = t.file;
+        a.innerHTML =
+          '<div class="em">' + t.icon + '</div>' +
+          '<h3>' + t.name + '</h3>' +
+          '<div class="muted">' + t.desc + '</div>' +
+          '<span class="size">' + t.size + '</span>';
+        grid.appendChild(a);
+      });
+    }
+
+    function route() {
+      var view = VIEWS[location.hash] || 'studio';
+      if (view === 'studio') renderStudio();
+    }
+
+    window.addEventListener('hashchange', route);
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', route);
+    } else {
+      route();
+    }
+  </script>
+
+</body>
+</html>

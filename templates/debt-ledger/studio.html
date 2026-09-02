@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سجل الديون — المركزية الحديثة</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal&family=Aref+Ruqaa&family=Amiri&family=Reem+Kufi&family=Almarai&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/site.css">
+  <style>
+    .ledger-card {
+      width: 900px; height: 1280px; background: linear-gradient(170deg, #0d1826, #0a1220); color: #fff;
+      font-family: 'Cairo', sans-serif; padding: 56px 66px; display: flex; flex-direction: column; gap: 40px;
+    }
+    .ldg-head { text-align: center; border-bottom: 2px solid rgba(245, 192, 76, 0.35); padding-bottom: 26px; }
+    .ldg-head .logo { color: #f5c04c; font-size: 2rem; }
+    .ldg-head h2 { font-size: 2.6rem; font-weight: 800; margin-top: 8px; }
+    .ldg-head .date { color: #93a7b8; font-size: 1.1rem; }
+    .ldg-sub { display: flex; justify-content: space-between; color: #93a7b8; font-size: 1.05rem; padding: 0 6px; }
+    .ldg-row { display: flex; align-items: center; gap: 18px; background: #0e1f2c; border: 1px solid rgba(245,192,76,0.15);
+      border-radius: 18px; padding: 20px 24px; font-size: 1.35rem; }
+    .ldg-row .who { flex: 1; font-weight: 700; }
+    .ldg-row .amt { color: #f5c04c; font-weight: 800; }
+    .ldg-total { display: flex; justify-content: space-between; align-items: center; margin-top: auto;
+      background: linear-gradient(90deg, rgba(245,192,76,0.18), transparent); border: 1px solid rgba(245,192,76,0.3);
+      border-radius: 18px; padding: 24px 26px; font-size: 1.5rem; }
+    .ldg-total .lbl { color: #f5c04c; }
+    .ldg-total .val { font-weight: 800; }
+    .ldg-foot { text-align: center; color: #6f8496; font-size: 0.95rem; }
+  </style>
+</head>
+<body class="editor-page">
+
+  <div class="preview-toolbar">
+    <span class="zoom"><i class="fas fa-arrows-up-down-left-right"></i> سجل الديون — 900 × 1280</span>
+    <a href="../../app/home.html#/studio" style="margin-inline-start:16px;" class="btn"><i class="fas fa-arrow-right"></i> رجوع</a>
+  </div>
+
+  <div class="canvas-stage">
+    <div class="canvas-wrapper ledger-card" id="ledgerCard">
+
+      <div class="ldg-head">
+        <div class="logo"><i class="fas fa-book-open"></i></div>
+        <h2 contenteditable="true">سجل الديون</h2>
+        <div class="date" contenteditable="true">شهر رمضان ١٤٤٧ هـ</div>
+      </div>
+
+      <div class="ldg-sub">
+        <span contenteditable="true">الاسم</span>
+        <span contenteditable="true">المبلغ</span>
+      </div>
+
+      <div class="ldg-row">
+        <span class="who" contenteditable="true">أبو محمد</span>
+        <span class="amt" contenteditable="true">١٤٠ ر.س</span>
+      </div>
+      <div class="ldg-row">
+        <span class="who" contenteditable="true">أبو عبدالله</span>
+        <span class="amt" contenteditable="true">٩٠ ر.س</span>
+      </div>
+      <div class="ldg-row">
+        <span class="who" contenteditable="true">أبو خالد</span>
+        <span class="amt" contenteditable="true">٢٢٠ ر.س</span>
+      </div>
+      <div class="ldg-row">
+        <span class="who" contenteditable="true">أبو فهد</span>
+        <span class="amt" contenteditable="true">٦٠ ر.س</span>
+      </div>
+      <div class="ldg-row">
+        <span class="who" contenteditable="true">أبو سلطان</span>
+        <span class="amt" contenteditable="true">١٧٥ ر.س</span>
+      </div>
+
+      <div class="ldg-total">
+        <span class="lbl" contenteditable="true">الإجمالي</span>
+        <span class="val" contenteditable="true">٦٨٥ ر.س</span>
+      </div>
+
+      <div class="ldg-foot" contenteditable="true">المركزية الحديثة للتصميم</div>
+
+    </div>
+  </div>
+
+  <script src="../../assets/js/site-settings.js"></script>
+  <script src="../../assets/js/editor-panel.js"></script>
+
+</body>
+</html>

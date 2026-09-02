@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دفتر الديون - إعلان ستوري إطار واحد</title>
+    <!-- Cairo Font for Modern Arabic Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* Theme Colors */
+            --bg-main: #020a0d;
+            --bg-surface: #0d1f25;
+            --bg-card: #122b33;
+            --accent-teal: #1ae5ff;
+            --accent-emerald: #10b981;
+            --accent-coral: #ef4444;
+            --text-white: #f0fdfa;
+            --text-muted: #8ba3b5;
+            --border-subtle: rgba(26, 229, 255, 0.15);
+            --shadow-heavy: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
+            --shadow-soft: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+            --phone-bg: #0d1f25;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-white);
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: radial-gradient(circle at 50% 50%, rgba(26, 229, 255, 0.08) 0%, transparent 70%);
+        }
+
+        /* 9:16 Canvas Wrapper for Instagram Story */
+        .canvas-wrapper {
+            width: 100%;
+            max-width: 480px; 
+            aspect-ratio: 9 / 16;
+            height: auto;
+            max-height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px 20px;
+            background-color: var(--bg-main);
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            overflow: hidden;
+        }
+
+        /* --- TOP SIDE: Branding & Copy --- */
+        .top-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+            z-index: 20;
+        }
+
+        .branding {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 1.8rem;
+            color: var(--bg-main);
+            background: var(--accent-teal);
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(26, 229, 255, 0.4);
+        }
+
+        .brand-title {
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+        .brand-title span { color: var(--accent-teal); }
+
+        .tagline {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        .sub-tagline {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+        /* --- MIDDLE SIDE: Single Showcase --- */
+        .middle-showcase {
+            position: relative;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        /* Single Mobile Phone */
+        .phone-mockup {
+            position: relative;
+            width: 65%;
+            max-width: 260px;
+            aspect-ratio: 9 / 19.5;
+            background: #000;
+            border-radius: 30px;
+            padding: 8px;
+            box-shadow: var(--shadow-heavy), 0 0 40px rgba(26, 229, 255, 0.15), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+            border: 1px solid #2a4a5a;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(-2%);
+        }
+
+        /* Phone Notch */
+        .phone-mockup::before {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 14px;
+            background: #000;
+            border-radius: 8px;
+            z-index: 20;
+        }
+
+        .phone-screen {
+            background: var(--phone-bg);
+            border-radius: 22px;
+            overflow: hidden;
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .phone-screen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Glass Reflection */
+        .phone-mockup::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 30px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: 25;
+        }
+
+        /* --- BOTTOM SIDE: Feature Cards --- */
+        .bottom-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 20;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .feature-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 12px;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .f-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .f-header i {
+            font-size: 1.1rem;
+            color: var(--accent-teal);
+        }
+
+        .f-header h4 { font-size: 0.85rem; font-weight: 700; }
+        .feature-card p { color: var(--text-muted); font-size: 0.75rem; line-height: 1.4; margin: 0; }
+
+        /* Bottom Strip */
+        .bottom-strip {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .b-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+        .b-item i { color: var(--accent-teal); font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <div class="canvas-wrapper">
+        
+        <!-- TOP: Branding & Copy -->
+        <div class="top-content">
+            <div class="branding">
+                <div class="logo-icon"><i class="fas fa-wallet"></i></div>
+                <h1 class="brand-title">دفتر <span>الديون</span></h1>
+            </div>
+            <div>
+                <div class="tagline">إدارة ديون الزبائن وحركات الدفع بسهولة</div>
+                <div class="sub-tagline">بسيط، سريع، وموثوق</div>
+            </div>
+        </div>
+
+        <!-- MIDDLE: Single Screenshot Showcase -->
+        <div class="middle-showcase">
+            
+            <!-- Single Mobile Phone -->
+            <div class="phone-mockup">
+                <div class="phone-screen">
+                    <img src="customers.png" alt="تطبيق دفتر الديون" draggable="false">
+                </div>
+            </div>
+
+        </div>
+
+        <!-- BOTTOM: Features & Strip -->
+        <div class="bottom-content">
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="f-header">
+                        <i class="fas fa-users"></i>
+                        <h4>إدارة الزبائن</h4>
+                    </div>
+                    <p>إضافة الزبائن ومتابعة أرصدتهم</p>
+                </div>
+                <div class="feature-card">
+                    <div class="f-header">
+                        <i class="fas fa-coins"></i>
+                        <h4>الديون والمدفوعات</h4>
+                    </div>
+                    <p>سجل كامل لكل دين أو دفعة</p>
+                </div>
+                <div class="feature-card">
+                    <div class="f-header">
+                        <i class="fas fa-chart-pie"></i>
+                        <h4>لوحة متابعة ذكية</h4>
+                    </div>
+                    <p>نظرة سريعة للمقبوضات</p>
+                </div>
+                <div class="feature-card">
+                    <div class="f-header">
+                        <i class="fas fa-archive"></i>
+                        <h4>أرشيف كامل</h4>
+                    </div>
+                    <p>تاريخ مفصل لكافة الحركات</p>
+                </div>
+            </div>
+
+            <div class="bottom-strip">
+                <div class="b-item"><i class="fas fa-bolt"></i> سريع الاستخدام</div>
+                <div class="b-item"><i class="fas fa-mobile-alt"></i> متاح دائماً</div>
+                <div class="b-item"><i class="fas fa-shield-alt"></i> آمن وموثوق</div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

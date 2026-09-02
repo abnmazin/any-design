@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>بانتو بورد — المركزية الحديثة</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal&family=Aref+Ruqaa&family=Amiri&family=Reem+Kufi&family=Almarai&display=swap" rel="stylesheet">
+  <style>
+    .bento-card {
+      width: 1080px; height: 1500px; background: #0b1524; color: #fff; font-family: 'Cairo', sans-serif;
+      padding: 46px; display: flex; flex-direction: column; gap: 46px;
+    }
+    .bent-head { text-align: center; }
+    .bent-head h2 { font-size: 3.4rem; font-weight: 800; }
+    .bent-head .tag { color: #1ae5ff; font-size: 1.4rem; }
+    .bent-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(4, 1fr); gap: 22px; }
+    .bent-cell { background: #0e1f2c; border: 1px solid rgba(26,229,255,0.18); border-radius: 26px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; padding: 20px; }
+    .bent-cell .ic { font-size: 2.3rem; color: #1ae5ff; }
+    .bent-cell .t { font-size: 1.7rem; font-weight: 700; }
+    .bent-cell .d { color: #93a7b8; font-size: 1rem; }
+    .bent-cell.hl { background: linear-gradient(135deg, #1ae5ff, #0ea5b7); border-color: transparent; color: #06121a; }
+    .bent-cell.hl .ic, .bent-cell.hl .d { color: #06121a; }
+    .bent-cell.wide { grid-column: span 2; flex-direction: row; gap: 24px; }
+    .bent-foot { text-align: center; color: #6f8496; font-size: 1rem; }
+  </style>
+  <link rel="stylesheet" crossorigin href="/assets/site-D78fNVxH.css">
+</head>
+<body class="editor-page">
+
+  <div class="preview-toolbar">
+    <span class="zoom"><i class="fas fa-arrows-up-down-left-right"></i> بانتو بورد — 1080 × 1500</span>
+    <a href="../../app/home.html#/studio" style="margin-inline-start:16px;" class="btn"><i class="fas fa-arrow-right"></i> رجوع</a>
+  </div>
+
+  <div class="canvas-stage">
+    <div class="canvas-wrapper bento-card" id="bentoCard">
+
+      <div class="bent-head">
+        <div class="tag" contenteditable="true">باقاتنا</div>
+        <h2 contenteditable="true">اختر باقتك المناسبة</h2>
+      </div>
+
+      <div class="bent-grid">
+        <div class="bent-cell">
+          <i class="ic fas fa-seedling"></i>
+          <div class="t" contenteditable="true">بداية</div>
+          <div class="d" contenteditable="true">٩٩ ر.س / شهرياً</div>
+        </div>
+        <div class="bent-cell">
+          <i class="ic fas fa-rocket"></i>
+          <div class="t" contenteditable="true">نمو</div>
+          <div class="d" contenteditable="true">١٩٩ ر.س / شهرياً</div>
+        </div>
+        <div class="bent-cell">
+          <i class="ic fas fa-gem"></i>
+          <div class="t" contenteditable="true">احتراف</div>
+          <div class="d" contenteditable="true">٣٤٩ ر.س / شهرياً</div>
+        </div>
+        <div class="bent-cell wide hl">
+          <i class="ic fas fa-crown"></i>
+          <div>
+            <div class="t" contenteditable="true">الأكثر طلباً</div>
+            <div class="d" contenteditable="true">باقة نمو مع مصمم مخصص ودعم كامل</div>
+          </div>
+        </div>
+        <div class="bent-cell">
+          <i class="ic fas fa-headset"></i>
+          <div class="t" contenteditable="true">دعم 24/7</div>
+          <div class="d" contenteditable="true">استجابة خلال ساعة</div>
+        </div>
+        <div class="bent-cell">
+          <i class="ic fas fa-truck-fast"></i>
+          <div class="t" contenteditable="true">توصيل فوري</div>
+          <div class="d" contenteditable="true">لجميع المناطق</div>
+        </div>
+      </div>
+
+      <div class="bent-foot" contenteditable="true">المركزية الحديثة للتصميم</div>
+
+    </div>
+  </div>
+
+  <script src="../../assets/js/site-settings.js"></script>
+  <script src="../../assets/js/editor-panel.js"></script>
+
+</body>
+</html>

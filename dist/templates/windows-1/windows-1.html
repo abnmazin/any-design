@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إعلان كمبيوتر — Bento | المركزية الحديثة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-base: #030712;
+      --bg-card: #0b141f;
+      --bg-card-hover: #111e2d;
+      --accent-primary: #1ae5ff;
+      --accent-gradient: linear-gradient(135deg, #1ae5ff 0%, #10b981 100%);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(26, 229, 255, 0.12);
+      --border-hover: rgba(26, 229, 255, 0.3);
+      --card-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.8);
+      --glow: 0 0 80px rgba(26, 229, 255, 0.08);
+    }
+
+    /* 16:9 Desktop Canvas */
+    .canvas-wrapper {
+      width: 1600px;
+      height: 900px;
+      display: flex;
+      flex-direction: column;
+      padding: 40px 60px;
+      position: relative;
+      background-color: var(--bg-base);
+      font-family: 'Cairo', sans-serif;
+      color: var(--text-main);
+    }
+
+    /* --- Header Section --- */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 40px;
+      padding: 0 10px;
+    }
+
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-box {
+      width: 60px;
+      height: 60px;
+      background: var(--accent-gradient);
+      border-radius: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      color: var(--bg-base);
+      box-shadow: 0 10px 20px rgba(26, 229, 255, 0.2);
+    }
+
+    .title-group h1 {
+      font-size: 3rem;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .title-group p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .header-badge {
+      background: rgba(26, 229, 255, 0.1);
+      border: 1px solid var(--border-color);
+      padding: 10px 20px;
+      border-radius: 50px;
+      color: var(--accent-primary);
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* --- Bento Grid Layout --- */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 24px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .bento-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 32px;
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--card-shadow), inset 0 1px 0 rgba(255,255,255,0.05);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-header { z-index: 10; }
+
+    .card-header h3 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--text-main);
+    }
+
+    .card-header h3 span {
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .card-header p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* 1. Mobile App Card (RTL grid col 1) */
+    .card-mobile {
+      grid-row: 1 / -1;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* Shared movable mockup frame */
+    .mockup-frame { position: absolute; }
+
+    .phone-mockup {
+      bottom: -30px;
+      width: 200px;
+      height: 434px;
+      background: #000;
+      border-radius: 28px 28px 0 0;
+      border: 6px solid #1a2a3a;
+      border-bottom: none;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .phone-mockup img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+    }
+    .phone-mockup .screen-img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+
+    /* 2. Desktop Dashboard Card (RTL grid col 2) */
+    .card-desktop {
+      grid-row: 1 / -1;
+      background: radial-gradient(circle at bottom, rgba(26, 229, 255, 0.15) 0%, var(--bg-card) 60%);
+    }
+
+    .laptop-mockup {
+      bottom: -20px;
+      left: 50%;
+      margin-inline-start: -360px;
+      width: 720px;
+      height: 450px;
+      background: #0c1c24;
+      border-radius: 16px 16px 0 0;
+      padding: 12px 12px 0 12px;
+      border: 2px solid #1a3642;
+      border-bottom: none;
+      box-shadow: 0 -20px 50px rgba(0,0,0,0.6);
+      z-index: 1;
+    }
+
+    .laptop-screen {
+      background: #000;
+      border-radius: 8px 8px 0 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .laptop-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+    }
+
+    /* Upload overlay on the screens */
+    .upload-overlay {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; gap: 5px; justify-content: center; align-items: center;
+      background: rgba(2, 10, 13, 0.55);
+      color: var(--text-main);
+      font-size: 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      z-index: 30;
+      text-align: center;
+      padding: 12px;
+      border: none;
+      font-family: inherit;
+    }
+    .upload-overlay i { font-size: 2rem; color: var(--accent-primary); }
+    .upload-overlay small { font-size: 0.9rem; color: var(--text-muted); }
+    .card-desktop:hover .upload-overlay,
+    .card-mobile:hover .upload-overlay { opacity: 1; }
+
+    /* 3. Small Feature Cards (RTL grid col 3) */
+    .card-feature-top, .card-feature-bottom {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .icon-circle {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.4rem;
+      color: var(--accent-primary);
+      margin-bottom: 16px;
+    }
+
+    .feature-list {
+      margin-top: 15px;
+      list-style: none;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+
+    .feature-list li i {
+      color: var(--accent-primary);
+      font-size: 0.8rem;
+    }
+
+    [contenteditable="true"] { outline: none; }
+  </style>
+  <link rel="stylesheet" crossorigin href="/assets/site-D78fNVxH.css">
+</head>
+<body class="editor-page">
+
+  <div class="preview-toolbar">
+    <span class="zoom"><i class="fas fa-arrows-up-down-left-right"></i> إعلان كمبيوتر — Bento | 1600 × 900</span>
+    <a href="../../app/home.html#/studio" style="margin-inline-start:16px;" class="btn"><i class="fas fa-arrow-right"></i> رجوع</a>
+  </div>
+
+  <div class="canvas-stage">
+    <div class="canvas-wrapper" id="windows1">
+
+      <!-- HEADER -->
+      <div class="header">
+        <div class="brand-container">
+          <div class="logo-box">
+            <i class="fas fa-wallet"></i>
+          </div>
+          <div class="title-group">
+            <h1 contenteditable="true">دفتر الديون</h1>
+            <p contenteditable="true">إدارة ديون الزبائن وحركات الدفع بسهولة</p>
+          </div>
+        </div>
+
+        <div class="header-badge" contenteditable="true">
+          <i class="fas fa-star"></i>
+          الحل المالي رقم #1 للتجار
+        </div>
+      </div>
+
+      <!-- BENTO GRID -->
+      <div class="bento-grid">
+
+        <!-- Column 1 (RTL): Mobile View -->
+        <div class="bento-card card-mobile">
+          <div class="card-header">
+            <h3 contenteditable="true">معك في <span>أي وقت</span></h3>
+            <p contenteditable="true">تابع أرصدة زبائنك من هاتفك المحمول بخفة وسرعة تامة.</p>
+          </div>
+          <div class="mockup-frame phone-mockup">
+            <img class="w1PhoneShot" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='520'%3E%3Crect width='240' height='520' fill='%230c1c24'/%3E%3Ctext x='120' y='250' font-size='80' text-anchor='middle'%3E%F0%9F%93%B1%3C/text%3E%3Ctext x='120' y='310' font-family='Cairo,sans-serif' font-size='15' fill='%231ae5ff' text-anchor='middle'%3E%D8%A7%D8%B1%D9%81%D8%B9%20%D8%B5%D9%88%D8%B1%D8%A9%20%D8%A7%D9%84%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%3C/text%3E%3C/svg%3E" alt="تطبيق الموبايل" draggable="false">
+            <button class="upload-overlay" id="w1PhoneUploadBtn" type="button">
+              <i class="fas fa-cloud-arrow-up"></i> اضغط للرفع
+              <small>صورة التطبيق</small>
+            </button>
+          </div>
+        </div>
+
+        <!-- Column 2 (RTL): Main Desktop View -->
+        <div class="bento-card card-desktop">
+          <div class="card-header">
+            <h3 contenteditable="true">لوحة تحكم <span>شاملة وذكية</span></h3>
+            <p contenteditable="true">نظرة عامة على كافة الديون، المقبوضات، وإحصائيات متقدمة من شاشة حاسوبك.</p>
+          </div>
+          <div class="mockup-frame laptop-mockup">
+            <div class="laptop-screen">
+              <img class="w1LaptopShot" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='560' height='350'%3E%3Crect width='560' height='350' fill='%230c1c24'/%3E%3Ctext x='280' y='180' font-size='90' text-anchor='middle'%3E%F0%9F%96%A5%EF%B8%8F%3C/text%3E%3Ctext x='280' y='230' font-family='Cairo,sans-serif' font-size='15' fill='%231ae5ff' text-anchor='middle'%3E%D8%A7%D8%B1%D9%81%D8%B9%20%D8%B5%D9%88%D8%B1%D8%A9%20%D9%84%D9%88%D8%AD%D8%A9%20%D8%A7%D9%84%D8%AA%D8%AD%D9%83%D9%85%3C/text%3E%3C/svg%3E" alt="لوحة التحكم" draggable="false">
+              <button class="upload-overlay" id="w1LaptopUploadBtn" type="button">
+                <i class="fas fa-cloud-arrow-up"></i> اضغط للرفع
+                <small>لوحة التحكم</small>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 3 (RTL): Features Stack -->
+        <div class="bento-card card-feature-top">
+          <div class="icon-circle"><i class="fas fa-shield-alt"></i></div>
+          <div class="card-header">
+            <h3 contenteditable="true">أمان <span>وموثوقية</span></h3>
+            <p contenteditable="true">بياناتك المالية مشفرة ومحفوظة سحابياً بأعلى معايير الأمان.</p>
+          </div>
+          <ul class="feature-list">
+            <li contenteditable="true"><i class="fas fa-check"></i> نسخ احتياطي تلقائي</li>
+            <li contenteditable="true"><i class="fas fa-check"></i> خصوصية تامة للبيانات</li>
+          </ul>
+        </div>
+
+        <div class="bento-card card-feature-bottom">
+          <div class="icon-circle"><i class="fas fa-archive"></i></div>
+          <div class="card-header">
+            <h3 contenteditable="true">أرشيف <span>منظم</span></h3>
+            <p contenteditable="true">تاريخ مفصل لكل حركة، لتتمكن من مراجعة العمليات السابقة بثوانٍ.</p>
+          </div>
+          <ul class="feature-list">
+            <li contenteditable="true"><i class="fas fa-check"></i> بحث وتصفية متقدمة</li>
+            <li contenteditable="true"><i class="fas fa-check"></i> تقارير كشف حساب</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <input type="file" id="w1PhoneFile" accept="image/*" style="display:none;">
+  <input type="file" id="w1LaptopFile" accept="image/*" style="display:none;">
+
+  <script src="../../assets/js/site-settings.js"></script>
+  <script src="../../assets/js/editor-panel.js"></script>
+  <script>
+    (function () {
+      function wireUpload(btnId, inputId, imgSelector) {
+        var btn = document.getElementById(btnId);
+        var input = document.getElementById(inputId);
+        var img = document.querySelector(imgSelector);
+        if (!btn || !input || !img) return;
+        btn.addEventListener('click', function () { input.click(); });
+        input.addEventListener('change', function () {
+          if (!input.files || !input.files[0]) return;
+          img.src = URL.createObjectURL(input.files[0]);
+        });
+      }
+      wireUpload('w1PhoneUploadBtn', 'w1PhoneFile', '.w1PhoneShot');
+      wireUpload('w1LaptopUploadBtn', 'w1LaptopFile', '.w1LaptopShot');
+    })();
+  </script>
+
+</body>
+</html>

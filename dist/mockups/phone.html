@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<!-- Mockup fragment: iPhone-style phone device. Injected into the editor canvas via the القوالب tab. -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mockup — Phone</title>
+  <style>
+    /* All rules are scoped under .mc-phone-frame so inserting into any design's
+       canvas cannot clash with the host template's own CSS. */
+    .mc-phone-frame {
+      width: 380px;
+      height: 824px;
+      position: relative;
+      background: #000;
+      border-radius: 58px;
+      padding: 13px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9), 0 0 40px rgba(26, 229, 255, 0.15), inset 0 1px 3px rgba(255,255,255,0.1);
+      border: 1px solid #2a4a5a;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Cairo', sans-serif;
+    }
+    .mc-phone-frame::before {
+      content: '';
+      position: absolute;
+      top: 26px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 26px;
+      background: #000;
+      border-radius: 14px;
+      z-index: 20;
+    }
+    .mc-phone-frame::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 58px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: 25;
+    }
+    .mc-phone-screen {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+      border-radius: 45px;
+      overflow: hidden;
+      background: #0d1f25;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mc-phone-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .mc-phone-upload {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      justify-content: center;
+      align-items: center;
+      background: rgba(2, 10, 13, 0.55);
+      color: #f0fdfa;
+      font-size: 2rem;
+      border-radius: 45px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      z-index: 30;
+      text-align: center;
+      padding: 12px;
+      border: none;
+      font-family: inherit;
+    }
+    .mc-phone-upload i { font-size: 4.4rem; color: #1ae5ff; }
+    .mc-phone-upload small { font-size: 1.6rem; color: #8ba3b5; }
+    .mc-phone-screen:hover .mc-phone-upload { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="mockup-frame mc-phone-frame">
+    <div class="mc-phone-screen">
+      <img class="mc-shot" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='354' height='768'%3E%3Crect width='354' height='768' fill='%2314252d'/%3E%3Crect x='30' y='30' width='294' height='708' rx='18' fill='%230a1419'/%3E%3Ctext x='177' y='370' font-size='64' text-anchor='middle'%3E%F0%9F%93%B1%3C/text%3E%3Ctext x='177' y='440' font-family='Cairo,sans-serif' font-size='18' fill='%231ae5ff' text-anchor='middle'%3E%D8%A7%D8%B1%D9%81%D8%B9%20%D8%B5%D9%88%D8%B1%D8%A9%20%D8%A7%D9%84%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%3C/text%3E%3C/svg%3E" alt="شاشة الهاتف" draggable="false">
+      <button class="mc-phone-upload" type="button">
+        <i class="fas fa-cloud-arrow-up"></i> اضغط للرفع
+        <small>رفع صورة</small>
+      </button>
+    </div>
+  </div>
+</body>
+</html>

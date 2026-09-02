@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دفتر الديون - إعلان بلمسة احترافية (Bento Grid)</title>
+    <!-- Cairo Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* Modern Dark SaaS Palette */
+            --bg-base: #030712;
+            --bg-card: #0b141f;
+            --bg-card-hover: #111e2d;
+            --accent-primary: #1ae5ff;
+            --accent-gradient: linear-gradient(135deg, #1ae5ff 0%, #10b981 100%);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(26, 229, 255, 0.12);
+            --border-hover: rgba(26, 229, 255, 0.3);
+            --card-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.8);
+            --glow: 0 0 80px rgba(26, 229, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(26, 229, 255, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
+        }
+
+        /* 16:9 Desktop Canvas */
+        .canvas-wrapper {
+            width: 100vw;
+            max-width: 1600px;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            flex-direction: column;
+            padding: 40px 60px;
+            position: relative;
+        }
+
+        /* --- Header Section --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 40px;
+            padding: 0 10px;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-box {
+            width: 60px;
+            height: 60px;
+            background: var(--accent-gradient);
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: var(--bg-base);
+            box-shadow: 0 10px 20px rgba(26, 229, 255, 0.2);
+        }
+
+        .title-group h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .title-group p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .header-badge {
+            background: rgba(26, 229, 255, 0.1);
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            border-radius: 50px;
+            color: var(--accent-primary);
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* --- Bento Grid Layout --- */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr; /* 3 Columns: Mobile | Desktop | Features */
+            grid-template-rows: 1fr 1fr;
+            gap: 24px;
+            flex: 1;
+            min-height: 0; /* Important for preventing overflow in flex children */
+        }
+
+        /* Generic Card Styles */
+        .bento-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 32px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--card-shadow), inset 0 1px 0 rgba(255,255,255,0.05);
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bento-card:hover {
+            border-color: var(--border-hover);
+            background: var(--bg-card-hover);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+
+        .card-header {
+            z-index: 10;
+        }
+
+        .card-header h3 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+        
+        .card-header h3 span {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card-header p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* --- Specific Cards --- */
+        
+        /* 1. Mobile App Card (Left side visually in RTL, grid col 1) */
+        .card-mobile {
+            grid-row: 1 / -1; /* Spans full height */
+            align-items: center;
+            text-align: center;
+        }
+
+        .phone-mockup-bento {
+            position: absolute;
+            bottom: -30px;
+            width: 75%;
+            max-width: 240px;
+            aspect-ratio: 9/19.5;
+            background: #000;
+            border-radius: 28px 28px 0 0;
+            border: 6px solid #1a2a3a;
+            border-bottom: none;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+            overflow: hidden;
+            transition: transform 0.4s ease;
+        }
+
+        .card-mobile:hover .phone-mockup-bento {
+            transform: translateY(-15px);
+        }
+
+        .phone-mockup-bento img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+        }
+
+        /* 2. Desktop Dashboard Card (Center, grid col 2) */
+        .card-desktop {
+            grid-row: 1 / -1; /* Spans full height */
+            background: radial-gradient(circle at bottom, rgba(26, 229, 255, 0.15) 0%, var(--bg-card) 60%);
+        }
+
+        .laptop-mockup-bento {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            aspect-ratio: 16/10;
+            background: #0c1c24;
+            border-radius: 16px 16px 0 0;
+            padding: 12px 12px 0 12px;
+            border: 2px solid #1a3642;
+            border-bottom: none;
+            box-shadow: 0 -20px 50px rgba(0,0,0,0.6);
+            transition: transform 0.4s ease;
+        }
+
+        .card-desktop:hover .laptop-mockup-bento {
+            transform: translate(-50%, -10px);
+        }
+
+        .laptop-screen {
+            background: #000;
+            border-radius: 8px 8px 0 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .laptop-screen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+        }
+
+        /* 3. Small Feature Cards (Right side visually in RTL, grid col 3) */
+        .card-feature-top, .card-feature-bottom {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .icon-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.4rem;
+            color: var(--accent-primary);
+            margin-bottom: 16px;
+            transition: background 0.3s ease;
+        }
+
+        .bento-card:hover .icon-circle {
+            background: var(--accent-gradient);
+            color: var(--bg-base);
+            border-color: transparent;
+        }
+
+        .feature-list {
+            margin-top: 15px;
+            list-style: none;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+        
+        .feature-list li i {
+            color: var(--accent-primary);
+            font-size: 0.8rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="canvas-wrapper">
+        
+        <!-- HEADER -->
+        <div class="header">
+            <div class="brand-container">
+                <div class="logo-box">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <div class="title-group">
+                    <h1>دفتر الديون</h1>
+                    <p>إدارة ديون الزبائن وحركات الدفع بسهولة</p>
+                </div>
+            </div>
+            
+            <div class="header-badge">
+                <i class="fas fa-star"></i>
+                الحل المالي رقم #1 للتجار
+            </div>
+        </div>
+
+        <!-- BENTO GRID -->
+        <div class="bento-grid">
+            
+            <!-- Column 1 (RTL): Mobile View -->
+            <div class="bento-card card-mobile">
+                <div class="card-header">
+                    <h3>معك في <span>أي وقت</span></h3>
+                    <p>تابع أرصدة زبائنك من هاتفك المحمول بخفة وسرعة تامة.</p>
+                </div>
+                <div class="phone-mockup-bento">
+                    <!-- Referencing your existing image -->
+                    <img src="customers.png" alt="تطبيق الموبايل" draggable="false">
+                </div>
+            </div>
+
+            <!-- Column 2 (RTL): Main Desktop View -->
+            <div class="bento-card card-desktop">
+                <div class="card-header">
+                    <h3>لوحة تحكم <span>شاملة وذكية</span></h3>
+                    <p>نظرة عامة على كافة الديون، المقبوضات، وإحصائيات متقدمة من شاشة حاسوبك.</p>
+                </div>
+                <div class="laptop-mockup-bento">
+                    <div class="laptop-screen">
+                        <!-- Referencing your existing image -->
+                        <img src="pc_dashboard.png" alt="لوحة التحكم" draggable="false">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 3 (RTL): Features Stack -->
+            <div class="bento-card card-feature-top">
+                <div class="icon-circle"><i class="fas fa-shield-alt"></i></div>
+                <div class="card-header">
+                    <h3>أمان <span>وموثوقية</span></h3>
+                    <p>بياناتك المالية مشفرة ومحفوظة سحابياً بأعلى معايير الأمان.</p>
+                </div>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check"></i> نسخ احتياطي تلقائي</li>
+                    <li><i class="fas fa-check"></i> خصوصية تامة للبيانات</li>
+                </ul>
+            </div>
+
+            <div class="bento-card card-feature-bottom">
+                <div class="icon-circle"><i class="fas fa-archive"></i></div>
+                <div class="card-header">
+                    <h3>أرشيف <span>منظم</span></h3>
+                    <p>تاريخ مفصل لكل حركة، لتتمكن من مراجعة العمليات السابقة بثوانٍ.</p>
+                </div>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check"></i> بحث وتصفية متقدمة</li>
+                    <li><i class="fas fa-check"></i> تقارير كشف حساب</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دفتر الديون - إعلان 10x Masterpiece (ثابت)</title>
+    <!-- Premium Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* 10x Studio Color Palette */
+            --bg-base: #f8fafc;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            
+            /* Core Accents */
+            --blue-bright: #2563eb;
+            --purple-bright: #9333ea;
+            --pink-bright: #ec4899;
+            --rose-bright: #f43f5e;
+            
+            /* Static Gradients */
+            --grad-text-1: linear-gradient(135deg, #2563eb, #8b5cf6, #2563eb);
+            --grad-text-2: linear-gradient(135deg, #ec4899, #f43f5e, #ec4899);
+            
+            /* Photorealistic Podium Lighting */
+            --podium-top-light: radial-gradient(circle at 50% 20%, #ffe4f0 0%, #ffa3c9 80%);
+            --podium-side-dark: linear-gradient(90deg, #cc2e6b 0%, #e04b82 15%, #b32a5e 100%);
+            --podium-top-light-inner: radial-gradient(circle at 50% 20%, #f0e6ff 0%, #d4afff 80%);
+            --podium-side-dark-inner: linear-gradient(90deg, #6c32a8 0%, #9055cc 15%, #592391 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #cbd5e1;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* --- Strict 16:9 Canvas with CSS Grid (Fixes Overlap) --- */
+        .master-canvas {
+            width: 100vw;
+            max-width: 1500px;
+            aspect-ratio: 16 / 9;
+            background: var(--bg-base);
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr 1.1fr; /* Strict boundary: Text (RTL Right) | 3D Stage (RTL Left) */
+            gap: 2vw;
+            padding: 4vw 5vw;
+            border-radius: 24px;
+            box-shadow: 
+                0 50px 100px -20px rgba(0, 0, 0, 0.25),
+                inset 0 0 0 1px rgba(255,255,255,1);
+            overflow: hidden;
+        }
+
+        /* --- 10x Cinematic Background --- */
+        .ambient-glow {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(244, 63, 94, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(37, 99, 235, 0.08) 0%, transparent 50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Multi-layered 3D SVG Ribbon */
+        .ribbon-bg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .ribbon-bg path {
+            fill: url(#master-grad);
+            opacity: 0.9;
+        }
+        .ribbon-bg path.layer-2 {
+            fill: url(#master-grad-2);
+            opacity: 0.4;
+            transform: translateY(20px) scale(1.05);
+            filter: blur(10px);
+        }
+
+        /* Static Depth of Field Glass Squares */
+        .dof-glass {
+            position: absolute;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.8);
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1), inset 0 2px 5px rgba(255,255,255,0.5);
+        }
+        .glass-1 { width: 90px; height: 90px; bottom: 40px; right: 40px; transform: rotate(10deg); }
+        .glass-2 { width: 50px; height: 50px; bottom: 140px; right: 100px; transform: rotate(-15deg); filter: blur(2px); }
+
+        /* --- Right Column: 10x Typography --- */
+        .text-col {
+            position: relative;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .brand-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #ffffff, #f1f5f9);
+            padding: 12px 28px;
+            border-radius: 100px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05), inset 0 2px 0 rgba(255,255,255,1);
+            margin-bottom: 5vh;
+            width: fit-content;
+        }
+        .brand-pill i { color: var(--blue-bright); font-size: 1.6rem; }
+        .brand-pill h2 { font-size: 1.4rem; font-weight: 900; color: var(--text-dark); line-height: 1; }
+        .brand-pill span { font-size: 0.8rem; font-weight: 800; color: var(--text-muted); letter-spacing: 0.1em; display: block; }
+
+        .headline {
+            font-size: clamp(3rem, 5.5vw, 6rem);
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+            margin-bottom: 4vh;
+        }
+
+        /* Static Gradient Text */
+        .hl-anim-1, .hl-anim-2 {
+            background-size: 100% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+        }
+        .hl-anim-1 { background-image: var(--grad-text-1); }
+        .hl-anim-2 { background-image: var(--grad-text-2); }
+        .hl-dark { color: var(--text-dark); display: block; }
+
+        .divider {
+            width: clamp(100px, 15vw, 200px);
+            height: 6px;
+            background: linear-gradient(90deg, var(--blue-bright), var(--pink-bright));
+            border-radius: 10px;
+            margin-bottom: 4vh;
+            box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4);
+        }
+
+        .sub-text {
+            font-size: clamp(1.2rem, 2vw, 1.8rem);
+            color: var(--text-muted);
+            font-weight: 600;
+            line-height: 1.5;
+        }
+        .sub-text span { color: var(--text-dark); font-weight: 900; }
+
+        /* --- Left Column: True 3D CSS Stage --- */
+        .stage-col {
+            position: relative;
+            z-index: 20;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding-bottom: 8vh;
+        }
+
+        /* Stage Anchor keeps everything perfectly centered and prevents bleed */
+        .stage-anchor {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        /* --- High-Fidelity Podiums --- */
+        .podium-base, .podium-inner {
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .podium-base {
+            bottom: 0;
+            width: min(100%, 600px); /* Strict boundary limit */
+            aspect-ratio: 5 / 1.6;
+            background: var(--podium-top-light);
+            box-shadow: 
+                inset 0 -10px 20px rgba(0,0,0,0.15),
+                0 70px 0 var(--podium-side-dark),
+                0 100px 50px -10px rgba(0,0,0,0.4),
+                0 140px 100px rgba(244, 63, 94, 0.3);
+        }
+
+        .podium-inner {
+            bottom: 12%; /* Scales perfectly */
+            width: min(75%, 450px);
+            aspect-ratio: 5 / 1.6;
+            background: var(--podium-top-light-inner);
+            box-shadow: 
+                inset 0 -5px 15px rgba(0,0,0,0.1),
+                0 40px 0 var(--podium-side-dark-inner),
+                0 70px 40px rgba(0,0,0,0.4);
+        }
+
+        /* --- 10x Monitor Pro --- */
+        .monitor-rig {
+            position: absolute;
+            bottom: 27%;
+            width: min(90%, 550px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .monitor-body {
+            width: 100%;
+            aspect-ratio: 16 / 10.5;
+            background: #0f1115;
+            border-radius: 20px;
+            padding: 2.5%;
+            padding-bottom: 6%;
+            position: relative;
+            box-shadow: 
+                0 0 0 2px #333,
+                0 0 0 4px #111,
+                0 40px 80px rgba(0,0,0,0.6),
+                inset 0 2px 10px rgba(255,255,255,0.15);
+        }
+
+        /* Glowing LED and Chin */
+        .monitor-body::after {
+            content: '';
+            position: absolute;
+            bottom: 3%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 0 10px #fff, 0 0 20px var(--blue-bright);
+        }
+
+        .screen-glass {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
+        }
+
+        .screen-glass img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+        }
+
+        /* Static Glass Glare */
+        .screen-glass::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -50%;
+            width: 100%; height: 200%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-30deg);
+            pointer-events: none;
+        }
+
+        .stand-neck {
+            width: 20%;
+            height: 40px;
+            background: linear-gradient(90deg, #333 0%, #888 20%, #ddd 50%, #888 80%, #333 100%);
+            box-shadow: inset 0 15px 20px rgba(0,0,0,0.8);
+        }
+        
+        .stand-base {
+            width: 40%;
+            height: 15px;
+            background: linear-gradient(90deg, #666 0%, #fff 50%, #666 100%);
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 15px 25px rgba(0,0,0,0.5);
+        }
+
+        /* --- TRUE CSS 3D ENGINE CUBES --- */
+        .scene-3d {
+            perspective: 1200px;
+            position: absolute;
+            width: 100%; height: 100%;
+            top: 0; left: 0;
+            pointer-events: none;
+        }
+
+        .cube-master {
+            position: absolute;
+            width: min(20%, 90px);
+            aspect-ratio: 1 / 1;
+            transform-style: preserve-3d;
+        }
+
+        .blue-cube {
+            bottom: 27%;
+            right: 5%;
+            transform: rotateX(-20deg) rotateY(35deg) rotateZ(0deg);
+        }
+        
+        .white-cube {
+            bottom: 14%;
+            left: 2%;
+            transform: rotateX(-20deg) rotateY(-35deg) rotateZ(0deg);
+        }
+
+        .cube-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        /* Blue Cube Geometry & Lighting */
+        .blue-cube .front { transform: translateZ(min(10vw, 45px)); background: #3730a3; color: white; box-shadow: -20px 30px 40px rgba(0,0,0,0.5); }
+        .blue-cube .top   { transform: rotateX(90deg) translateZ(min(10vw, 45px)); background: linear-gradient(135deg, #6366f1, #4f46e5); }
+        .blue-cube .left  { transform: rotateY(-90deg) translateZ(min(10vw, 45px)); background: #312e81; }
+
+        /* White Cube Geometry & Lighting */
+        .white-cube .front { transform: translateZ(min(10vw, 45px)); background: #f8fafc; box-shadow: 20px 30px 40px rgba(0,0,0,0.3); }
+        .white-cube .front i { background: var(--grad-text-2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .white-cube .top   { transform: rotateX(90deg) translateZ(min(10vw, 45px)); background: linear-gradient(135deg, #ffffff, #e2e8f0); }
+        .white-cube .right { transform: rotateY(90deg) translateZ(min(10vw, 45px)); background: #cbd5e1; }
+
+        /* Static Asterisk */
+        .asterisk-10x {
+            position: absolute;
+            top: 5%;
+            left: 10%;
+            width: 80px; height: 80px;
+            transform: rotate(20deg);
+        }
+        .a-line {
+            position: absolute;
+            top: 50%; left: 0;
+            width: 100%; height: 16px;
+            background: linear-gradient(90deg, #3b82f6, #ec4899);
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(236, 72, 153, 0.4);
+            transform-origin: center;
+        }
+        .a-line:nth-child(1) { transform: translateY(-50%) rotate(0deg); }
+        .a-line:nth-child(2) { transform: translateY(-50%) rotate(60deg); }
+        .a-line:nth-child(3) { transform: translateY(-50%) rotate(120deg); }
+
+    </style>
+</head>
+<body>
+
+    <div class="master-canvas">
+        
+        <!-- Background Lighting & Ribbons -->
+        <div class="ambient-glow"></div>
+        <svg class="ribbon-bg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+                <linearGradient id="master-grad" x1="100%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#3b82f6" />
+                    <stop offset="30%" stop-color="#8b5cf6" />
+                    <stop offset="70%" stop-color="#ec4899" />
+                    <stop offset="100%" stop-color="#f43f5e" />
+                </linearGradient>
+                <linearGradient id="master-grad-2" x1="0%" y1="100%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#2563eb" />
+                    <stop offset="50%" stop-color="#9333ea" />
+                    <stop offset="100%" stop-color="#f43f5e" />
+                </linearGradient>
+            </defs>
+            <path class="layer-2" d="M 0,10 L 40,20 C 10,60 50,90 100,70 L 100,100 L 0,100 Z" />
+            <path d="M 0,0 L 45,0 C 20,45 35,85 100,85 L 100,100 L 0,100 Z" />
+        </svg>
+
+        <!-- Glass DOF Elements -->
+        <div class="dof-glass glass-1"></div>
+        <div class="dof-glass glass-2"></div>
+
+        <!-- RIGHT COLUMN: Typography -->
+        <div class="text-col">
+            <div class="brand-pill">
+                <i class="fas fa-wallet"></i> 
+                <div>
+                    <h2>دفتر الديون</h2>
+                    <span>DIGITAL LEDGER APP</span>
+                </div>
+            </div>
+
+            <h1 class="headline">
+                <span class="hl-dark">أفضل</span>
+                <span class="hl-anim-1">تطبيق متكامل</span>
+                <span class="hl-dark">لإدارة الحسابات</span>
+                <span class="hl-anim-2">التجارية</span>
+            </h1>
+
+            <div class="divider"></div>
+
+            <p class="sub-text">
+                تصاميم <span>عصرية.</span><br>نتائج <span>واحترافية لا مثيل لها.</span>
+            </p>
+        </div>
+
+        <!-- LEFT COLUMN: True 3D Stage -->
+        <div class="stage-col">
+            <div class="stage-anchor">
+                
+                <!-- Asterisk -->
+                <div class="asterisk-10x">
+                    <div class="a-line"></div>
+                    <div class="a-line"></div>
+                    <div class="a-line"></div>
+                </div>
+
+                <!-- Photorealistic Podiums -->
+                <div class="podium-base"></div>
+                <div class="podium-inner"></div>
+
+                <!-- Monitor Pro Rig -->
+                <div class="monitor-rig">
+                    <div class="monitor-body">
+                        <div class="screen-glass">
+                            <!-- Image asset remains intact -->
+                            <img src="pc_dashboard.png" alt="لوحة التحكم دفتر الديون" draggable="false">
+                        </div>
+                    </div>
+                    <div class="stand-neck"></div>
+                    <div class="stand-base"></div>
+                </div>
+
+                <!-- TRUE 3D CSS ENGINE SCENE -->
+                <div class="scene-3d">
+                    
+                    <!-- True 3D Blue Cube (Front, Top, Left visible) -->
+                    <div class="cube-master blue-cube">
+                        <div class="cube-face front"><i class="fas fa-chart-line"></i></div>
+                        <div class="cube-face top"></div>
+                        <div class="cube-face left"></div>
+                    </div>
+
+                    <!-- True 3D White Cube (Front, Top, Right visible) -->
+                    <div class="cube-master white-cube">
+                        <div class="cube-face front"><i class="fas fa-globe"></i></div>
+                        <div class="cube-face top"></div>
+                        <div class="cube-face right"></div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

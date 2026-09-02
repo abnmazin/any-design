@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إعلان ستوري — فاتح | المركزية الحديثة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../../assets/css/site.css">
+  <style>
+    :root {
+      --accent-teal: #1ae5ff;
+      --accent-emerald: #10b981;
+      --accent-coral: #ef4444;
+    }
+
+    .story-stage { display: flex; justify-content: center; padding: 30px 12px 90px; }
+
+    /* 9:16 Canvas for Instagram Story */
+    .canvas-wrapper {
+      width: 1080px;
+      height: 1920px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 88px 45px 77px;
+      background-color: #020a0d;
+      color: #f0fdfa;
+      box-shadow: 0 0 50px rgba(0,0,0,0.8);
+      overflow: hidden;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    /* TOP SIDE: Branding & Copy */
+    .top-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 22px;
+      z-index: 20;
+      flex-shrink: 0;
+    }
+
+    .branding { display: flex; align-items: center; gap: 26px; }
+
+    .logo-icon {
+      font-size: 4rem;
+      color: #020a0d;
+      background: var(--accent-teal);
+      width: 110px;
+      height: 110px;
+      border-radius: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 40px rgba(26, 229, 255, 0.4);
+    }
+
+    .brand-title { font-size: 6.6rem; font-weight: 900; line-height: 1; }
+    .brand-title span { color: var(--accent-teal); }
+
+    .tagline { font-size: 2.5rem; font-weight: 700; margin-top: 8px; }
+    .sub-tagline { color: #8ba3b5; font-size: 2.1rem; font-weight: 400; }
+
+    /* MIDDLE SIDE: Single Showcase */
+    .middle-showcase {
+      position: relative;
+      flex: 1;
+      display: flex; justify-content: center; align-items: center;
+      width: 100%; margin: 40px 0; min-height: 0;
+    }
+
+    .phone-mockup {
+      position: relative;
+      width: 380px;
+      height: 824px;
+      background: #000;
+      border-radius: 58px;
+      padding: 13px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9), 0 0 40px rgba(26, 229, 255, 0.15), inset 0 1px 3px rgba(255,255,255,0.1);
+      border: 1px solid #2a4a5a;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .phone-mockup::before {
+      content: '';
+      position: absolute;
+      top: 26px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 26px;
+      background: #000;
+      border-radius: 14px;
+      z-index: 20;
+    }
+
+    .phone-screen {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+      border-radius: 45px;
+      overflow: hidden;
+      background: #0d1f25;
+      z-index: 20;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .phone-screen img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* Glass Reflection */
+    .phone-mockup::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 30px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: 25;
+    }
+
+    .upload-overlay {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; gap: 5px; justify-content: center; align-items: center;
+      background: rgba(2, 10, 13, 0.55);
+      color: var(--text-white, #f0fdfa);
+      font-size: 2rem;
+      border-radius: 45px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      z-index: 30;
+      text-align: center;
+      padding: 12px;
+      border: none;
+      font-family: inherit;
+    }
+    .upload-overlay i { font-size: 4.4rem; color: var(--accent-teal); }
+    .upload-overlay small { font-size: 1.8rem; color: #8ba3b5; }
+    .phone-screen:hover .upload-overlay { opacity: 1; }
+
+    /* BOTTOM SIDE: Feature Cards */
+    .bottom-content {
+      display: flex;
+      flex-direction: column;
+      gap: 34px;
+      z-index: 20;
+      flex-shrink: 0;
+    }
+
+    .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+
+    .feature-card {
+      background: #0d1f25;
+      border: 1px solid rgba(26, 229, 255, 0.15);
+      border-radius: 26px;
+      padding: 26px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+    }
+
+    .f-header { display: flex; align-items: center; gap: 18px; margin-bottom: 12px; }
+    .f-header i { font-size: 1.9rem; color: var(--accent-teal); }
+    .f-header h4 { font-size: 2rem; font-weight: 700; color: #f0fdfa; margin: 0; }
+    .feature-card p { color: #8ba3b5; font-size: 1.7rem; line-height: 1.4; margin: 0; }
+
+    /* Bottom Strip */
+    .bottom-strip {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 26px;
+      padding-top: 30px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .b-item { display: flex; align-items: center; gap: 12px; color: #8ba3b5; font-size: 1.6rem; }
+    .b-item i { color: var(--accent-teal); font-size: 1.8rem; }
+
+    [contenteditable="true"] { outline: none; }
+  </style>
+</head>
+<body class="editor-page">
+
+  <div class="preview-toolbar">
+    <span class="zoom"><i class="fas fa-arrows-up-down-left-right"></i> إعلان ستوري — فاتح | 1080 × 1920</span>
+    <a href="../../app/home.html#/studio" style="margin-inline-start:16px;" class="btn"><i class="fas fa-arrow-right"></i> رجوع</a>
+  </div>
+
+  <div class="story-stage">
+    <div class="canvas-wrapper" id="phone1">
+
+      <!-- TOP: Branding & Copy -->
+      <div class="top-content">
+        <div class="branding">
+          <div class="logo-icon"><i class="fas fa-wallet"></i></div>
+          <h1 class="brand-title" contenteditable="true">دفتر <span>الديون</span></h1>
+        </div>
+        <div>
+          <div class="tagline" contenteditable="true">إدارة ديون الزبائن وحركات الدفع بسهولة</div>
+          <div class="sub-tagline" contenteditable="true">بسيط، سريع، وموثوق</div>
+        </div>
+      </div>
+
+      <!-- MIDDLE: Single Screenshot Showcase -->
+      <div class="middle-showcase">
+        <div class="phone-mockup">
+          <div class="phone-screen">
+            <img id="p1PhoneShot" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='780'%3E%3Crect width='360' height='780' fill='%2314252d'/%3E%3Crect x='30' y='30' width='300' height='720' rx='18' fill='%230a1419'/%3E%3Ctext x='180' y='370' font-size='64' text-anchor='middle'%3E%F0%9F%93%B1%3C/text%3E%3Ctext x='180' y='440' font-family='Cairo,sans-serif' font-size='18' fill='%231ae5ff' text-anchor='middle'%3E%D8%A7%D8%B1%D9%81%D8%B9%20%D8%B5%D9%88%D8%B1%D8%A9%20%D9%84%D9%84%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%3C/text%3E%3C/svg%3E" alt="تطبيق دفتر الديون" draggable="false">
+            <button class="upload-overlay" id="p1PhoneUploadBtn" type="button">
+              <i class="fas fa-cloud-arrow-up"></i> اضغط للرفع
+              <small>رفع صورة</small>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM: Features & Strip -->
+      <div class="bottom-content">
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="f-header">
+              <i class="fas fa-users"></i>
+              <h4 contenteditable="true">إدارة الزبائن</h4>
+            </div>
+            <p contenteditable="true">إضافة الزبائن ومتابعة أرصدتهم</p>
+          </div>
+          <div class="feature-card">
+            <div class="f-header">
+              <i class="fas fa-coins"></i>
+              <h4 contenteditable="true">الديون والمدفوعات</h4>
+            </div>
+            <p contenteditable="true">سجل كامل لكل دين أو دفعة</p>
+          </div>
+          <div class="feature-card">
+            <div class="f-header">
+              <i class="fas fa-chart-pie"></i>
+              <h4 contenteditable="true">لوحة متابعة ذكية</h4>
+            </div>
+            <p contenteditable="true">نظرة سريعة للمقبوضات</p>
+          </div>
+          <div class="feature-card">
+            <div class="f-header">
+              <i class="fas fa-archive"></i>
+              <h4 contenteditable="true">أرشيف كامل</h4>
+            </div>
+            <p contenteditable="true">تاريخ مفصل لكافة الحركات</p>
+          </div>
+        </div>
+
+        <div class="bottom-strip">
+          <div class="b-item" contenteditable="true"><i class="fas fa-bolt"></i> سريع الاستخدام</div>
+          <div class="b-item" contenteditable="true"><i class="fas fa-mobile-alt"></i> متاح دائماً</div>
+          <div class="b-item" contenteditable="true"><i class="fas fa-shield-alt"></i> آمن وموثوق</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <input type="file" id="p1PhoneFile" accept="image/*" style="display:none;">
+
+  <script src="../../assets/js/site-settings.js"></script>
+  <script src="../../assets/js/editor-panel.js"></script>
+  <script>
+    (function () {
+      var btn = document.getElementById('p1PhoneUploadBtn');
+      var input = document.getElementById('p1PhoneFile');
+      var img = document.getElementById('p1PhoneShot');
+      if (!btn || !input || !img) return;
+      btn.addEventListener('click', function () { input.click(); });
+      input.addEventListener('change', function () {
+        if (!input.files || !input.files[0]) return;
+        img.src = URL.createObjectURL(input.files[0]);
+      });
+    })();
+  </script>
+
+</body>
+</html>
