@@ -397,8 +397,18 @@
         if (!activeElement) return;
         e.preventDefault();
         e.stopPropagation();
-        const r = activeElement.getBoundingClientRect();
-        resizeState = { side, startX: e.clientX, startY: e.clientY, startW: r.width, startH: r.height };
+        // Store geometry in canvas CSS px so anchor math stays consistent with
+        // the width/height deltas (getBoundingClientRect is scaled by currentScale).
+        const rect = activeElement.getBoundingClientRect();
+        resizeState = {
+            side,
+            startX: e.clientX,
+            startY: e.clientY,
+            startW: rect.width / currentScale,
+            startH: rect.height / currentScale,
+            startLeft: activeElement.offsetLeft || ((rect.left - (activeElement.parentElement?.getBoundingClientRect().left || 0)) / currentScale),
+            startTop: activeElement.offsetTop || ((rect.top - (activeElement.parentElement?.getBoundingClientRect().top || 0)) / currentScale),
+        };
         document.addEventListener('mousemove', onResizeMove);
         document.addEventListener('mouseup', endResize);
         showToolbarEl(false);
@@ -415,8 +425,23 @@
         if (sides.indexOf('s') !== -1) h += dy / currentScale;
         if (sides.indexOf('w') !== -1) w -= dx / currentScale;
         if (sides.indexOf('n') !== -1) h -= dy / currentScale;
-        activeElement.style.width = Math.max(MIN_W, Math.round(w)) + 'px';
-        activeElement.style.height = Math.max(MIN_H, Math.round(h)) + 'px';
+
+        // Clamp before deriving the shifted anchors so a clamped edge does not
+        // detach from its fixed opposite edge.
+        w = Math.max(MIN_W, Math.round(w));
+        h = Math.max(MIN_H, Math.round(h));
+
+        // Resize by anchoring the edge opposite the handle being pulled:
+        // the right edge stays in place when stretching the left handle (w),
+        // and the bottom edge stays in place when stretching the top handle (n).
+        if (sides.indexOf('w') !== -1) {
+            activeElement.style.left = (resizeState.startLeft + resizeState.startW - w) + 'px';
+        }
+        if (sides.indexOf('n') !== -1) {
+            activeElement.style.top = (resizeState.startTop + resizeState.startH - h) + 'px';
+        }
+        activeElement.style.width = w + 'px';
+        activeElement.style.height = h + 'px';
         positionOverlay();
     }
 
@@ -477,18 +502,21 @@
         if (!activeElement) return;
         e.preventDefault();
         e.stopPropagation();
-        const r = activeElement.getBoundingClientRect();
         const canvas = findCanvas();
         const canvasRect = canvas.getBoundingClientRect();
+        const startRect = activeElement.getBoundingClientRect();
 
-        // Insert placeholder on first move to preserve layout
+        // Insert placeholder on first move to preserve layout. The placeholder
+        // shifts flow layout (flex centering), so the offset/anchor snapshot is
+        // taken AFTER it is inserted and the element is made absolute, otherwise
+        // the first mousemove would land a scaled distance from the cursor.
         const hasPlaceholder = activeElement.querySelector('.editor-placeholder')
             || (activeElement.parentElement && activeElement.parentElement.querySelector('.editor-placeholder'));
         if (!hasPlaceholder && !activeElement.dataset.placeholder) {
             const ph = document.createElement('div');
             ph.className = 'editor-placeholder';
-            ph.style.width = Math.round(r.width) + 'px';
-            ph.style.height = Math.round(r.height) + 'px';
+            ph.style.width = Math.round(startRect.width) + 'px';
+            ph.style.height = Math.round(startRect.height) + 'px';
             activeElement.dataset.placeholder = '1';
             if (activeElement.parentElement) {
                 activeElement.parentElement.insertBefore(ph, activeElement);
@@ -499,6 +527,10 @@
         activeElement.style.margin = '0';
         activeElement.style.willChange = 'top, left';
         activeElement.style.zIndex = String(maxLayerZ(layerElements()) + 1);
+
+        // Re-measure after the layout changes so the anchor matches what is
+        // actually on screen the moment the drag starts.
+        const r = activeElement.getBoundingClientRect();
         moveState = {
             offsetX: e.clientX - r.left,
             offsetY: e.clientY - r.top,
@@ -854,18 +886,24 @@
         const m = MOCKUPS.find((x) => x.id === id);
         if (!m) return null;
 
-        // Resolve the mockups folder. The fragments live at /mockups/ in dev
-        // and dist/mockups/ in production (vite copies public/ verbatim), so try
-        // ascending-relative and absolute candidates until one fetches.
+        // Resolve the mockups folder. The fragments live at /mockups/ in both
+        // dev (public/) and production (dist/), so try the absolute-root path
+        // first, then ascending-relative fallbacks for cases where the app is
+        // served from a sub-path. A response "ok" is not enough — vite's dev
+        // server returns the SPA index (200) for missing HTML files, so every
+        // candidate must be verified to actually contain the mockup fragment
+        // before it is accepted.
         const fileName = id + '.html';
         const candidates = []
-            .concat('mockups/' + fileName, '../mockups/' + fileName,
-                '../../mockups/' + fileName, '/mockups/' + fileName);
+            .concat('/mockups/' + fileName, 'mockups/' + fileName,
+                '../mockups/' + fileName, '../../mockups/' + fileName);
         let text = null;
-        for (let i = 0; i < candidates.length; i++) {
+        for (let i = 0; i < candidates.length && !text; i++) {
             try {
                 const res = await fetch(candidates[i], { method: 'GET' });
-                if (res.ok) { text = await res.text(); break; }
+                if (!res.ok) continue;
+                const body = await res.text();
+                if (body.includes('mockup-frame') || body.includes(id + '-frame')) text = body;
             } catch (e) { /* try next candidate */ }
         }
         if (!text) return null;

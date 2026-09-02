@@ -1,10 +1,32 @@
 import { fileURLToPath, URL } from 'node:url';
+import { readdirSync, cpSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
+// The editor loads its JS/CSS as raw static files (assets/js/editor-panel.js,
+// assets/js/site-settings.js, assets/css/site.css). Vite only copies public/
+// to dist/, so this plugin mirrors the project-root assets/ tree into dist/
+// after every build to keep those <script>/<link> references working.
+function copyRootAssets() {
+    const src = resolve('assets');
+    const dest = resolve('dist/assets');
+    return {
+        name: 'copy-root-assets',
+        closeBundle: async (ctx) => {
+            try {
+                if (readdirSync(src).length) cpSync(src, dest, { recursive: true });
+            } catch (err) {
+                ctx.warn('copy-root-assets: ' + err.message);
+            }
+        },
+    };
+}
+
 export default defineConfig({
-  build: {
-    rollupOptions: {
-      input: {
+    plugins: [copyRootAssets()],
+    build: {
+        rollupOptions: {
+            input: {
         main: fileURLToPath(new URL('./index.html', import.meta.url)),
         login: fileURLToPath(new URL('./app/index.html', import.meta.url)),
         home: fileURLToPath(new URL('./app/home.html', import.meta.url)),
