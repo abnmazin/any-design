@@ -1,22 +1,23 @@
 // Static UI markup and styles for the floating editor chrome, plus buildUI()
-// which injects everything into the page. The markup strings are kept verbatim
-// from the original single-file editor to avoid visual regressions.
+// which injects everything into the page. The Strict Template Generator exposes
+// a structured content form (إعدادات التصميم) and a brand/theme picker (العلامة)
+// against a locked, read-only canvas preview.
 
-import { fontsHtml } from './helpers.js';
-import { startResize, startMove } from './interactions.js';
-import { buildElementsPane } from './elements.js';
+import { CONTENT_FORM, FEATURE_FIELD_COUNT } from './state.js';
 
 const STYLE = `
         #editorUI { position: fixed; inset: 0; z-index: 290; pointer-events: none;
             font-family: 'Cairo', sans-serif; }
         #editorUI *, #editorUI *::before, #editorUI *::after { box-sizing: border-box; }
 
-        /* ---- Left sidebar ---- */
+        /* ---- Left sidebar (Glassmorphism / Dark Mode) ---- */
         #editorSidebar {
             position: fixed; left: 76px; top: 60px; height: calc(100vh - 60px); width: 300px;
-            background: rgba(9, 17, 26, 0.98); border-right: 1px solid rgba(26,229,255,0.2);
-            box-shadow: 20px 0 40px rgba(0,0,0,0.5); z-index: 90;
-            display: flex; flex-direction: column;
+            background: linear-gradient(160deg, rgba(13, 31, 37, 0.92), rgba(9, 17, 26, 0.96));
+            border-right: 1px solid rgba(26, 229, 255, 0.18);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            box-shadow: 20px 0 40px rgba(0, 0, 0, 0.5);
+            z-index: 90; display: flex; flex-direction: column;
             transform: translateX(-100%); transition: transform 0.28s ease;
             pointer-events: auto;
         }
@@ -25,172 +26,93 @@ const STYLE = `
         #editorSidebar .es-head h3 { color: #f0fdfa; font-size: 1.05rem; margin: 0; }
         #editorSidebar .es-close { background: none; border: none; color: #8ba3b5; font-size: 1.4rem; cursor: pointer; }
         #editorSidebar .es-close:hover { color: #fff; }
-        #editorSidebar .es-tabs { display: none; }
+        #editorSidebar .es-tabs { display: flex; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
         #editorSidebar .es-tab { flex: 1; padding: 10px 4px; background: none; border: none; color: #8ba3b5;
             font-size: 0.85rem; cursor: pointer; border-bottom: 2px solid transparent; font-family: inherit; }
         #editorSidebar .es-tab.active { color: #1ae5ff; border-bottom-color: #1ae5ff; }
-        #editorSidebar .es-body { flex: 1; overflow-y: auto; padding: 14px; }
-        #editorSidebar .es-body, #editorSidebar .elements-cats {
-            scrollbar-width: none; -ms-overflow-style: none;
-        }
-        #editorSidebar .es-body::-webkit-scrollbar,
-        #editorSidebar .elements-cats::-webkit-scrollbar { display: none; width: 0; height: 0; }
+        #editorSidebar .es-body { flex: 1; overflow-y: auto; padding: 16px; }
+        #editorSidebar .es-body::-webkit-scrollbar { width: 8px; }
+        #editorSidebar .es-body::-webkit-scrollbar-thumb { background: rgba(26, 229, 255, 0.25); border-radius: 4px; }
         #editorSidebar .es-pane { display: none; }
         #editorSidebar .es-pane.active { display: block; }
 
-        /* Layers */
-        .layers-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-        .layers-list li { display: flex; align-items: center; gap: 8px; padding: 9px 10px;
-            background: #0d1f25; border: 1px solid rgba(26,229,255,0.15); border-radius: 10px;
-            color: #d5e5ee; font-size: 0.85rem; cursor: pointer; user-select: none; }
-        .layers-list li.active { border-color: #1ae5ff; background: rgba(26,229,255,0.15); }
-        .layers-list li.drag-over { border-color: #22c55e; background: rgba(34,197,94,0.12); }
-        .layers-list li.group-row > .lay-grip { cursor: grab; }
-        .lay-chev { width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center;
-            flex-shrink: 0; color: #8ba3b5; cursor: pointer; transition: transform 0.15s ease; }
-        .lay-chev::before { content: "\\25B8"; font-size: 0.65rem; }
-        .lay-chev-hidden { visibility: hidden; pointer-events: none; }
-        li.group-row.expanded > .lay-chev { transform: rotate(90deg); }
-        li.group-row.expanded > ul.lay-children { display: block; }
-        li.group-row { flex-wrap: wrap; }
-        ul.lay-children { display: none; flex: 0 0 100%; width: 100%; margin: 0; padding: 2px 0 4px 10px; list-style: none; }
-        ul.lay-children li { border-bottom: none; font-size: 0.8rem; margin: 2px 0; padding: 3px 4px 3px 8px;
-            background: rgba(13,31,37,0.6); }
-        .layers-list li .lay-grip { color: #8ba3b5; font-size: 1rem; cursor: grab; padding: 0 2px; flex-shrink: 0; }
-        .layers-list li .lay-grip:active { cursor: grabbing; }
-        .layers-list li .lay-idx { color: #8ba3b5; font-size: 0.7rem; min-width: 16px; }
-        .layers-list li .lay-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .layers-list li .lay-tag { font-size: 0.65rem; color: #7fd6a8; }
-        .layers-list li .lay-lock { color: #8ba3b5; width: 22px; height: 22px; display: inline-flex;
-            align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; flex-shrink: 0;
-            font-size: 0.8rem; border: 1px solid transparent; transition: color 0.15s ease,
-            background 0.15s ease, border-color 0.15s ease; }
-        .layers-list li .lay-lock:hover { color: #1ae5ff; background: rgba(26,229,255,0.08);
-            border-color: rgba(26,229,255,0.25); }
-        .layers-list li.locked .lay-lock { color: #ffb454; }
-        .layers-list li.locked .lay-name, .layers-list li.locked .lay-tag { opacity: 0.55; }
+        /* Content form */
+        #contentForm { display: flex; flex-direction: column; gap: 14px; }
+        .cf-section { }
+        .cf-section-title { color: #1ae5ff; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.3px;
+            text-transform: uppercase; margin: 4px 0 10px; display: flex; align-items: center; gap: 8px; }
+        .cf-section-title::after { content: ""; flex: 1; height: 1px; background: rgba(26, 229, 255, 0.2); }
+        .cf-field { margin-bottom: 14px; }
+        .cf-field > label { display: block; color: #8ba3b5; font-size: 0.72rem; margin-bottom: 6px; }
+        .cf-input {
+            width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #f0fdfa; padding: 10px 12px; border-radius: 10px; font-family: inherit; font-size: 0.85rem;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .cf-input::placeholder { color: #5b7383; }
+        .cf-input:focus { outline: none; border-color: #1ae5ff; box-shadow: 0 0 0 3px rgba(26, 229, 255, 0.15); }
+        .cf-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px; padding: 12px; margin-top: 8px; }
+        .cf-card-head { color: #8ba3b5; font-size: 0.7rem; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        .cf-card-head i { color: #1ae5ff; font-size: 0.85rem; }
 
-        /* Text pane */
-        .es-field { margin-bottom: 14px; }
-        .es-label { color: #8ba3b5; font-size: 0.72rem; margin-bottom: 6px; display: block; }
-        .es-swatches { display: flex; flex-wrap: wrap; gap: 8px; }
-        .es-swatch { width: 26px; height: 26px; border-radius: 8px; cursor: pointer;
-            border: 2px solid rgba(255,255,255,0.35); }
-        .es-swatch.active { border-color: #fff; box-shadow: 0 0 0 2px #1ae5ff; }
-        .es-select { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
-            color: #f0fdfa; padding: 9px; border-radius: 9px; font-family: inherit; font-size: 0.85rem; }
-        .es-select option { background: #0a111c; }
-        .es-row { display: flex; align-items: center; gap: 8px; }
-        .es-btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #f0fdfa;
-            width: 38px; height: 34px; border-radius: 9px; cursor: pointer; font-size: 1rem; }
-        .es-btn:hover { border-color: #1ae5ff; color: #1ae5ff; }
-        .es-val { flex: 1; text-align: center; color: #f0fdfa; font-weight: 700; }
-        .es-colorwrap { position: relative; width: 38px; height: 34px; }
-        .es-colorwrap input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-        .es-colorchip { width: 38px; height: 34px; border-radius: 9px; border: 1px solid rgba(255,255,255,0.2);
-            background: conic-gradient(#ef4444,#f97316,#facc15,#22c55e,#06b6d4,#3b82f6,#a855f7,#ec4899,#ef4444); }
-        .es-hint { color: #8ba3b5; font-size: 0.72rem; padding: 10px; background: #0d1f25; border-radius: 10px; }
-
-        /* Logo pane */
+        /* Brand pane */
         .logo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .logo-item { background: #0d1f25; border: 1px solid rgba(26,229,255,0.15); border-radius: 12px;
-            display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 8px; cursor: pointer; }
+        .logo-item { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(26, 229, 255, 0.15);
+            border-radius: 12px; display: flex; flex-direction: column; align-items: center; gap: 6px;
+            padding: 14px 8px; cursor: pointer; transition: border-color 0.15s ease, transform 0.15s ease; }
         .logo-item:hover { border-color: #1ae5ff; transform: translateY(-2px); }
-        .logo-item.active { background: rgba(26,229,255,0.15); border-color: #1ae5ff; }
+        .logo-item.active { background: rgba(26, 229, 255, 0.15); border-color: #1ae5ff; }
         .logo-item i { font-size: 1.5rem; color: #1ae5ff; }
         .logo-item span { color: #8ba3b5; font-size: 0.72rem; }
+        .es-hint { color: #8ba3b5; font-size: 0.72rem; padding: 12px; background: rgba(255, 255, 255, 0.04);
+            border: 1px dashed rgba(255, 255, 255, 0.1); border-radius: 10px; line-height: 1.6; }
 
-        /* Mockups (القوالب) pane */
-        .mockup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .mockup-item { background: #0d1f25; border: 1px solid rgba(26,229,255,0.15); border-radius: 12px;
-            display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 8px; cursor: pointer;
-            color: #f0fdfa; }
-        .mockup-item:hover { border-color: #1ae5ff; transform: translateY(-2px); }
-        .mockup-item i { font-size: 2rem; color: #1ae5ff; }
-        .mockup-item span { color: #8ba3b5; font-size: 0.72rem; font-weight: 700; }
-        .mockup-hint { color: #8ba3b5; font-size: 0.72rem; padding: 10px; background: #0d1f25;
-            border-radius: 10px; margin-top: 12px; }
+        /* ---- Top bar ---- */
+        .es-export-btn { display: inline-flex; align-items: center; gap: 8px; }
 
-        /* ---- Bottom floating toolbar ---- */
-        #editorToolbar {
-            position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
-            display: none; align-items: center; gap: 8px; padding: 9px 12px;
-            background: rgba(9,17,26,0.95); border: 1px solid rgba(26,229,255,0.25); border-radius: 18px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.6); backdrop-filter: blur(14px); z-index: 296;
-            pointer-events: auto; max-width: calc(100vw - 24px); overflow-x: auto;
-        }
-        #editorToolbar.show { display: flex; }
-        #editorToolbar .tb-divider { width: 1px; height: 26px; background: rgba(255,255,255,0.12); margin: 0 2px; }
-        #editorToolbar .tb-swatches { display: flex; align-items: center; gap: 6px; }
-        #editorToolbar .tb-swatch { width: 22px; height: 22px; border-radius: 7px; cursor: pointer;
-            border: 2px solid rgba(255,255,255,0.35); }
-        #editorToolbar .tb-swatch.active { border-color: #fff; box-shadow: 0 0 0 2px #1ae5ff; }
-        #editorToolbar .tb-font { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
-            color: #f0fdfa; height: 30px; border-radius: 8px; padding: 0 6px; font-size: 0.78rem; max-width: 120px;
-            font-family: inherit; }
-        #editorToolbar .tb-font option { background: #0a111c; }
-        #editorToolbar .tb-size { display: flex; align-items: center; gap: 2px; }
-        #editorToolbar .tb-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            color: #f0fdfa; min-width: 30px; height: 30px; border-radius: 8px; cursor: pointer; }
-        #editorToolbar .tb-btn:hover { border-color: #1ae5ff; color: #1ae5ff; }
-        #editorToolbar .tb-size-val { min-width: 34px; text-align: center; color: #f0fdfa; font-weight: 700; font-size: 0.8rem; }
+        /* ---- Tool rail ---- */
+        .tool-rail { position: fixed; left: 0; top: 0; bottom: 0; width: 76px; z-index: 100;
+            background: rgba(9, 17, 26, 0.92); border-right: 1px solid rgba(26, 229, 255, 0.12);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            display: flex; flex-direction: column; align-items: center; padding-top: 12px; gap: 4px; }
+        .tool-rail button { width: 60px; padding: 10px 0; background: none; border: none; border-radius: 12px;
+            color: #8ba3b5; font-size: 0.62rem; cursor: pointer; font-family: inherit; display: flex;
+            flex-direction: column; align-items: center; gap: 5px; transition: color 0.15s ease, background 0.15s ease; }
+        .tool-rail button i { font-size: 1.25rem; }
+        .tool-rail button:hover { color: #f0fdfa; background: rgba(255, 255, 255, 0.05); }
+        .tool-rail button.active { color: #fff; background: rgba(26, 229, 255, 0.15); }
+        .tool-rail .rail-zoom { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 6px; padding-bottom: 14px; }
+        .tool-rail .rail-zoom button { width: 34px; padding: 6px 0; }
+        .tool-rail #zoomValue { width: 48px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #f0fdfa; text-align: center; border-radius: 8px; font-size: 0.7rem; padding: 4px 0; }
 
-        /* Placeholder for free-moved elements */
-        .editor-placeholder {
-            background: rgba(255, 255, 255, 0.03); box-sizing: border-box; pointer-events: none; }
+        .editor-top-bar { position: fixed; top: 0; left: 76px; right: 0; height: 60px; z-index: 95;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
+            background: rgba(9, 17, 26, 0.9); border-bottom: 1px solid rgba(26, 229, 255, 0.12);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        .editor-top-bar .top-bar-title { color: #f0fdfa; font-weight: 700; font-size: 0.95rem; }
+        .editor-top-bar .top-bar-right, .editor-top-bar .top-bar-left { display: flex; align-items: center; gap: 10px; }
+        .editor-top-bar .btn { border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.06);
+            color: #f0fdfa; padding: 8px 14px; border-radius: 10px; font-size: 0.82rem; font-weight: 600;
+            cursor: pointer; font-family: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 7px; }
+        .editor-top-bar .btn:hover { border-color: #1ae5ff; color: #1ae5ff; }
+        .editor-top-bar .btn.primary { background: linear-gradient(135deg, #1ae5ff, #0e9bb3); color: #0a111c;
+            border: none; font-weight: 800; }
+        .editor-top-bar .btn.primary:disabled { opacity: 0.5; cursor: default; }
+        .editor-top-bar .profile-avatar { border-radius: 50%; background: #1ae5ff; }
 
-        /* Resize + move overlay */
-        #resizeOverlay { position: fixed; z-index: 293; pointer-events: none; display: none;
-            border: 1px solid rgba(26,229,255,0.85); border-radius: 8px;
-            box-shadow: 0 0 12px rgba(26,229,255,0.35), 0 0 0 1px rgba(0,0,0,0.35);
-            will-change: top, left; }
-        #resizeOverlay.show { display: block; }
-        .rs-handle { position: fixed; z-index: 294; width: 10px; height: 10px; background: #fff;
-            border: 2px solid #1ae5ff; border-radius: 50%; display: none; pointer-events: auto;
-            box-shadow: 0 0 8px rgba(26,229,255,0.8), 0 1px 3px rgba(0,0,0,0.5);
-            transform: translate(-50%, -50%); }
-        .rs-handle.show { display: block; }
-        .rs-handle:hover { background: #1ae5ff; }
-        .rs-n, .rs-s { cursor: ns-resize; } .rs-e, .rs-w { cursor: ew-resize; }
-        .rs-ne, .rs-sw { cursor: nesw-resize; } .rs-nw, .rs-se { cursor: nwse-resize; }
-        .rs-move-handle { position: fixed; z-index: 294; width: 26px; height: 26px; background: #1ae5ff;
-            border: 2px solid #fff; border-radius: 50%; color: #0a111c; display: none; align-items: center;
-            justify-content: center; font-size: 0.8rem; cursor: grab; pointer-events: auto;
-            box-shadow: 0 0 10px rgba(26,229,255,0.7), 0 2px 6px rgba(0,0,0,0.45); }
-        .rs-move-handle.show { display: flex; }
-        .rs-move-handle:active { cursor: grabbing; }
-
-        /* Hover ring: a dashed highlight that rotates slowly around whichever
-           layer the pointer is over, so users can see it is interactable. It is
-           pointer-events: none and never captures input. The spinning dashes are
-           drawn with a rotating repeating-conic-gradient on the border box. */
-        @property --ring-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
-        #layerHoverRing {
-            position: fixed; z-index: 292; pointer-events: none; display: none;
-            box-sizing: border-box; will-change: transform;
-            background:
-                repeating-conic-gradient(from var(--ring-angle), #1ae5ff 0deg 14deg, transparent 14deg 40deg);
-            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-            -webkit-mask-composite: xor; mask-composite: exclude;
-            padding: 2px; border-radius: 6px;
-        }
-        #layerHoverRing.show { display: block; }
-        #layerHoverRing.spin { animation: layerRingRotate 5s linear infinite; }
-        @keyframes layerRingRotate { from { --ring-angle: 0deg; } to { --ring-angle: 360deg; } }
+        /* Canvas stage */
+        .editor-page .canvas-stage, .editor-page .story-stage, .editor-page .wedding-stage {
+            width: 100%; height: calc(100vh - 60px); min-height: 0; padding: 24px 12px; overflow: hidden;
+            display: flex; align-items: center; justify-content: center; }
+        .editor-page { max-width: 100%; height: 100vh; overflow: hidden; }
     `;
 
 const TOOL_RAIL = `
         <nav class="tool-rail" aria-label="أدوات التصميم">
-            <button type="button" data-tool="templates"><i class="fas fa-layer-group"></i><span>القوالب</span></button>
-            <button type="button" data-tool="elements"><i class="fas fa-shapes"></i><span>العناصر</span></button>
-            <button type="button" data-tool="text"><i class="fas fa-font"></i><span>النص</span></button>
-            <button type="button" data-tool="uploads"><i class="fas fa-image"></i><span>الرفع</span></button>
+            <button type="button" data-tool="content"><i class="fas fa-sliders"></i><span>إعدادات</span></button>
             <button type="button" data-tool="brand"><i class="fas fa-palette"></i><span>العلامة</span></button>
-            <button type="button" data-tool="layers"><i class="fas fa-layer-group"></i><span>الطبقات</span></button>
-            <div class="rail-history" aria-label="سجل التعديلات">
-                <button type="button" id="undoButton" title="تراجع (Ctrl+Z)" aria-label="تراجع"><i class="fas fa-rotate-left"></i></button>
-                <button type="button" id="redoButton" title="إعادة (Ctrl+Shift+Z)" aria-label="إعادة"><i class="fas fa-rotate-right"></i></button>
-            </div>
             <div class="rail-zoom">
                 <button type="button" id="zoomOut" title="تصغير"><i class="fas fa-minus"></i></button>
                 <input type="text" id="zoomValue" value="100" inputmode="numeric" aria-label="نسبة التكبير">
@@ -201,132 +123,85 @@ const TOOL_RAIL = `
 
 const TOP_BAR = `
         <header class="editor-top-bar">
-            <!-- أقصى اليمين: زر الحفظ وصورة البروفايل -->
             <div class="top-bar-right">
-                <button class="btn primary save-btn" type="button" style="padding: 6px 14px; border-radius: 8px; font-size: 0.82rem; font-weight: 600;"><i class="fas fa-floppy-disk"></i> حفظ</button>
-                <div class="profile-avatar" style="width: 30px; height: 30px; border-radius: 50%; background: #1ae5ff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; color: #0a111c; cursor: pointer;">M</div>
+                <button class="btn primary save-btn es-export-btn" type="button"><i class="fas fa-download"></i> تصدير</button>
+                <div class="profile-avatar" style="width: 32px; height: 32px; display:flex; align-items:center; justify-content:center; font-weight:bold; color:#0a111c; cursor:pointer;">M</div>
             </div>
-
-            <!-- المنتصف: اسم الملف -->
-            <div class="top-bar-center">
-                <span class="top-bar-title"></span>
-            </div>
-
-            <!-- أقصى اليسار: زر ملف وزر رجوع -->
+            <div class="top-bar-center"><span class="top-bar-title"></span></div>
             <div class="top-bar-left">
-                <button class="btn file-btn" type="button" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #f0fdfa; padding: 6px 12px; border-radius: 8px; font-size: 0.82rem; font-weight: 600;"><i class="fas fa-folder-open"></i> ملف</button>
-                <a href="../../app/home.html#/studio" class="btn es-back" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #f0fdfa; padding: 6px 12px; border-radius: 8px; font-size: 0.82rem; font-weight: 600;"><i class="fas fa-arrow-right"></i> رجوع</a>
+                <button class="btn file-btn" type="button"><i class="fas fa-folder-open"></i> ملف</button>
+                <a href="../../app/home.html#/studio" class="btn es-back"><i class="fas fa-arrow-right"></i> رجوع</a>
             </div>
         </header>
     `;
 
-    export function buildUI() {
-        const style = document.createElement('style');
-        style.textContent = STYLE;
-        document.head.appendChild(style);
+// Render the content form field groups for the feature cards (one per card).
+function cardGroupHtml(index) {
+    return '<div class="cf-card" data-feature-group="' + index + '">'
+        + '<div class="cf-card-head"><i class="fas fa-layer-group"></i> بطاقة ' + index + '</div>'
+        + '<div class="cf-field"><label>العنوان</label>'
+        + '<input class="cf-input" type="text" data-bind-to="feature-' + index + '-heading" placeholder="عنوان البطاقة"></div>'
+        + '<div class="cf-field" style="margin-bottom:0;"><label>الوصف</label>'
+        + '<input class="cf-input" type="text" data-bind-to="feature-' + index + '-text" placeholder="نص الوصف"></div>'
+        + '</div>';
+}
 
-        const rail = document.createElement('div');
-        rail.innerHTML = TOOL_RAIL;
-        document.body.appendChild(rail.firstElementChild);
+// Render the main content pane: the text fields plus one grouped field per card.
+function contentPaneHtml() {
+    let heading = '';
+    CONTENT_FORM.forEach((f) => {
+        heading += '<div class="cf-field"><label>' + f.label + '</label>'
+            + '<input class="cf-input" type="text" data-bind-to="' + f.bindTo + '" placeholder="' + f.placeholder + '"></div>';
+    });
+    let cards = '';
+    for (let i = 1; i <= FEATURE_FIELD_COUNT; i++) cards += cardGroupHtml(i);
+    return '<form id="contentForm">'
+        + '<div class="cf-section"><div class="cf-section-title">النص</div>' + heading + '</div>'
+        + '<div class="cf-section"><div class="cf-section-title">البطاقات</div>' + cards + '</div>'
+        + '<div class="cf-section"><div class="cf-section-title">الصورة</div>'
+        + '<div class="cf-field"><label>صورة التطبيق</label>'
+        + '<input class="cf-input" type="file" id="appScreenshotInput" accept="image/*" data-bind-to="app-screenshot"></div>'
+        + '</div>'
+        + '</form>';
+}
 
-        const bar = document.createElement('div');
-        bar.innerHTML = TOP_BAR;
-        document.body.appendChild(bar.firstElementChild);
+function brandPaneHtml() {
+    return '<div class="cf-section"><div class="cf-section-title">اللوغو</div>'
+        + '<div class="logo-grid" id="logoGrid"></div>'
+        + '<div class="es-hint" style="margin-top:12px;">التصميم مقفل: لا يمكن سحب العناصر أو تغيير أحجامها. غيّر النصوص من نموذج الإعدادات.</div>'
+        + '</div>';
+}
 
-        const ui = document.createElement('div');
-        ui.id = 'editorUI';
+export function buildUI() {
+    const style = document.createElement('style');
+    style.textContent = STYLE;
+    document.head.appendChild(style);
+
+    const rail = document.createElement('div');
+    rail.innerHTML = TOOL_RAIL;
+    document.body.appendChild(rail.firstElementChild);
+
+    const bar = document.createElement('div');
+    bar.innerHTML = TOP_BAR;
+    document.body.appendChild(bar.firstElementChild);
+
+    const ui = document.createElement('div');
+    ui.id = 'editorUI';
     ui.innerHTML = `
-            <aside id="editorSidebar">
+            <aside id="editorSidebar" aria-label="إعدادات التصميم">
                 <div class="es-head">
-                    <h3 id="esTitle">الإعدادات</h3>
-                    <button class="es-close" id="esClose">&times;</button>
+                    <h3 id="esTitle">إعدادات التصميم</h3>
+                    <button class="es-close" id="esClose" type="button">&times;</button>
                 </div>
                 <div class="es-tabs">
-                    <button class="es-tab active" data-tab="layers">الطبقات</button>
-                    <button class="es-tab" data-tab="text">النص</button>
-                    <button class="es-tab" data-tab="templates">القوالب</button>
-                    <button class="es-tab" data-tab="logo">اللوغو</button>
+                    <button class="es-tab active" type="button" data-tab="content">إعدادات</button>
+                    <button class="es-tab" type="button" data-tab="brand">العلامة</button>
                 </div>
                 <div class="es-body">
-                    <div class="es-pane active" data-pane="layers">
-                        <ul class="layers-list" id="layersList"></ul>
-                    </div>
-                    <div class="es-pane" data-pane="text">
-                        <div class="es-field">
-                            <label class="es-label">اللون</label>
-                            <div class="es-swatches" id="textSwatches"></div>
-                        </div>
-                        <div class="es-field">
-                            <label class="es-label">الخط</label>
-                            <select class="es-select" id="fontSelect">${fontsHtml()}</select>
-                        </div>
-                        <div class="es-field">
-                            <label class="es-label">حجم الخط</label>
-                            <div class="es-row">
-                                <button class="es-btn" id="sizeMinus">−</button>
-                                <span class="es-val" id="sizeVal">28</span>
-                                <button class="es-btn" id="sizePlus">+</button>
-                            </div>
-                        </div>
-                        <div class="es-field">
-                            <label class="es-label">لون مخصص</label>
-                            <div class="es-row">
-                                <div class="es-colorwrap"><input type="color" id="customColor" value="#1ae5ff">
-                                    <div class="es-colorchip"></div></div>
-                            </div>
-                        </div>
-                        <div class="es-field"><button class="es-btn" id="textBold" style="width:100%;height:36px;"><b>B</b> غامق</button></div>
-                        <div class="es-hint">حدد نصاً داخل التصميم لعرض إعداداته هنا.</div>
-                    </div>
-                    <div class="es-pane" data-pane="elements" id="elementsPane"></div>
-                    <div class="es-pane" data-pane="logo">
-                        <div class="logo-grid" id="logoGrid"></div>
-                    </div>
-                    <div class="es-pane" data-pane="templates">
-                        <div class="mockup-grid" id="mockupGrid"></div>
-                        <div class="mockup-hint">اضغط على أي جهاز لإدراجه في التصميم كنموذج قابل للنقل والتكبير.</div>
-                    </div>
+                    <div class="es-pane active" data-pane="content">${contentPaneHtml()}</div>
+                    <div class="es-pane" data-pane="brand">${brandPaneHtml()}</div>
                 </div>
             </aside>
-
-            <div id="editorToolbar">
-                <div class="tb-swatches" id="tbSwatches"></div>
-                <div class="tb-divider"></div>
-                <select class="tb-font" id="tbFont">${fontsHtml()}</select>
-                <div class="tb-divider"></div>
-                <div class="tb-size">
-                    <button class="tb-btn" id="tbMinus" title="تصغير">−</button>
-                    <span class="tb-size-val" id="tbSizeVal">28</span>
-                    <button class="tb-btn" id="tbPlus" title="تكبير">+</button>
-                </div>
-                <div class="tb-divider"></div>
-                <button class="tb-btn" id="tbBold" title="غامق"><b>B</b></button>
-                <div class="tb-divider"></div>
-                <button class="tb-btn" id="tbAlignRight" title="محاذاة يمين" aria-label="محاذاة يمين"><i class="fas fa-align-right"></i></button>
-                <button class="tb-btn" id="tbAlignCenter" title="توسيط" aria-label="توسيط"><i class="fas fa-align-center"></i></button>
-                <button class="tb-btn" id="tbAlignLeft" title="محاذاة يسار" aria-label="محاذاة يسار"><i class="fas fa-align-left"></i></button>
-                <div class="tb-divider"></div>
-                <button class="tb-btn tb-delete" id="tbDelete" title="حذف" aria-label="حذف"><i class="fas fa-trash"></i></button>
-            </div>
-
-            <div id="resizeOverlay"></div>
-            <div id="layerHoverRing" aria-hidden="true"></div>
         `;
-        ui.querySelector('#elementsPane').replaceWith(buildElementsPane());
-        document.body.appendChild(ui);
-        // nw is intentionally omitted: the top-left corner belongs to the move handle.
-        ['n', 'ne', 'e', 'se', 's', 'sw', 'w'].forEach((side) => {
-            const h = document.createElement('div');
-            h.className = 'rs-handle rs-' + side;
-            h.dataset.side = side;
-            h.addEventListener('mousedown', (e) => startResize(e, side));
-            document.body.appendChild(h);
-        });
-        const moveHandle = document.createElement('div');
-        moveHandle.id = 'rsMoveHandle';
-        moveHandle.className = 'rs-move-handle';
-        moveHandle.innerHTML = '&#10227;';
-        moveHandle.title = 'Move';
-        moveHandle.addEventListener('mousedown', startMove);
-        document.body.appendChild(moveHandle);
-    }
+    document.body.appendChild(ui);
+}
