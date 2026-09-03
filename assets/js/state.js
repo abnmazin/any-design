@@ -1,7 +1,6 @@
 // Shared mutable editor state + settings-derived config constants.
-// The previous single-file IIFE used module-scope `let` declarations; here they
-// live on one exported object so every editor module reads/writes the same
-// values regardless of import order.
+// Every editor module reads/writes this single exported object so state is
+// never duplicated across module boundaries.
 
 const settings = window.SITE_SETTINGS || window.SITE_SETTINGS_FALLBACK || null;
 
@@ -22,34 +21,26 @@ export const LOGOS = (settings && settings.logos) || [
     { name: 'Heart', icon: 'fa-heart' },
 ];
 
-// Minimum resize bounds for any layer.
-export const MIN_W = 40;
-export const MIN_H = 24;
-
-// Mockup devices available in the "القوالب" tab. Each entry points to a
-// standalone fragment in public/mockups/ that is fetched and injected into
-// the active canvas as a movable .mockup-frame layer.
-export const MOCKUPS = [
-    { id: 'phone', label: 'جوال', icon: 'fa-mobile-screen-button' },
-    { id: 'laptop', label: 'لابتوب', icon: 'fa-laptop' },
-    { id: 'monitor', label: 'شاشة', icon: 'fa-desktop' },
+// The content form fields, in display order. Each entry describes one sidebar
+// control and the canvas node it binds to via [data-bind] / [data-bind-to].
+// The accent word inside the title is a styled <span>; the form edits the whole
+// title string and bindings.js re-derives the accent span position.
+export const CONTENT_FORM = [
+    { bindTo: 'title', label: 'العنوان الرئيسي', placeholder: 'دفتر الديون' },
+    { bindTo: 'subtitle', label: 'العنوان الفرعي', placeholder: 'إدارة ديون الزبائن وحركات الدفع بسهولة' },
+    { bindTo: 'tagline-sub', label: 'الوصف المختصر', placeholder: 'بسيط، سريع، وموثوق' },
+    { bindTo: 'cta', label: 'نص الزر', placeholder: 'حمّل التطبيق الآن' },
+    { bindTo: 'brand-name', label: 'اسم العلامة', placeholder: 'دفتر الديون' },
 ];
 
-// Mutable per-session editor state, shared across module boundaries.
+// Reusable field builder ids for the feature cards (heading + body per card).
+// Cards are rendered as group 1..N from the template's [data-bind-feature] nodes.
+export const FEATURE_FIELD_COUNT = 4;
+
+// Mutable per-session editor state.
 export const state = {
-    activeElement: null,
-
-    // Saved text range inside the active element, so formatting survives focus
-    // loss when a toolbar control collapses the live selection first (e.g. iOS).
-    activeRange: null,
-
-    currentScale: 1,
-
     // User zoom multiplier on top of the fit-to-screen base ratio
     // (1 = fit, >1 = zoom in, <1 = zoom out).
     userZoom: 1,
-
-    resizeState: null,
-    moveState: null,
-    layerUpdating: false,
+    currentScale: 1,
 };

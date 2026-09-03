@@ -1,27 +1,12 @@
 // Editor entry point (loaded as <script type="module">). Assembles the split
 // editor modules and boots them once the DOM is ready. This is the single entry
-// that every template references in place of the old monolithic editor-panel.js.
+// that every template references.
 
 import { buildUI } from './ui-config.js';
-import { renderLogos } from './logo.js';
-import { renderMockups } from './mockups.js';
-import { flattenCanvasIntoLayers, updateCanvasScale } from './interactions.js';
-import { initLayerStack } from './layers.js';
 import { bind } from './events.js';
-import { initEditableText } from './text.js';
+import { initFormBindings } from './bindings.js';
+import { updateCanvasScale } from './interactions.js';
 import { state } from './state.js';
-import { hideOverlay, showToolbarEl } from './interactions.js';
-
-document.addEventListener('editor:canvas-restored', () => {
-    state.activeElement = null;
-    state.activeRange = null;
-    hideOverlay();
-    showToolbarEl(false);
-    initEditableText();
-    flattenCanvasIntoLayers();
-    initLayerStack();
-    updateCanvasScale();
-});
 
 // Migrate the dimension/title text from the old preview toolbar into the
 // new top bar, then remove the original toolbar from the DOM entirely.
@@ -45,21 +30,15 @@ function injectUploadOverlayCss() {
     document.head.appendChild(style);
 }
 
-async function inject() {
+function inject() {
     buildUI();
     bind();
-    renderLogos();
-    renderMockups();
+    initFormBindings();
     initTopBar();
     injectUploadOverlayCss();
-    initEditableText();
-    // Wait for webfonts before flattening so measured layer geometry reflects
-    // the final (web font) layout; flating with fallback-font measurements
-    // would freeze wrong widths/heights as explicit sizes.
-    try { await document.fonts.ready; } catch (e) { /* continue anyway */ }
-    flattenCanvasIntoLayers();
-    initLayerStack();
-    updateCanvasScale();
+    // Wait for webfonts before measuring so the scaled preview reflects the
+    // final (web font) layout.
+    document.fonts.ready.then(() => updateCanvasScale()).catch(() => updateCanvasScale());
 }
 
 if (document.readyState === 'loading') {
