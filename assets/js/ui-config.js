@@ -12,16 +12,21 @@ const STYLE = `
 
         /* ---- Left sidebar (Glassmorphism / Dark Mode) ---- */
         #editorSidebar {
-            position: fixed; left: 76px; top: 60px; height: calc(100vh - 60px); width: 300px;
+            position: fixed; left: 82px; top: 68px; width: 300px;
+            max-height: calc(100vh - 84px);
             background: linear-gradient(160deg, rgba(13, 31, 37, 0.92), rgba(9, 17, 26, 0.96));
-            border-right: 1px solid rgba(26, 229, 255, 0.18);
+            border: 1px solid rgba(26, 229, 255, 0.18);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            box-shadow: 20px 0 40px rgba(0, 0, 0, 0.5);
+            box-shadow: 8px 0 30px rgba(0, 0, 0, 0.45);
+            border-radius: 0 14px 14px 0;
             z-index: 90; display: flex; flex-direction: column;
-            transform: translateX(-100%); transition: transform 0.28s ease;
-            pointer-events: auto;
+            transform: translateX(-105%); transition: transform 0.28s ease, visibility 0s 0.28s;
+            pointer-events: none; visibility: hidden;
         }
-        #editorSidebar.open { transform: translateX(0); }
+        #editorSidebar.is-open {
+            transform: translateX(0); pointer-events: auto; visibility: visible;
+            transition: transform 0.28s ease, visibility 0s 0s;
+        }
         #editorSidebar .es-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; }
         #editorSidebar .es-head h3 { color: #f0fdfa; font-size: 1.05rem; margin: 0; }
         #editorSidebar .es-close { background: none; border: none; color: #8ba3b5; font-size: 1.4rem; cursor: pointer; }
@@ -71,25 +76,43 @@ const STYLE = `
         /* ---- Top bar ---- */
         .es-export-btn { display: inline-flex; align-items: center; gap: 8px; }
 
-        /* ---- Tool rail ---- */
-        .tool-rail { position: fixed; left: 0; top: 0; bottom: 0; width: 76px; z-index: 100;
-            background: rgba(9, 17, 26, 0.92); border-right: 1px solid rgba(26, 229, 255, 0.12);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            display: flex; flex-direction: column; align-items: center; padding-top: 12px; gap: 4px; }
-        .tool-rail button { width: 60px; padding: 10px 0; background: none; border: none; border-radius: 12px;
-            color: #8ba3b5; font-size: 0.62rem; cursor: pointer; font-family: inherit; display: flex;
-            flex-direction: column; align-items: center; gap: 5px; transition: color 0.15s ease, background 0.15s ease; }
-        .tool-rail button i { font-size: 1.25rem; }
-        .tool-rail button:hover { color: #f0fdfa; background: rgba(255, 255, 255, 0.05); }
-        .tool-rail button.active { color: #fff; background: rgba(26, 229, 255, 0.15); }
-        .tool-rail .rail-zoom { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 6px; padding-bottom: 14px; }
-        .tool-rail .rail-zoom button { width: 34px; padding: 6px 0; }
-        .tool-rail #zoomValue { width: 48px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12);
-            color: #f0fdfa; text-align: center; border-radius: 8px; font-size: 0.7rem; padding: 4px 0; }
+        /* ---- Tool rail (compact floating vertical pill) ---- */
+        .tool-rail {
+            position: fixed; left: 14px; top: 50%;
+            transform: translateY(-50%);
+            width: 62px; height: auto; z-index: 100;
+            background: rgba(13, 23, 31, 0.94);
+            border: 1px solid rgba(26, 229, 255, 0.14);
+            backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 0 1px rgba(26, 229, 255, 0.15);
+            border-radius: 16px;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 10px 6px; gap: 4px;
+        }
+        .tool-rail button {
+            width: 50px; padding: 9px 0; background: none; border: none; border-radius: 10px;
+            color: #8ba3b5; font-size: 0.58rem; cursor: pointer; font-family: inherit; display: flex;
+            flex-direction: column; align-items: center; gap: 4px;
+            transition: color 0.15s ease, background 0.15s ease;
+        }
+        .tool-rail button i { font-size: 1.15rem; }
+        .tool-rail button:hover { color: #f0fdfa; background: rgba(255, 255, 255, 0.06); }
+        .tool-rail button.active { color: #fff; background: rgba(26, 229, 255, 0.18); }
+        .tool-rail .rail-divider { width: 32px; height: 1px; background: rgba(255,255,255,0.1); margin: 4px 0; }
+        .tool-rail .rail-zoom {
+            display: flex; flex-direction: column; align-items: center; gap: 5px; padding-top: 4px; width: 100%;
+        }
+        .tool-rail .rail-zoom button {
+            width: 34px; padding: 5px 0; border-radius: 8px;
+        }
+        .tool-rail #zoomValue {
+            width: 44px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #f0fdfa; text-align: center; border-radius: 7px; font-size: 0.68rem; padding: 3px 0;
+        }
 
-        .editor-top-bar { position: fixed; top: 0; left: 76px; right: 0; height: 60px; z-index: 95;
+        .editor-top-bar { position: fixed; top: 0; left: 0; right: 0; height: 60px; z-index: 95;
             display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
-            background: rgba(9, 17, 26, 0.9); border-bottom: 1px solid rgba(26, 229, 255, 0.12);
+            background: rgba(9, 17, 26, 0.92); border-bottom: 1px solid rgba(26, 229, 255, 0.12);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
         .editor-top-bar .top-bar-title { color: #f0fdfa; font-weight: 700; font-size: 0.95rem; }
         .editor-top-bar .top-bar-right, .editor-top-bar .top-bar-left { display: flex; align-items: center; gap: 10px; }
@@ -113,6 +136,7 @@ const TOOL_RAIL = `
         <nav class="tool-rail" aria-label="أدوات التصميم">
             <button type="button" data-tool="content"><i class="fas fa-sliders"></i><span>إعدادات</span></button>
             <button type="button" data-tool="brand"><i class="fas fa-palette"></i><span>العلامة</span></button>
+            <div class="rail-divider"></div>
             <div class="rail-zoom">
                 <button type="button" id="zoomOut" title="تصغير"><i class="fas fa-minus"></i></button>
                 <input type="text" id="zoomValue" value="100" inputmode="numeric" aria-label="نسبة التكبير">

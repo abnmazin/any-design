@@ -19,6 +19,19 @@ const TOOL_LABELS = {
     brand: 'العلامة',
 };
 
+function openSidebar() {
+    const sidebar = document.getElementById('editorSidebar');
+    if (sidebar) sidebar.classList.add('is-open');
+}
+
+function closeSidebar() {
+    const sidebar = document.getElementById('editorSidebar');
+    if (sidebar) sidebar.classList.remove('is-open');
+    // Clearing the active tool keeps the rail visually consistent with the
+    // closed state and makes re-clicking the same tool reopen the panel.
+    document.querySelectorAll('.tool-rail button').forEach((b) => b.classList.remove('active'));
+}
+
 function activatePane(pane) {
     document.querySelectorAll('.es-tab').forEach((tab) => tab.classList.toggle('active', tab.dataset.tab === pane));
     document.querySelectorAll('.es-pane').forEach((paneEl) =>
@@ -30,25 +43,26 @@ function onToolClick(e) {
     const btn = e.target.closest('.tool-rail button');
     if (!btn) return;
     const tool = btn.dataset.tool;
+    if (!tool) return;
     const pane = TOOL_PANES[tool];
-    const rails = document.querySelectorAll('.tool-rail button');
+    const sidebar = document.getElementById('editorSidebar');
 
     if (btn.classList.contains('active')) {
         btn.classList.remove('active');
-        document.getElementById('editorSidebar').classList.remove('open');
+        closeSidebar();
         updateCanvasScale();
         return;
     }
 
-    rails.forEach((b) => b.classList.remove('active'));
+    document.querySelectorAll('.tool-rail button').forEach((b) => b.classList.remove('active'));
     btn.classList.add('active');
 
     if (pane) {
         document.getElementById('esTitle').textContent = TOOL_LABELS[tool];
-        document.getElementById('editorSidebar').classList.add('open');
         activatePane(pane);
+        openSidebar();
     } else {
-        document.getElementById('editorSidebar').classList.remove('open');
+        closeSidebar();
     }
     updateCanvasScale();
 }
@@ -69,16 +83,14 @@ export function bind() {
 
     // sidebar close (drawer close button)
     document.getElementById('esClose').addEventListener('click', () => {
-        document.getElementById('editorSidebar').classList.remove('open');
+        closeSidebar();
         updateCanvasScale();
-        document.querySelectorAll('.tool-rail button').forEach((b) => b.classList.remove('active'));
     });
 
     // tool rail (primary navigation)
     document.querySelector('.tool-rail').addEventListener('click', onToolClick);
 
-    // export button (top navbar). Kept functional with html2canvas for now;
-    // see export.js for the html-to-image swap point.
+    // export button (top navbar) triggers the html-to-image PNG capture.
     document.querySelector('.save-btn').addEventListener('click', exportCanvas);
 
     // zoom controls (bottom of the tool rail)
@@ -99,11 +111,9 @@ export function bind() {
         if (e.key === 'Enter') e.target.blur();
     });
 
-    // Re-scale the locked preview when the viewport changes or the drawer opens.
+    // Re-scale the locked preview when the drawer's slide transition completes.
     document.getElementById('editorSidebar').addEventListener('transitionend', (e) => {
-        if (e.propertyName === 'transform' || e.target === document.getElementById('editorSidebar')) {
-            updateCanvasScale();
-        }
+        if (e.propertyName === 'transform') updateCanvasScale();
     });
     window.addEventListener('resize', updateCanvasScale);
 
