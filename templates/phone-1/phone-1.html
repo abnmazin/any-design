@@ -183,7 +183,7 @@
     .b-item { display: flex; align-items: center; gap: 12px; color: #8ba3b5; font-size: 1.6rem; }
     .b-item i { color: var(--accent-teal); font-size: 1.8rem; }
 
-    [contenteditable="true"] { outline: none; }
+    /* Canvas is a read-only preview; the sidebar form drives content. */
   </style>
 </head>
 <body class="editor-page">
@@ -200,11 +200,11 @@
       <div class="top-content">
         <div class="branding">
           <div class="logo-icon"><i class="fas fa-wallet"></i></div>
-          <h1 class="brand-title" contenteditable="true">دفتر <span>الديون</span></h1>
+          <h1 class="brand-title" data-bind="title">دفتر <span>الديون</span></h1>
         </div>
         <div>
-          <div class="tagline" contenteditable="true">إدارة ديون الزبائن وحركات الدفع بسهولة</div>
-          <div class="sub-tagline" contenteditable="true">بسيط، سريع، وموثوق</div>
+          <div class="tagline" data-bind="subtitle">إدارة ديون الزبائن وحركات الدفع بسهولة</div>
+          <div class="sub-tagline" data-bind="tagline-sub">بسيط، سريع، وموثوق</div>
         </div>
       </div>
 
@@ -212,7 +212,7 @@
       <div class="middle-showcase">
         <div class="phone-mockup">
           <div class="phone-screen">
-            <img id="p1PhoneShot" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='780'%3E%3Crect width='360' height='780' fill='%2314252d'/%3E%3Crect x='30' y='30' width='300' height='720' rx='18' fill='%230a1419'/%3E%3Ctext x='180' y='370' font-size='64' text-anchor='middle'%3E%F0%9F%93%B1%3C/text%3E%3Ctext x='180' y='440' font-family='Cairo,sans-serif' font-size='18' fill='%231ae5ff' text-anchor='middle'%3E%D8%A7%D8%B1%D9%81%D8%B9%20%D8%B5%D9%88%D8%B1%D8%A9%20%D9%84%D9%84%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%3C/text%3E%3C/svg%3E" alt="تطبيق دفتر الديون" draggable="false">
+            <img id="p1PhoneShot" data-bind="app-screenshot" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='780'%3E%3Crect width='360' height='780' fill='%2314252d'/%3E%3Crect x='30' y='30' width='300' height='720' rx='18' fill='%230a1419'/%3E%3Ctext x='180' y='370' font-size='64' text-anchor='middle'%3E%F0%9F%93%B1%3C/text%3E%3Ctext x='180' y='440' font-family='Cairo,sans-serif' font-size='18' fill='%231ae5ff' text-anchor='middle'%3E%D8%A7%D8%B1%D9%81%D8%B9%20%D8%B5%D9%88%D8%B1%D8%A9%20%D9%84%D9%84%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%3C/text%3E%3C/svg%3E" alt="تطبيق دفتر الديون" draggable="false">
             <button class="upload-overlay" id="p1PhoneUploadBtn" type="button">
               <i class="fas fa-cloud-arrow-up"></i> اضغط للرفع
               <small>رفع صورة</small>
@@ -227,37 +227,37 @@
           <div class="feature-card">
             <div class="f-header">
               <i class="fas fa-users"></i>
-              <h4 contenteditable="true">إدارة الزبائن</h4>
+              <h4 data-bind="feature-1-heading">إدارة الزبائن</h4>
             </div>
-            <p contenteditable="true">إضافة الزبائن ومتابعة أرصدتهم</p>
+            <p data-bind="feature-1-text">إضافة الزبائن ومتابعة أرصدتهم</p>
           </div>
           <div class="feature-card">
             <div class="f-header">
               <i class="fas fa-coins"></i>
-              <h4 contenteditable="true">الديون والمدفوعات</h4>
+              <h4 data-bind="feature-2-heading">الديون والمدفوعات</h4>
             </div>
-            <p contenteditable="true">سجل كامل لكل دين أو دفعة</p>
+            <p data-bind="feature-2-text">سجل كامل لكل دين أو دفعة</p>
           </div>
           <div class="feature-card">
             <div class="f-header">
               <i class="fas fa-chart-pie"></i>
-              <h4 contenteditable="true">لوحة متابعة ذكية</h4>
+              <h4 data-bind="feature-3-heading">لوحة متابعة ذكية</h4>
             </div>
-            <p contenteditable="true">نظرة سريعة للمقبوضات</p>
+            <p data-bind="feature-3-text">نظرة سريعة للمقبوضات</p>
           </div>
           <div class="feature-card">
             <div class="f-header">
               <i class="fas fa-archive"></i>
-              <h4 contenteditable="true">أرشيف كامل</h4>
+              <h4 data-bind="feature-4-heading">أرشيف كامل</h4>
             </div>
-            <p contenteditable="true">تاريخ مفصل لكافة الحركات</p>
+            <p data-bind="feature-4-text">تاريخ مفصل لكافة الحركات</p>
           </div>
         </div>
 
         <div class="bottom-strip">
-          <div class="b-item"><i class="fas fa-bolt"></i><span contenteditable="true">سريع الاستخدام</span></div>
-          <div class="b-item"><i class="fas fa-mobile-alt"></i><span contenteditable="true">متاح دائماً</span></div>
-          <div class="b-item"><i class="fas fa-shield-alt"></i><span contenteditable="true">آمن وموثوق</span></div>
+          <div class="b-item"><i class="fas fa-bolt"></i><span>سريع الاستخدام</span></div>
+          <div class="b-item"><i class="fas fa-mobile-alt"></i><span>متاح دائماً</span></div>
+          <div class="b-item"><i class="fas fa-shield-alt"></i><span>آمن وموثوق</span></div>
         </div>
       </div>
 
