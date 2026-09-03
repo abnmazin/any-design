@@ -52,5 +52,10 @@ Editor is a browser-based advertisement-design studio: static multi-page
 templates each loading `assets/js/editor.js` (Vite split-ESM modules). The
 editor flattens each template into independent draggable/resizable/groupable
 layers with a layers drawer, per-layer locking, text editing toolbar, logo and
-mockup insertion. See `STRUCTURE.md` for the module layout and `AGENTS.md` for
-engineering invariants.
+mockup insertion. The editor UI is a Canva-style chrome: a top navbar (save /
+file title / navigation), a vertical tool rail (tools, undo-redo, zoom), a
+right-side drawer split into tabbed panes (الطبقات / النص / القوالب / اللوغو /
+العناصر), and a floating text toolbar over the selection. Drag/drop, move and
+resize are standardised (top-left move handle, directional resize handles, a
+rotating hover ring, `blob:` URL cleanup on upload). See `STRUCTURE.md` for the
+module layout and `AGENTS.md` for engineering invariants.

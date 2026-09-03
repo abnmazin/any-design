@@ -84,6 +84,26 @@ re-runs the flatten/stack/scale steps so the DOM is authoritative again.
   editor CSS (layer ring 5s spin, `.lay-chev`, elements grid), and mounts the
   sidebar tabs.
 
+### Editor chrome (UI)
+
+The editor is a Canva-style three-region layout built by `buildUI()`
+(`ui-config.js`):
+
+- **Top navbar** (`editor-top-bar`): a fixed header with the save button and
+  profile avatar on the right, the file title centred (`top-bar-title`,
+  migrated from the old preview toolbar by `editor.js` `initTopBar`), and a
+  "ملف" / "رجوع" link pair on the left. The `save-btn` triggers PNG export via
+  `downloadCanvasPng` (`events.js`, uses `html2canvas`).
+- **Tool rail** (`.tool-rail`): a vertical Canva-style primary nav mapping
+  buttons (`data-tool`) to sidebar panes (`TOOL_PANES`), plus an undo/redo pair
+  (`.rail-history`) and zoom in/out controls (`.rail-zoom`).
+- **Sidebar** (`#editorSidebar`): a right-hand drawer with an `es-tabs` tab bar
+  (الطبقات / النص / القوالب / اللوغو) and an `es-body` containing panes keyed by
+  `data-pane` (`layers`, `text`, `elements`, `logo`, `templates`). It opens and
+  closes via `sidebarOpen()`.
+- **Text toolbar** (`#editorToolbar`): floated over the selection with
+  swatches, font, size, alignment, bold, and delete controls.
+
 ## Feature modules
 
 - `elements.js` — "العناصر": `ELEMENTS` catalog (~50 static items, 8 categories),
