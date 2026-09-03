@@ -10,8 +10,8 @@
   <link rel="stylesheet" href="../../assets/css/site.css">
   <style>
     :root {
-      --accent-teal: #1ae5ff;
-      --accent-emerald: #10b981;
+      --accent-cyan: #60efff;
+      --accent-green: #10b981;
       --accent-coral: #ef4444;
     }
 
@@ -49,18 +49,18 @@
     .logo-icon {
       font-size: 4rem;
       color: #020a0d;
-      background: var(--accent-teal);
+      background: var(--accent-cyan);
       width: 110px;
       height: 110px;
       border-radius: 30px;
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 0 40px rgba(26, 229, 255, 0.4);
+      box-shadow: 0 0 40px rgba(96, 239, 255, 0.4);
     }
 
     .brand-title { font-size: 6.6rem; font-weight: 900; line-height: 1; }
-    .brand-title span { color: var(--accent-teal); }
+    .brand-title span { color: var(--accent-cyan); }
 
     .tagline { font-size: 2.5rem; font-weight: 700; margin-top: 8px; }
     .sub-tagline { color: #8ba3b5; font-size: 2.1rem; font-weight: 400; }
@@ -80,7 +80,7 @@
       background: #000;
       border-radius: 58px;
       padding: 13px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9), 0 0 40px rgba(26, 229, 255, 0.15), inset 0 1px 3px rgba(255,255,255,0.1);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9), 0 0 40px rgba(96, 239, 255, 0.15), inset 0 1px 3px rgba(255,255,255,0.1);
       border: 1px solid #2a4a5a;
       z-index: 10;
       display: flex;
@@ -107,7 +107,7 @@
       width: 100%;
       border-radius: 45px;
       overflow: hidden;
-      background: #0d1f25;
+      background: #0a1628;
       z-index: 20;
       display: flex; align-items: center; justify-content: center;
     }
@@ -141,7 +141,7 @@
       border: none;
       font-family: inherit;
     }
-    .upload-overlay i { font-size: 4.4rem; color: var(--accent-teal); }
+    .upload-overlay i { font-size: 4.4rem; color: var(--accent-cyan); }
     .upload-overlay small { font-size: 1.8rem; color: #8ba3b5; }
     .phone-screen:hover .upload-overlay { opacity: 1; }
 
@@ -157,8 +157,8 @@
     .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
 
     .feature-card {
-      background: #0d1f25;
-      border: 1px solid rgba(26, 229, 255, 0.15);
+      background: #0a1628;
+      border: 1px solid rgba(96, 239, 255, 0.15);
       border-radius: 26px;
       padding: 26px;
       backdrop-filter: blur(10px);
@@ -166,7 +166,7 @@
     }
 
     .f-header { display: flex; align-items: center; gap: 18px; margin-bottom: 12px; }
-    .f-header i { font-size: 1.9rem; color: var(--accent-teal); }
+    .f-header i { font-size: 1.9rem; color: var(--accent-cyan); }
     .f-header h4 { font-size: 2rem; font-weight: 700; color: #f0fdfa; margin: 0; }
     .feature-card p { color: #8ba3b5; font-size: 1.7rem; line-height: 1.4; margin: 0; }
 
@@ -181,7 +181,7 @@
     }
 
     .b-item { display: flex; align-items: center; gap: 12px; color: #8ba3b5; font-size: 1.6rem; }
-    .b-item i { color: var(--accent-teal); font-size: 1.8rem; }
+    .b-item i { color: var(--accent-cyan); font-size: 1.8rem; }
 
     /* Canvas is a read-only preview; the sidebar form drives content. */
   </style>
@@ -212,7 +212,7 @@
       <div class="middle-showcase">
         <div class="phone-mockup">
           <div class="phone-screen">
-            <img id="p1PhoneShot" data-bind="app-screenshot" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='780'%3E%3Crect width='360' height='780' fill='%2314252d'/%3E%3Crect x='30' y='30' width='300' height='720' rx='18' fill='%230a1419'/%3E%3Ctext x='180' y='370' font-size='64' text-anchor='middle'%3E%F0%9F%93%B1%3C/text%3E%3Ctext x='180' y='440' font-family='Cairo,sans-serif' font-size='18' fill='%231ae5ff' text-anchor='middle'%3E%D8%A7%D8%B1%D9%81%D8%B9%20%D8%B5%D9%88%D8%B1%D8%A9%20%D9%84%D9%84%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%3C/text%3E%3C/svg%3E" alt="تطبيق دفتر الديون" draggable="false">
+            <img id="p1PhoneShot" data-bind="app-screenshot" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='780'%3E%3Crect width='360' height='780' fill='%230a1628'/%3E%3Crect x='30' y='30' width='300' height='720' rx='18' fill='%23050b18'/%3E%3Ctext x='180' y='370' font-size='64' text-anchor='middle'%3E%F0%9F%93%B1%3C/text%3E%3Ctext x='180' y='440' font-family='Cairo,sans-serif' font-size='18' fill='%2360efff' text-anchor='middle'%3E%D8%A7%D8%B1%D9%81%D8%B9%20%D8%B5%D9%88%D8%B1%D8%A9%20%D9%84%D9%84%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%3C/text%3E%3C/svg%3E" alt="تطبيق دفتر الديون" draggable="false">
             <button class="upload-overlay" id="p1PhoneUploadBtn" type="button">
               <i class="fas fa-cloud-arrow-up"></i> اضغط للرفع
               <small>رفع صورة</small>

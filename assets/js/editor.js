@@ -7,6 +7,7 @@ import { bind } from './events.js';
 import { initFormBindings } from './bindings.js';
 import { updateCanvasScale } from './interactions.js';
 import { state } from './state.js';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 // Migrate the dimension/title text from the old preview toolbar into the
 // new top bar, then remove the original toolbar from the DOM entirely.

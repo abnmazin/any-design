@@ -6,14 +6,14 @@ window.SITE_SETTINGS = {
   brand: 'المركزية الحديثة',
   textColors: [
     { name: 'أبيض', color: '#ffffff' },
-    { name: 'سماوي', color: '#1ae5ff' },
+    { name: 'سماوي', color: '#60efff' },
     { name: 'ذهبي', color: '#f5c04c' },
     { name: 'وردي', color: '#ec4899' },
     { name: 'بنفسجي', color: '#a855f7' },
     { name: 'أخضر', color: '#22c55e' },
     { name: 'برتقالي', color: '#f97316' },
     { name: 'أحمر', color: '#ef4444' },
-    { name: 'كحلي', color: '#0a111c' },
+    { name: 'كحلي', color: '#0a1628' },
   ],
   fonts: [
     { value: 'Cairo', label: 'القاهرة' },

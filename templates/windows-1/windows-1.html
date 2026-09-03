@@ -10,17 +10,17 @@
   <link rel="stylesheet" href="../../assets/css/site.css">
   <style>
     :root {
-      --bg-base: #030712;
-      --bg-card: #0b141f;
-      --bg-card-hover: #111e2d;
-      --accent-primary: #1ae5ff;
-      --accent-gradient: linear-gradient(135deg, #1ae5ff 0%, #10b981 100%);
+      --bg-base: #050b18;
+      --bg-card: #0a1628;
+      --bg-card-hover: #10213a;
+      --accent-primary: #60efff;
+      --accent-gradient: linear-gradient(135deg, #0061ff 0%, #60efff 100%);
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --border-color: rgba(26, 229, 255, 0.12);
-      --border-hover: rgba(26, 229, 255, 0.3);
+      --border-color: rgba(96, 239, 255, 0.12);
+      --border-hover: rgba(96, 239, 255, 0.3);
       --card-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.8);
-      --glow: 0 0 80px rgba(26, 229, 255, 0.08);
+      --glow: 0 0 80px rgba(96, 239, 255, 0.08);
     }
 
     /* 16:9 Desktop Canvas */
@@ -61,7 +61,7 @@
       align-items: center;
       font-size: 2rem;
       color: var(--bg-base);
-      box-shadow: 0 10px 20px rgba(26, 229, 255, 0.2);
+      box-shadow: 0 10px 20px rgba(96, 239, 255, 0.2);
     }
 
     .title-group h1 {
@@ -78,7 +78,7 @@
     }
 
     .header-badge {
-      background: rgba(26, 229, 255, 0.1);
+      background: rgba(96, 239, 255, 0.1);
       border: 1px solid var(--border-color);
       padding: 10px 20px;
       border-radius: 50px;
@@ -167,7 +167,7 @@
     /* 2. Desktop Dashboard Card (RTL grid col 2) */
     .card-desktop {
       grid-row: 1 / -1;
-      background: radial-gradient(circle at bottom, rgba(26, 229, 255, 0.15) 0%, var(--bg-card) 60%);
+      background: radial-gradient(circle at bottom, rgba(96, 239, 255, 0.15) 0%, var(--bg-card) 60%);
     }
 
     .laptop-mockup {
@@ -176,7 +176,7 @@
       margin-inline-start: -360px;
       width: 720px;
       height: 450px;
-      background: #0c1c24;
+      background: #0a1628;
       border-radius: 16px 16px 0 0;
       padding: 12px 12px 0 12px;
       border: 2px solid #1a3642;
@@ -304,7 +304,7 @@
             <p >تابع أرصدة زبائنك من هاتفك المحمول بخفة وسرعة تامة.</p>
           </div>
           <div class="mockup-frame phone-mockup">
-            <img class="w1PhoneShot" data-bind="app-screenshot" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='520'%3E%3Crect width='240' height='520' fill='%230c1c24'/%3E%3Ctext x='120' y='250' font-size='80' text-anchor='middle'%3E%F0%9F%93%B1%3C/text%3E%3Ctext x='120' y='310' font-family='Cairo,sans-serif' font-size='15' fill='%231ae5ff' text-anchor='middle'%3E%D8%A7%D8%B1%D9%81%D8%B9%20%D8%B5%D9%88%D8%B1%D8%A9%20%D8%A7%D9%84%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%3C/text%3E%3C/svg%3E" alt="تطبيق الموبايل" draggable="false">
+            <img class="w1PhoneShot" data-bind="app-screenshot" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='520'%3E%3Crect width='240' height='520' fill='%230a1628'/%3E%3Ctext x='120' y='250' font-size='80' text-anchor='middle'%3E%F0%9F%93%B1%3C/text%3E%3Ctext x='120' y='310' font-family='Cairo,sans-serif' font-size='15' fill='%2360efff' text-anchor='middle'%3E%D8%A7%D8%B1%D9%81%D8%B9%20%D8%B5%D9%88%D8%B1%D8%A9%20%D8%A7%D9%84%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%3C/text%3E%3C/svg%3E" alt="تطبيق الموبايل" draggable="false">
             <button class="upload-overlay" id="w1PhoneUploadBtn" type="button">
               <i class="fas fa-cloud-arrow-up"></i> اضغط للرفع
               <small>صورة التطبيق</small>
@@ -320,7 +320,7 @@
           </div>
           <div class="mockup-frame laptop-mockup">
             <div class="laptop-screen">
-              <img class="w1LaptopShot" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='560' height='350'%3E%3Crect width='560' height='350' fill='%230c1c24'/%3E%3Ctext x='280' y='180' font-size='90' text-anchor='middle'%3E%F0%9F%96%A5%EF%B8%8F%3C/text%3E%3Ctext x='280' y='230' font-family='Cairo,sans-serif' font-size='15' fill='%231ae5ff' text-anchor='middle'%3E%D8%A7%D8%B1%D9%81%D8%B9%20%D8%B5%D9%88%D8%B1%D8%A9%20%D9%84%D9%88%D8%AD%D8%A9%20%D8%A7%D9%84%D8%AA%D8%AD%D9%83%D9%85%3C/text%3E%3C/svg%3E" alt="لوحة التحكم" draggable="false">
+              <img class="w1LaptopShot" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='560' height='350'%3E%3Crect width='560' height='350' fill='%230a1628'/%3E%3Ctext x='280' y='180' font-size='90' text-anchor='middle'%3E%F0%9F%96%A5%EF%B8%8F%3C/text%3E%3Ctext x='280' y='230' font-family='Cairo,sans-serif' font-size='15' fill='%2360efff' text-anchor='middle'%3E%D8%A7%D8%B1%D9%81%D8%B9%20%D8%B5%D9%88%D8%B1%D8%A9%20%D9%84%D9%88%D8%AD%D8%A9%20%D8%A7%D9%84%D8%AA%D8%AD%D9%83%D9%85%3C/text%3E%3C/svg%3E" alt="لوحة التحكم" draggable="false">
               <button class="upload-overlay" id="w1LaptopUploadBtn" type="button">
                 <i class="fas fa-cloud-arrow-up"></i> اضغط للرفع
                 <small>لوحة التحكم</small>

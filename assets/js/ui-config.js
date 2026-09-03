@@ -14,10 +14,10 @@ const STYLE = `
         #editorSidebar {
             position: fixed; left: 82px; top: 68px; width: 300px;
             max-height: calc(100vh - 84px);
-            background: linear-gradient(160deg, rgba(13, 31, 37, 0.92), rgba(9, 17, 26, 0.96));
-            border: 1px solid rgba(26, 229, 255, 0.18);
+            background: linear-gradient(160deg, rgba(10, 22, 40, 0.94), rgba(5, 11, 24, 0.97));
+            border: 1px solid rgba(96, 239, 255, 0.16);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            box-shadow: 8px 0 30px rgba(0, 0, 0, 0.45);
+            box-shadow: 8px 0 30px rgba(0, 5, 20, 0.55);
             border-radius: 0 14px 14px 0;
             z-index: 90; display: flex; flex-direction: column;
             transform: translateX(-105%); transition: transform 0.28s ease, visibility 0s 0.28s;
@@ -28,50 +28,50 @@ const STYLE = `
             transition: transform 0.28s ease, visibility 0s 0s;
         }
         #editorSidebar .es-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; }
-        #editorSidebar .es-head h3 { color: #f0fdfa; font-size: 1.05rem; margin: 0; }
-        #editorSidebar .es-close { background: none; border: none; color: #8ba3b5; font-size: 1.4rem; cursor: pointer; }
+        #editorSidebar .es-head h3 { color: #f0f8ff; font-size: 1.05rem; margin: 0; }
+        #editorSidebar .es-close { background: none; border: none; color: #7893ab; font-size: 1.4rem; cursor: pointer; }
         #editorSidebar .es-close:hover { color: #fff; }
         #editorSidebar .es-tabs { display: flex; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
-        #editorSidebar .es-tab { flex: 1; padding: 10px 4px; background: none; border: none; color: #8ba3b5;
+        #editorSidebar .es-tab { flex: 1; padding: 10px 4px; background: none; border: none; color: #7893ab;
             font-size: 0.85rem; cursor: pointer; border-bottom: 2px solid transparent; font-family: inherit; }
-        #editorSidebar .es-tab.active { color: #1ae5ff; border-bottom-color: #1ae5ff; }
+        #editorSidebar .es-tab.active { color: #60efff; border-bottom-color: #60efff; }
         #editorSidebar .es-body { flex: 1; overflow-y: auto; padding: 16px; }
         #editorSidebar .es-body::-webkit-scrollbar { width: 8px; }
-        #editorSidebar .es-body::-webkit-scrollbar-thumb { background: rgba(26, 229, 255, 0.25); border-radius: 4px; }
+        #editorSidebar .es-body::-webkit-scrollbar-thumb { background: rgba(96, 239, 255, 0.25); border-radius: 4px; }
         #editorSidebar .es-pane { display: none; }
         #editorSidebar .es-pane.active { display: block; }
 
         /* Content form */
         #contentForm { display: flex; flex-direction: column; gap: 14px; }
         .cf-section { }
-        .cf-section-title { color: #1ae5ff; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.3px;
+        .cf-section-title { color: #60efff; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.3px;
             text-transform: uppercase; margin: 4px 0 10px; display: flex; align-items: center; gap: 8px; }
-        .cf-section-title::after { content: ""; flex: 1; height: 1px; background: rgba(26, 229, 255, 0.2); }
+        .cf-section-title::after { content: ""; flex: 1; height: 1px; background: rgba(96, 239, 255, 0.2); }
         .cf-field { margin-bottom: 14px; }
-        .cf-field > label { display: block; color: #8ba3b5; font-size: 0.72rem; margin-bottom: 6px; }
+        .cf-field > label { display: block; color: #7893ab; font-size: 0.72rem; margin-bottom: 6px; }
         .cf-input {
-            width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12);
-            color: #f0fdfa; padding: 10px 12px; border-radius: 10px; font-family: inherit; font-size: 0.85rem;
+            width: 100%; background: rgba(10, 22, 40, 0.6); border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #f0f8ff; padding: 10px 12px; border-radius: 10px; font-family: inherit; font-size: 0.85rem;
             transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
-        .cf-input::placeholder { color: #5b7383; }
-        .cf-input:focus { outline: none; border-color: #1ae5ff; box-shadow: 0 0 0 3px rgba(26, 229, 255, 0.15); }
-        .cf-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
+        .cf-input::placeholder { color: #50677d; }
+        .cf-input:focus { outline: none; border-color: #60efff; box-shadow: 0 0 0 3px rgba(96, 239, 255, 0.16); }
+        .cf-card { background: rgba(10, 22, 40, 0.55); border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 12px; padding: 12px; margin-top: 8px; }
-        .cf-card-head { color: #8ba3b5; font-size: 0.7rem; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-        .cf-card-head i { color: #1ae5ff; font-size: 0.85rem; }
+        .cf-card-head { color: #7893ab; font-size: 0.7rem; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        .cf-card-head i { color: #60efff; font-size: 0.85rem; }
 
         /* Brand pane */
         .logo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .logo-item { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(26, 229, 255, 0.15);
+        .logo-item { background: rgba(10, 22, 40, 0.55); border: 1px solid rgba(96, 239, 255, 0.15);
             border-radius: 12px; display: flex; flex-direction: column; align-items: center; gap: 6px;
             padding: 14px 8px; cursor: pointer; transition: border-color 0.15s ease, transform 0.15s ease; }
-        .logo-item:hover { border-color: #1ae5ff; transform: translateY(-2px); }
-        .logo-item.active { background: rgba(26, 229, 255, 0.15); border-color: #1ae5ff; }
-        .logo-item i { font-size: 1.5rem; color: #1ae5ff; }
-        .logo-item span { color: #8ba3b5; font-size: 0.72rem; }
-        .es-hint { color: #8ba3b5; font-size: 0.72rem; padding: 12px; background: rgba(255, 255, 255, 0.04);
-            border: 1px dashed rgba(255, 255, 255, 0.1); border-radius: 10px; line-height: 1.6; }
+        .logo-item:hover { border-color: #60efff; transform: translateY(-2px); }
+        .logo-item.active { background: rgba(96, 239, 255, 0.14); border-color: #60efff; }
+        .logo-item i { font-size: 1.5rem; color: #60efff; }
+        .logo-item span { color: #7893ab; font-size: 0.72rem; }
+        .es-hint { color: #7893ab; font-size: 0.72rem; padding: 12px; background: rgba(10, 22, 40, 0.6);
+            border: 1px dashed rgba(255, 255, 255, 0.12); border-radius: 10px; line-height: 1.6; }
 
         /* ---- Top bar ---- */
         .es-export-btn { display: inline-flex; align-items: center; gap: 8px; }
@@ -81,23 +81,23 @@ const STYLE = `
             position: fixed; left: 14px; top: 50%;
             transform: translateY(-50%);
             width: 62px; height: auto; z-index: 100;
-            background: rgba(13, 23, 31, 0.94);
-            border: 1px solid rgba(26, 229, 255, 0.14);
+            background: rgba(10, 22, 40, 0.94);
+            border: 1px solid rgba(96, 239, 255, 0.14);
             backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 0 1px rgba(26, 229, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 1px rgba(96, 239, 255, 0.15);
             border-radius: 16px;
             display: flex; flex-direction: column; align-items: center;
             padding: 10px 6px; gap: 4px;
         }
         .tool-rail button {
             width: 50px; padding: 9px 0; background: none; border: none; border-radius: 10px;
-            color: #8ba3b5; font-size: 0.58rem; cursor: pointer; font-family: inherit; display: flex;
+            color: #7893ab; font-size: 0.58rem; cursor: pointer; font-family: inherit; display: flex;
             flex-direction: column; align-items: center; gap: 4px;
             transition: color 0.15s ease, background 0.15s ease;
         }
         .tool-rail button i { font-size: 1.15rem; }
-        .tool-rail button:hover { color: #f0fdfa; background: rgba(255, 255, 255, 0.06); }
-        .tool-rail button.active { color: #fff; background: rgba(26, 229, 255, 0.18); }
+        .tool-rail button:hover { color: #f0f8ff; background: rgba(255, 255, 255, 0.06); }
+        .tool-rail button.active { color: #fff; background: rgba(96, 239, 255, 0.18); }
         .tool-rail .rail-divider { width: 32px; height: 1px; background: rgba(255,255,255,0.1); margin: 4px 0; }
         .tool-rail .rail-zoom {
             display: flex; flex-direction: column; align-items: center; gap: 5px; padding-top: 4px; width: 100%;
@@ -106,24 +106,24 @@ const STYLE = `
             width: 34px; padding: 5px 0; border-radius: 8px;
         }
         .tool-rail #zoomValue {
-            width: 44px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12);
-            color: #f0fdfa; text-align: center; border-radius: 7px; font-size: 0.68rem; padding: 3px 0;
+            width: 44px; background: rgba(10, 22, 40, 0.6); border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #f0f8ff; text-align: center; border-radius: 7px; font-size: 0.68rem; padding: 3px 0;
         }
 
         .editor-top-bar { position: fixed; top: 0; left: 0; right: 0; height: 60px; z-index: 95;
             display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
-            background: rgba(9, 17, 26, 0.92); border-bottom: 1px solid rgba(26, 229, 255, 0.12);
+            background: rgba(5, 11, 24, 0.92); border-bottom: 1px solid rgba(96, 239, 255, 0.12);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
-        .editor-top-bar .top-bar-title { color: #f0fdfa; font-weight: 700; font-size: 0.95rem; }
+        .editor-top-bar .top-bar-title { color: #f0f8ff; font-weight: 700; font-size: 0.95rem; }
         .editor-top-bar .top-bar-right, .editor-top-bar .top-bar-left { display: flex; align-items: center; gap: 10px; }
-        .editor-top-bar .btn { border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.06);
-            color: #f0fdfa; padding: 8px 14px; border-radius: 10px; font-size: 0.82rem; font-weight: 600;
+        .editor-top-bar .btn { border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(10, 22, 40, 0.6);
+            color: #f0f8ff; padding: 8px 14px; border-radius: 10px; font-size: 0.82rem; font-weight: 600;
             cursor: pointer; font-family: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 7px; }
-        .editor-top-bar .btn:hover { border-color: #1ae5ff; color: #1ae5ff; }
-        .editor-top-bar .btn.primary { background: linear-gradient(135deg, #1ae5ff, #0e9bb3); color: #0a111c;
+        .editor-top-bar .btn:hover { border-color: #60efff; color: #60efff; }
+        .editor-top-bar .btn.primary { background: linear-gradient(135deg, #0061ff, #60efff); color: #050b18;
             border: none; font-weight: 800; }
         .editor-top-bar .btn.primary:disabled { opacity: 0.5; cursor: default; }
-        .editor-top-bar .profile-avatar { border-radius: 50%; background: #1ae5ff; }
+        .editor-top-bar .profile-avatar { border-radius: 50%; background: linear-gradient(135deg, #0061ff, #60efff); }
 
         /* Canvas stage */
         .editor-page .canvas-stage, .editor-page .story-stage, .editor-page .wedding-stage {
@@ -149,7 +149,7 @@ const TOP_BAR = `
         <header class="editor-top-bar">
             <div class="top-bar-right">
                 <button class="btn primary save-btn es-export-btn" type="button"><i class="fas fa-download"></i> تصدير</button>
-                <div class="profile-avatar" style="width: 32px; height: 32px; display:flex; align-items:center; justify-content:center; font-weight:bold; color:#0a111c; cursor:pointer;">M</div>
+                <div class="profile-avatar" style="width: 32px; height: 32px; display:flex; align-items:center; justify-content:center; font-weight:bold; color:#050b18; cursor:pointer;">M</div>
             </div>
             <div class="top-bar-center"><span class="top-bar-title"></span></div>
             <div class="top-bar-left">
