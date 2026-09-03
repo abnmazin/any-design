@@ -3,8 +3,9 @@
 // wiring static layers (images/SVG/mockup frames) into the move system.
 
 import { state, MIN_W, MIN_H } from './state.js';
-import { layerElements, frameElements, maxLayerZ, renderLayers } from './layers.js';
+import { layerElements, maxLayerZ, renderLayers, isLocked } from './layers.js';
 import { syncTextUI } from './text.js';
+import { record } from './history.js';
 
 // ---------- selection / overlay ----------
 
@@ -41,20 +42,24 @@ export function positionOverlay() {
     o.overlay.style.top = r.top + 'px';
     o.overlay.style.width = Math.round(r.width) + 'px';
     o.overlay.style.height = Math.round(r.height) + 'px';
-    const half = 5;
+    // The top-left corner is reserved for the move handle, so there is no nw
+    // resize handle there — resize stays available from n, e, s, w, ne, se, sw.
     const positions = {
-        nw: [r.left, r.top], n: [r.left + r.width / 2, r.top], ne: [r.left + r.width, r.top],
+        n: [r.left + r.width / 2, r.top], ne: [r.left + r.width, r.top],
         e: [r.left + r.width, r.top + r.height / 2], se: [r.left + r.width, r.top + r.height],
         s: [r.left + r.width / 2, r.top + r.height], sw: [r.left, r.top + r.height],
         w: [r.left, r.top + r.height / 2],
     };
+    // Handles center themselves via translate(-50%,-50%), so set their corner
+    // point directly (no half-size offset) or they'd be shifted out of place.
     o.handles.forEach((h) => {
         const p = positions[h.dataset.side];
-        h.style.left = (p[0] - half) + 'px';
-        h.style.top = (p[1] - half) + 'px';
+        if (!p) { h.style.left = '-9999px'; h.style.top = '-9999px'; return; }
+        h.style.left = p[0] + 'px';
+        h.style.top = p[1] + 'px';
     });
-    o.move.style.left = (r.left - 14) + 'px';
-    o.move.style.top = (r.top - 14) + 'px';
+    o.move.style.left = (r.left - 13) + 'px';
+    o.move.style.top = (r.top - 13) + 'px';
 }
 
 // ---------- shared positioning helper ----------
@@ -69,6 +74,209 @@ export function positionOverlay() {
 function positioningOrigin(el) {
     const op = el.offsetParent || document.documentElement;
     return op.getBoundingClientRect();
+}
+
+// The design box whose intrinsic size defines the canvas coordinate space.
+// All templates ship a .canvas-wrapper except wedding.html, which uses a
+// .card-frame directly under .wedding-stage. Resolving either keeps scaling
+// and layer projection working for all templates.
+export function canvasRoot() {
+    const wrapper = document.querySelector('.canvas-wrapper');
+    if (wrapper) return wrapper;
+    const frame = document.querySelector('.card-frame');
+    if (frame) return frame;
+    return document.querySelector('.story-stage, .wedding-stage, .canvas-stage') || document.body;
+}
+
+// The element that receives the transform scale(). This is always the stage
+// (the wrapper's parent), never the canvas itself — scaling the wrapper would
+// distort its own coordinate space. Falls back to the root's parent.
+export function canvasStage() {
+    const root = canvasRoot();
+    return (root.parentElement && root.parentElement.classList) ? root.parentElement : root;
+}
+
+// ---------- layer flattening ----------
+
+// Decorative backgrounds (e.g. the wedding .floral-bg SVG) are sized off the
+// canvas and carry pointer-events:none; they must not become interactive
+// layers, even though they participate in absolute layout.
+function isDecorative(el) {
+    return el.classList
+        && (el.classList.contains('floral-bg') || /floral|or|ornam|decor|pattern/i.test(String(el.className)));
+}
+
+// Logical "groups": the self-contained blocks each template is built from (a
+// feature card, a pricing cell, a header strip, ...). Each group is a single
+// draggable/resizable unit; the text/icons inside it are its editable children,
+// not separate top-level layers. Grouping keeps related content looking intact
+// when moved, instead of scattering a card's parts into individual layers.
+const GROUP_SELECTOR = [
+    '.branding', '.feature-card', '.phone-mockup', '.b-item', '.bottom-strip',
+    '.bent-head', '.bent-cell', '.bent-foot',
+    '.brand-container', '.header-badge', '.bento-card',
+    '.ldg-head', '.ldg-sub', '.ldg-row', '.ldg-total', '.ldg-foot',
+    '.monogram', '.dua-banner', '.invitation-text', '.main-groom-name',
+    '.inshallah', '.detail-item', '.footer-calligraphy',
+].join(', ');
+
+// Mockup device frames are deliberately interactive objects (they hold an
+// upload + independent move), so they stay top-level layers even when nested
+// inside a card group. Re-exported for the layers panel.
+const FRAME_SELECTOR = '.mockup-frame, .phone-mockup, .laptop-mockup, .monitor-mockup';
+const ICON_SELECTOR = 'i.fas, i.far, i.fab';
+
+// Whether a canvas element sits inside a group container (and should therefore
+// not become a top-level layer of its own). Mockup frames are exempt — they
+// remain independently movable inside any group.
+function isGroupMember(el) {
+    let p = el.parentElement;
+    while (p && p !== canvasRoot()) {
+        if (p.matches && p.matches(GROUP_SELECTOR) && !p.matches(FRAME_SELECTOR)) return true;
+        p = p.parentElement;
+    }
+    return false;
+}
+
+// The nearest group container an element belongs to, or null. Exported for the
+// layers panel so it can group editable text under its owning card, and to keep
+// mockup frames out of any group.
+export function groupOf(el) {
+    if (!el) return null;
+    if (el.matches && el.matches(FRAME_SELECTOR)) return null;
+    return (el.closest && el.closest(GROUP_SELECTOR)) || null;
+}
+
+// Decide whether a canvas element is a "layer" — a block the user should be
+// able to click, move and resize independently. The user wants literally every
+// visible element moveable (text, card backgrounds, icons, headings), not just
+// the ones with a painted background. We therefore treat every canvas-subtree
+// element as a layer, excluding only the cases where interactivity is
+// meaningless or harmful: the editor chrome, decorative pointer-events:none
+// ornaments, SVG internals (a whole <svg> is already one layer; its <g>/<path>
+// children are not separate layers), and text nodes nested inside an editable
+// block (the editable block itself is the layer).
+export function isLayerCandidate(el) {
+    if (!el) return false;
+    if (el.closest && el.closest('#editorUI')) return false;
+    if (el.closest && el.closest('.upload-overlay')) return false;
+    if (el.matches('[contenteditable="true"]')) return false; // handled by text layer system
+    const editable = el.closest && el.closest('[contenteditable="true"]');
+    if (editable) return false; // nested editable text spans are not separate layers
+    if (isDecorative(el)) return false;
+    if (window.getComputedStyle(el).pointerEvents === 'none') return false;
+    if (el.tagName === 'g' || el.tagName === 'path' || el.tagName === 'use' || el.tagName === 'defs' || el.tagName === 'text') return false;
+    // Void/line-break and empty sizing elements have no box of their own and
+    // must not become layers (they are invisible structure).
+    if (el.tagName === 'BR' || el.tagName === 'WBR' || el.tagName === 'HR' || el.tagName === 'SLOT' || el.tagName === 'AREA') return false;
+    return true;
+}
+
+// Collect every element under the canvas design box so the whole subtree can
+// be promoted out of normal flow. Returns document-order (parent before child)
+// elements, which is the safe order for top-down absolutization.
+function canvasSubtree() {
+    const root = canvasRoot();
+    if (!root) return [];
+    return Array.from(root.querySelectorAll('*')).filter((el) => !el.closest('#editorUI'));
+}
+
+// Bind the click-to-select + drag-to-move behaviour onto a non-editable visual
+// layer. Editable text is left to the editor's text selection (it stays movable
+// via the selection overlay's move handle). Guarded so repeated calls no-op.
+export function makeLayerMovable(layer) {
+    if (!layer || layer.__movable) return;
+    layer.__movable = true;
+    if (layer.isContentEditable) return;
+    if (!layer.style.zIndex) layer.style.zIndex = '1';
+    layer.addEventListener('mousedown', (e) => {
+        if (e.target.closest('.upload-overlay, [class$="-upload"], .mc-phone-upload, .mc-laptop-upload, .mc-monitor-upload')) return;
+        if (e.detail >= 2) {
+            selectElement(layer, true);
+            startMove(e);
+            return;
+        }
+        // Clicking the body only selects — it never moves the layer. Movement
+        // is started exclusively from the top-left move handle (startMove).
+        // If a locked container holds editable text, let the caret land so the
+        // text can be edited directly instead of being swallowed by the lock.
+        const editable = layer.querySelector('[contenteditable="true"]');
+        if (editable && e.target.closest('[contenteditable="true"]')) {
+            return;
+        }
+        e.preventDefault();
+        e.stopPropagation();
+        selectElement(layer, true);
+    });
+}
+
+// Promote the whole canvas subtree into absolute-positioned layers so no flow
+// relationship remains — this is what removes the "everything is connected
+// like a Word document" behaviour. Every element is repositioned using its
+// own parent as the origin (matching the move/resize math), with all geometry
+// measured in a single pre-mutation pass so nothing shifts while we read it.
+// All normal-flow parents are absolutized too, otherwise a promoted child
+// would still reflow the others through its parent's flex/column layout.
+export function flattenCanvasIntoLayers() {
+    const root = canvasRoot();
+    if (!root) return;
+    updateCanvasScale();
+
+    const els = canvasSubtree();
+
+    // Snapshot every rect BEFORE mutating anything: absolutizing one element
+    // invalidates the layout for the rest, so all positions/sizes must come
+    // from one consistent (pre-mutation) layout pass.
+    const rects = new Map();
+    rects.set(root, root.getBoundingClientRect());
+    els.forEach((el) => rects.set(el, el.getBoundingClientRect()));
+
+    const parentRect = (el) => {
+        if (el.parentElement && rects.has(el.parentElement)) return rects.get(el.parentElement);
+        return rects.get(root);
+    };
+
+    els.forEach((el) => {
+        if (el.parentElement && el.closest('[contenteditable="true"]') !== el
+            && el.closest('[contenteditable="true"]')) return;
+        const er = rects.get(el);
+        const pr = parentRect(el);
+        el.style.position = 'absolute';
+        el.style.margin = '0';
+        el.style.left = ((er.left - pr.left) / state.currentScale) + 'px';
+        el.style.top = ((er.top - pr.top) / state.currentScale) + 'px';
+        // Absolute elements collapse to content size, so pin explicit dims
+        // now to preserve the on-screen layout exactly.
+        el.style.width = Math.round(er.width / state.currentScale) + 'px';
+        el.style.height = Math.round(er.height / state.currentScale) + 'px';
+    });
+
+    // Every candidate becomes an independent, selection/move-wired layer. z-index
+    // is left to makeLayerMovable's uniform value (and the template's own) so
+    // absolute paint order follows source order — which already matches how the
+    // template layered its elements — instead of imposing an arbitrary z-order.
+    // Tag the movable layers: each group container, each mockup frame, and any
+    // standalone element that is not inside a group. Editable text nested inside
+    // a group is excluded (it belongs to the group and stays editable via the
+    // text system). This is what lets a whole card move as one unit.
+    const layers = els.filter((el) => {
+        if (!isLayerCandidate(el)) return false;
+        if (el.matches(FRAME_SELECTOR)) return true;
+        if (el.matches(ICON_SELECTOR)) return true;
+        // An element inside an outer group is a child of that group, not a
+        // layer of its own — even if it matches GROUP_SELECTOR (e.g. a .b-item
+        // inside a .bottom-strip). Checked before the group-container match so
+        // nested groups collapse into their outer container.
+        if (isGroupMember(el)) return false;
+        if (el.matches(GROUP_SELECTOR)) return true;
+        return false;
+    });
+    layers.forEach((el) => {
+        el.dataset.layer = '1';
+        if (el.matches(GROUP_SELECTOR) && !el.matches(FRAME_SELECTOR)) el.dataset.group = '1';
+        makeLayerMovable(el);
+    });
+    renderLayers();
 }
 
 // Ensure an element is absolutely positioned with explicit left/top/width/height
@@ -100,6 +308,9 @@ function ensureAbsolutePositioned(el) {
 
 export function startResize(e, side) {
     if (!state.activeElement) return;
+    // Locked layers can't be resized until unlocked in the Layers drawer.
+    if (isLocked(state.activeElement)) return;
+    record();
     e.preventDefault();
     e.stopPropagation();
 
@@ -180,15 +391,12 @@ export function applyZoom() {
 }
 
 export function updateCanvasScale() {
-    // Fall back to .card-frame for templates with no .canvas-wrapper
-    // (currently only wedding.html). Without this, updateCanvasScale()
-    // silently no-op'd for wedding, leaving currentScale stuck at its
-    // default of 1 and the 1080x1920 frame rendered unscaled/unfitted.
-    const wrapper = document.querySelector('.canvas-wrapper') || document.querySelector('.card-frame');
-    if (!wrapper) return;
+    const wrapper = canvasRoot();
     // The stage is the scaling container (varies per template: .canvas-stage,
-    // .wedding-stage, .story-stage). Resolve it as the wrapper's parent.
-    const stage = wrapper.parentElement;
+    // .wedding-stage, .story-stage). Because the stage must never be scaled
+    // together with the wrapper (that would distort the coordinate space),
+    // it is always the wrapper's parent element.
+    const stage = canvasStage();
     const drawer = document.getElementById('editorSidebar');
     const w = wrapper.offsetWidth;
     const h = wrapper.offsetHeight;
@@ -201,12 +409,14 @@ export function updateCanvasScale() {
     const availH = window.innerHeight - toolbarH;
     const ratio = Math.min(availW / w, availH / h, 1) * 0.9 * state.userZoom;
     state.currentScale = ratio;
-    stage.style.transform = 'scale(' + ratio + ')';
-    stage.style.transformOrigin = 'center center';
+    stage.style.transform = 'none';
+    wrapper.style.transform = 'scale(' + ratio + ')';
+    wrapper.style.transformOrigin = 'center center';
 }
 
 export function startMove(e) {
     if (!state.activeElement) return;
+    record();
     e.preventDefault();
     e.stopPropagation();
     const startRect = state.activeElement.getBoundingClientRect();
@@ -231,7 +441,6 @@ export function startMove(e) {
     state.activeElement.style.position = 'absolute';
     state.activeElement.style.margin = '0';
     state.activeElement.style.willChange = 'top, left';
-    state.activeElement.style.zIndex = String(maxLayerZ(layerElements()) + 1);
 
     // Re-measure BOTH the element and its positioning origin after the
     // layout-affecting mutations above (placeholder insert + position/margin
@@ -246,14 +455,19 @@ export function startMove(e) {
     // divided by it.
     const originRect = positioningOrigin(state.activeElement);
     const r = state.activeElement.getBoundingClientRect();
+    const left = ((r.left - originRect.left) / state.currentScale);
+    const top = ((r.top - originRect.top) / state.currentScale);
+    state.activeElement.style.left = left + 'px';
+    state.activeElement.style.top = top + 'px';
     state.moveState = {
         offsetX: e.clientX - r.left,
         offsetY: e.clientY - r.top,
+        targetLeft: left,
+        targetTop: top,
     };
-    state.activeElement.style.left = ((r.left - originRect.left) / state.currentScale) + 'px';
-    state.activeElement.style.top = ((r.top - originRect.top) / state.currentScale) + 'px';
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', endMove);
+    startDragLoop();
     showToolbarEl(false);
 }
 
@@ -262,14 +476,39 @@ function onMove(e) {
     // Must use the same origin function as startMove — mixing a different
     // origin here would reintroduce the exact class of bug this fix removes.
     const originRect = positioningOrigin(state.activeElement);
-    state.activeElement.style.left = ((e.clientX - originRect.left - state.moveState.offsetX) / state.currentScale) + 'px';
-    state.activeElement.style.top = ((e.clientY - originRect.top - state.moveState.offsetY) / state.currentScale) + 'px';
-    positionOverlay();
+    state.moveState.targetLeft = (e.clientX - originRect.left - state.moveState.offsetX) / state.currentScale;
+    state.moveState.targetTop = (e.clientY - originRect.top - state.moveState.offsetY) / state.currentScale;
+}
+
+// Damped drag easing: instead of snapping the element straight to the cursor,
+// each frame moves it a fraction of the remaining distance. This produces a
+// short, comfortable trailing motion without feeling unresponsive, because
+// the cursor target is updated on every raw mousemove.
+const DRAG_DAMP = 0.42;
+
+function startDragLoop() {
+    if (state.dragRaf) return;
+    const tick = function() {
+        if (!state.moveState || !state.activeElement) { state.dragRaf = null; return; }
+        const el = state.activeElement;
+        const currentLeft = Number.parseFloat(el.style.left) || 0;
+        const currentTop = Number.parseFloat(el.style.top) || 0;
+        const nl = currentLeft + (state.moveState.targetLeft - currentLeft) * DRAG_DAMP;
+        const nt = currentTop + (state.moveState.targetTop - currentTop) * DRAG_DAMP;
+        if (Math.abs(nl - currentLeft) > 0.05 || Math.abs(nt - currentTop) > 0.05) {
+            el.style.left = nl + 'px';
+            el.style.top = nt + 'px';
+            positionOverlay();
+        }
+        state.dragRaf = requestAnimationFrame(tick);
+    };
+    state.dragRaf = requestAnimationFrame(tick);
 }
 
 function endMove() {
     document.removeEventListener('mousemove', onMove);
     document.removeEventListener('mouseup', endMove);
+    if (state.dragRaf) { cancelAnimationFrame(state.dragRaf); state.dragRaf = null; }
     state.moveState = null;
     if (state.activeElement) {
         // Free-form canvas: no placeholder should linger after the drop.
@@ -281,28 +520,6 @@ function endMove() {
         state.activeElement.style.willChange = 'auto';
         toolbarsShow(); renderLayers();
     }
-}
-
-// Make static background images/SVGs draggable layers.
-// They are movable like text, defaulting to a low z-index as a backdrop.
-export function makeBaseImagesMovable() {
-    // Phone mockup frame moves as a single unit (frame + screen + image).
-    // The upload overlay keeps working since its clicks are excluded.
-    frameElements().forEach(makeFrameMovable);
-
-    // Plain image/SVG layers that aren't carried by a frame above.
-    document.querySelectorAll('.canvas-wrapper img, .canvas-wrapper svg').forEach((img) => {
-        if (img.closest('#editorUI')) return;
-        if (img.closest('.mockup-frame') || img.closest('.phone-mockup')) return;
-        img.style.position = (img.style.position || '') || 'absolute';
-        img.style.zIndex = '1';
-        img.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            selectElement(img, true);
-            startMove(e);
-        });
-    });
 }
 
 // Make a single .mockup-frame movable (draggable/resizable) as one unit.
@@ -319,16 +536,24 @@ export function makeFrameMovable(frame) {
         e.preventDefault();
         e.stopPropagation();
         selectElement(frame, true);
-        startMove(e);
     });
 }
 
 // ---------- selection / toolbar visibility ----------
 
 export function selectElement(el, keepOverlay) {
+    // Selection is always allowed so locked layers still show their selection
+    // box + handles; the lock only blocks moving/resizing (see startMove /
+    // startResize). Unlocking happens in the Layers drawer. Editable text also
+    // gets the same move handle, while clicks inside the text still place the
+    // caret because text layers are excluded from body-drag selection.
     state.activeElement = el;
     if (el) {
-        toolbarsShow();
+        showToolbarEl(true);
+        showOverlay();
+    } else {
+        showToolbarEl(false);
+        hideOverlay();
     }
     renderLayers();
     if (keepOverlay && el) showOverlay();

@@ -4,6 +4,7 @@
 
 import { state } from './state.js';
 import { rgbToHex, currentFontSize, normalizeFamilyName } from './helpers.js';
+import { record } from './history.js';
 
 function applyToSelection(applyFn) {
     const sel = window.getSelection();
@@ -47,6 +48,7 @@ function applyToSelection(applyFn) {
 
 export function setColor(color) {
     if (!state.activeElement) return;
+    record();
     applyToSelection((target) => {
         target.style.color = color;
         target.querySelectorAll('span, i, em, b, strong').forEach((s) => { s.style.color = color; });
@@ -56,12 +58,14 @@ export function setColor(color) {
 
 export function setFont(family) {
     if (!state.activeElement) return;
+    record();
     applyToSelection((el) => { el.style.fontFamily = family; });
     syncTextUI();
 }
 
 export function toggleBold() {
     if (!state.activeElement) return;
+    record();
     applyToSelection((el) => {
         const w = parseInt(window.getComputedStyle(el).fontWeight, 10) || 400;
         el.style.fontWeight = w >= 600 ? '400' : '700';
@@ -71,9 +75,15 @@ export function toggleBold() {
 
 export function resizeFont(delta) {
     if (!state.activeElement) return;
+    record();
     applyToSelection((target) => {
         const size = currentFontSize(target) || 0;
         target.style.fontSize = Math.min(160, Math.max(10, size + delta * 2)) + 'px';
+        if (target === state.activeElement) {
+            target.querySelectorAll('span, i, em, b, strong').forEach((child) => {
+                child.style.removeProperty('font-size');
+            });
+        }
     });
 }
 
@@ -92,5 +102,15 @@ export function syncTextUI() {
         Array.from(sel.options).forEach((opt) => {
             if (family.indexOf(normalizeFamilyName(opt.value)) !== -1) sel.value = opt.value;
         });
+    });
+}
+
+// Centralise per-editable polish so templates don't have to repeat it: disable
+// the browser's spellcheck (Arabic words otherwise get red squiggles) and the
+// native text-dragging that fights our move handles.
+export function initEditableText() {
+    document.querySelectorAll('[contenteditable="true"]').forEach((el) => {
+        el.spellcheck = false;
+        el.draggable = false;
     });
 }

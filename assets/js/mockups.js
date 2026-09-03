@@ -5,6 +5,7 @@
 import { MOCKUPS } from './state.js';
 import { layerElements, maxLayerZ, renderLayers } from './layers.js';
 import { selectElement, updateCanvasScale, makeFrameMovable } from './interactions.js';
+import { record } from './history.js';
 
 // Injected mockups are scoped with device-specific classes (e.g. .mc-phone-frame),
 // so re-inserting the same device reuses one <style> block.
@@ -69,6 +70,7 @@ async function insertMockupFragment(id) {
         } catch (e) { /* try next candidate */ }
     }
     if (!text) return null;
+    record();
 
     // Dedupe the injected <style> so inserting the same device twice
     // doesn't duplicate rules.
@@ -130,6 +132,14 @@ function wireMockupUpload(frame) {
     btn.addEventListener('click', (e) => { e.stopPropagation(); input.click(); });
     input.addEventListener('change', () => {
         if (!input.files || !input.files[0]) return;
+// Revoke the previous blob URL before assigning the new one; an
+        // unrevoked createObjectURL holds its blob in memory until the page
+        // unloads, which leaks RAM after several uploads in one session.
+        if (shot.src && shot.src.startsWith('blob:')) {
+            URL.revokeObjectURL(shot.src);
+        }
         shot.src = URL.createObjectURL(input.files[0]);
+        // Reset so re-selecting the *same* file still fires 'change' again.
+        input.value = '';
     });
 }
