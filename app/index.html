@@ -3,44 +3,517 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تسجيل الدخول — المركزية الحديثة</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <title>تسجيل الدخول — AnyDesire.Design</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/site.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg: #09080f;
+      --bg-secondary: #100d1a;
+      --bg-soft: #171225;
+      --text: #f4f1fa;
+      --muted: #a8a1b8;
+      --border: #2a2438;
+      --border-strong: #463a5c;
+      --accent: #a970ff;
+      --accent-strong: #c18aff;
+      --accent-dim: #a970ff1f;
+      --accent-border: #a970ff61;
+      --purple-deep: #6e3cbc;
+      --danger: #e07a8a;
+      --danger-dim: #e07a8a1f;
+      --success: #73c69a;
+      color-scheme: dark;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'IBM Plex Sans Arabic', system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Arabic', sans-serif;
+      line-height: 1.6;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+    }
+
+    /* ===== LEFT: Dual template showcase (mobile + laptop) ===== */
+    .preview-panel {
+      flex: 1.15;
+      position: relative;
+      background: var(--bg-secondary);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(32px, 5vw, 72px);
+    }
+
+    .mesh {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 18% 12%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 46%),
+        radial-gradient(circle at 82% 78%, color-mix(in srgb, var(--purple-deep) 30%, transparent), transparent 52%),
+        radial-gradient(circle at 50% 105%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 55%);
+      pointer-events: none;
+    }
+
+    /* Subtle grain for material depth — the detail that separates a flat
+       gradient background from a considered, premium surface */
+    .grain {
+      position: absolute;
+      inset: 0;
+      opacity: 0.035;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    .preview-content {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(36px, 5vw, 56px);
+      max-width: 480px;
+      width: 100%;
+    }
+
+    .preview-copy { text-align: center; }
+    .preview-copy .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--accent-strong);
+      font-weight: 500;
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-border);
+      border-radius: 100px;
+      padding: 7px 16px;
+      margin-bottom: 24px;
+    }
+    .preview-copy h1 {
+      font-size: clamp(1.7rem, 2.6vw, 2.3rem);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+      margin-bottom: 14px;
+      letter-spacing: -0.01em;
+    }
+    .preview-copy p { font-size: 1rem; color: var(--muted); line-height: 1.7; max-width: 38ch; margin-inline: auto; }
+
+    /* Dual device stage: laptop behind, phone overlapping in front —
+       represents the two template families (laptop + mobile) at once */
+    .device-stage {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .laptop {
+      position: absolute;
+      width: 320px;
+      right: 4%;
+      z-index: 2;
+    }
+    .laptop-screen {
+      background: #050308;
+      border: 2px solid var(--border-strong);
+      border-radius: 14px 14px 4px 4px;
+      padding: 12px;
+      box-shadow: 0 40px 90px rgba(0,0,0,0.6), 0 0 50px color-mix(in srgb, var(--accent) 8%, transparent);
+    }
+    .laptop-screen-inner {
+      background: var(--bg-soft);
+      border-radius: 8px;
+      aspect-ratio: 16 / 10;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .laptop-topbar { display: flex; gap: 5px; margin-bottom: 4px; }
+    .laptop-topbar span { width: 6px; height: 6px; border-radius: 50%; background: var(--border-strong); }
+    .laptop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; flex: 1; }
+    .laptop-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 7px; }
+    .laptop-card.active { border-color: var(--accent-border); background: var(--accent-dim); }
+    .laptop-base {
+      height: 10px;
+      width: 108%;
+      margin-right: -4%;
+      background: linear-gradient(#171225, #09080f);
+      border-radius: 0 0 8px 8px;
+      border: 2px solid var(--border-strong);
+      border-top: none;
+    }
+
+    .phone {
+      position: absolute;
+      width: 128px;
+      aspect-ratio: 9 / 19;
+      left: 2%;
+      bottom: -6%;
+      background: #050308;
+      border: 2px solid var(--border-strong);
+      border-radius: 24px;
+      padding: 8px;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.55), 0 0 40px color-mix(in srgb, var(--accent) 10%, transparent);
+      z-index: 6;
+    }
+    .phone-screen {
+      background: var(--bg-soft);
+      border-radius: 17px;
+      height: 100%;
+      padding: 12px 9px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .phone-pill { height: 5px; width: 40%; background: var(--border-strong); border-radius: 4px; margin: 0 auto 4px; }
+    .phone-row { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 7px; }
+    .phone-row.active { border-color: var(--accent-border); background: var(--accent-dim); }
+    .phone-row .bar { height: 5px; border-radius: 3px; background: var(--border-strong); }
+    .phone-row.active .bar { background: var(--accent); width: 60%; }
+
+    .device-badge {
+      position: absolute;
+      z-index: 9;
+      background: color-mix(in srgb, var(--bg-soft) 82%, transparent);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--text);
+      box-shadow: 0 16px 34px rgba(0,0,0,0.4);
+    }
+    .device-badge i { color: var(--accent-strong); font-size: 0.85rem; }
+    .badge-laptop { top: -4%; right: -2%; }
+    .badge-phone { bottom: 14%; left: -14%; }
+
+    /* ===== RIGHT: Auth form ===== */
+    .form-panel {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(28px, 4vw, 48px);
+      background: var(--bg);
+    }
+
+    .form-wrap { width: 100%; max-width: 384px; }
+
+    .form-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 48px; }
+    .form-brand .logo-icon {
+      width: 42px; height: 42px; border-radius: 12px;
+      background: var(--accent-dim); border: 1px solid var(--accent-border);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .form-brand .logo-icon i { font-size: 1.1rem; color: var(--accent-strong); }
+    .form-brand span { font-size: 1.12rem; font-weight: 700; color: var(--text); direction: ltr; }
+
+    .form-heading h2 { font-size: clamp(1.5rem, 2vw, 1.75rem); font-weight: 700; color: var(--text); margin-bottom: 8px; letter-spacing: -0.01em; }
+    .form-heading p { font-size: 0.93rem; color: var(--muted); margin-bottom: 32px; }
+
+    .segmented {
+      display: flex;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 4px;
+      margin-bottom: 30px;
+    }
+    .segmented button {
+      flex: 1;
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      padding: 9px 0;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .segmented button.active { background: var(--accent); color: #09080f; font-weight: 600; }
+    .segmented button:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
+
+    .fl-field { position: relative; margin-bottom: 24px; }
+    .fl-field input {
+      width: 100%;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 14px 8px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.98rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .fl-field label {
+      position: absolute;
+      right: 14px;
+      top: 15px;
+      font-size: 0.95rem;
+      color: var(--muted);
+      pointer-events: none;
+      transition: all 0.16s ease;
+    }
+    .fl-field input:focus,
+    .fl-field input:not(:placeholder-shown) { padding-top: 20px; }
+    .fl-field input:focus ~ label,
+    .fl-field input:not(:placeholder-shown) ~ label {
+      top: 7px;
+      font-size: 0.68rem;
+      color: var(--accent-strong);
+      font-weight: 500;
+    }
+    .fl-field input:focus {
+      border-color: var(--accent-border);
+      box-shadow: 0 0 0 4px var(--accent-dim);
+    }
+    .fl-field.has-error input { border-color: var(--danger); }
+    .fl-field.has-error input:focus { box-shadow: 0 0 0 4px var(--danger-dim); }
+    .fl-field .error-msg {
+      display: none;
+      font-size: 0.75rem;
+      color: var(--danger);
+      margin-top: 6px;
+    }
+    .fl-field.has-error .error-msg { display: block; }
+
+    .row-between { display: flex; align-items: center; justify-content: space-between; margin: 2px 0 30px; font-size: 0.85rem; }
+    .remember { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+    .remember input { accent-color: var(--accent); width: 15px; height: 15px; }
+    .forgot-link { color: var(--accent-strong); text-decoration: none; font-weight: 500; }
+    .forgot-link:hover { text-decoration: underline; }
+    .forgot-link:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 3px; border-radius: 4px; }
+
+    .btn-login {
+      width: 100%;
+      background: var(--accent);
+      color: #09080f;
+      border: none;
+      border-radius: 100px;
+      padding: 15px;
+      font-family: inherit;
+      font-size: 0.98rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 10px 30px color-mix(in srgb, var(--accent) 30%, transparent);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .btn-login:hover { background: var(--accent-strong); box-shadow: 0 14px 34px color-mix(in srgb, var(--accent) 40%, transparent); }
+    .btn-login:active { transform: scale(0.97); }
+    .btn-login:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+
+    .divider { display: flex; align-items: center; gap: 14px; margin: 28px 0; color: var(--muted); font-size: 0.78rem; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .icon-row { display: flex; gap: 12px; }
+    .icon-btn {
+      flex: 1;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 13px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .icon-btn:hover { background: var(--bg-soft); border-color: var(--border-strong); }
+    .icon-btn:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
+    .icon-btn i { font-size: 1.1rem; color: var(--text); }
+
+    .signup-line { text-align: center; margin-top: 32px; font-size: 0.87rem; color: var(--muted); }
+    .signup-line a { color: var(--accent-strong); font-weight: 600; text-decoration: none; }
+    .signup-line a:hover { text-decoration: underline; }
+
+    @media (max-width: 940px) {
+      .preview-panel { display: none; }
+      .form-panel { flex: 1; }
+    }
+  </style>
 </head>
 <body>
 
-  <div class="auth-wrap">
-    <div class="auth">
-      <a class="brand" href="../index.html"><i class="fas fa-palette"></i> المركزية <b>الحديثة</b></a>
-
-      <div class="field">
-        <label>البريد الإلكتروني</label>
-        <input type="email" id="loginEmail" placeholder="name@example.com" autocomplete="email">
-      </div>
-      <div class="field">
-        <label>كلمة المرور</label>
-        <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+  <div class="preview-panel">
+    <div class="mesh"></div>
+    <div class="grain"></div>
+    <div class="preview-content">
+      <div class="preview-copy">
+        <span class="kicker"><i class="fas fa-wand-magic-sparkles"></i> مكتبة قوالب جاهزة</span>
+        <h1>قوالب جاهزة لكل شاشة</h1>
+        <p>مكتبة قوالب مصممة خصيصًا للموبايل واللابتوب، عدّل ألوانك ونصوصك في دقائق وصدّر بالمقاس المناسب.</p>
       </div>
 
-      <button class="btn primary" id="loginBtn"><i class="fas fa-right-to-bracket"></i> دخول</button>
+      <div class="device-stage">
+        <div class="laptop">
+          <div class="laptop-screen">
+            <div class="laptop-screen-inner">
+              <div class="laptop-topbar"><span></span><span></span><span></span></div>
+              <div class="laptop-grid">
+                <div class="laptop-card active"></div>
+                <div class="laptop-card"></div>
+                <div class="laptop-card"></div>
+                <div class="laptop-card"></div>
+                <div class="laptop-card active"></div>
+                <div class="laptop-card"></div>
+              </div>
+            </div>
+          </div>
+          <div class="laptop-base"></div>
+        </div>
 
-      <p class="alt">لا تملك حساباً؟ <a href="#" onclick="alert('أنشئ حساباً لاحقاً')">أنشئ حساباً</a></p>
-      <p class="alt"><a href="../index.html">العودة للرئيسية</a></p>
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-pill"></div>
+            <div class="phone-row active"><div class="bar"></div></div>
+            <div class="phone-row"><div class="bar" style="width:40%"></div></div>
+            <div class="phone-row"><div class="bar" style="width:70%"></div></div>
+          </div>
+        </div>
+
+        <div class="device-badge badge-laptop"><i class="fas fa-laptop"></i> قوالب لابتوب</div>
+        <div class="device-badge badge-phone"><i class="fas fa-mobile-screen-button"></i> قوالب موبايل</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-panel">
+    <div class="form-wrap">
+      <div class="form-brand">
+        <div class="logo-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
+        <span>AnyDesire.Design</span>
+      </div>
+
+      <div class="form-heading">
+        <h2>أهلًا بعودتك</h2>
+        <p>سجّل دخولك للوصول إلى مكتبة القوالب ومشاريعك المحفوظة</p>
+      </div>
+
+      <div class="segmented">
+        <button type="button" class="active" id="tabEmail">البريد الإلكتروني</button>
+        <button type="button" id="tabPhone">رقم الهاتف</button>
+      </div>
+
+      <form id="loginForm" novalidate>
+        <div class="fl-field" id="idField">
+          <input type="text" id="loginId" placeholder=" " autocomplete="username">
+          <label for="loginId">البريد الإلكتروني</label>
+          <div class="error-msg" id="idError">أدخل بريدك الإلكتروني</div>
+        </div>
+
+        <div class="fl-field" id="passField">
+          <input type="password" id="loginPassword" placeholder=" " autocomplete="current-password">
+          <label for="loginPassword">كلمة المرور</label>
+          <div class="error-msg" id="passError">أدخل كلمة المرور</div>
+        </div>
+
+        <div class="row-between">
+          <label class="remember"><input type="checkbox"> تذكرني</label>
+          <a href="#" class="forgot-link">نسيت كلمة المرور؟</a>
+        </div>
+
+        <button type="submit" class="btn-login">
+          تسجيل الدخول <i class="fas fa-arrow-left"></i>
+        </button>
+      </form>
+
+      <div class="divider">أو المتابعة عبر</div>
+
+      <div class="icon-row">
+        <div class="icon-btn" tabindex="0"><i class="fab fa-google"></i></div>
+        <div class="icon-btn" tabindex="0"><i class="fab fa-apple"></i></div>
+        <div class="icon-btn" tabindex="0"><i class="fas fa-envelope"></i></div>
+      </div>
+
+      <div class="signup-line">ليس لديك حساب؟ <a href="#">إنشاء حساب جديد</a></div>
     </div>
   </div>
 
   <script>
-    document.getElementById('loginBtn').addEventListener('click', function () {
-      var email = document.getElementById('loginEmail').value.trim();
-      var pass = document.getElementById('loginPass').value.trim();
-      if (!email || !pass) {
-        alert('أدخل البريد وكلمة المرور');
-        return;
-      }
-      window.location.href = 'home.html';
-    });
+    (function () {
+      var tabEmail = document.getElementById('tabEmail');
+      var tabPhone = document.getElementById('tabPhone');
+      var loginId = document.getElementById('loginId');
+      var loginIdLabel = document.querySelector('label[for="loginId"]');
+      var idError = document.getElementById('idError');
+
+      tabEmail.addEventListener('click', function () {
+        tabEmail.classList.add('active');
+        tabPhone.classList.remove('active');
+        loginId.type = 'text';
+        loginId.autocomplete = 'username';
+        loginIdLabel.textContent = 'البريد الإلكتروني';
+        idError.textContent = 'أدخل بريدك الإلكتروني';
+      });
+
+      tabPhone.addEventListener('click', function () {
+        tabPhone.classList.add('active');
+        tabEmail.classList.remove('active');
+        loginId.type = 'tel';
+        loginId.autocomplete = 'tel';
+        loginIdLabel.textContent = 'رقم الهاتف';
+        idError.textContent = 'أدخل رقم هاتفك';
+      });
+
+      var form = document.getElementById('loginForm');
+      var idField = document.getElementById('idField');
+      var passField = document.getElementById('passField');
+      var loginPassword = document.getElementById('loginPassword');
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var valid = true;
+
+        if (!loginId.value.trim()) {
+          idField.classList.add('has-error');
+          valid = false;
+        } else {
+          idField.classList.remove('has-error');
+        }
+
+        if (!loginPassword.value.trim()) {
+          passField.classList.add('has-error');
+          valid = false;
+        } else {
+          passField.classList.remove('has-error');
+        }
+
+        if (!valid) return;
+        // Hook up real auth submission here.
+        window.location.assign('./home.html');
+      });
+
+      loginId.addEventListener('input', function () { idField.classList.remove('has-error'); });
+      loginPassword.addEventListener('input', function () { passField.classList.remove('has-error'); });
+    })();
   </script>
 
 </body>

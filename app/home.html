@@ -3,143 +3,404 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لوحة التحكم — المركزية الحديثة</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <title>القوالب — AnyDesire.Design</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/site.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    .studio-card {
-      background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 16px;
-      padding: 24px; text-align: center; transition: 0.2s ease; color: var(--text-primary);
-      display: block;
+    :root {
+      --bg: #09080f;
+      --bg-secondary: #100d1a;
+      --bg-soft: #171225;
+      --text: #f4f1fa;
+      --muted: #a8a1b8;
+      --border: #2a2438;
+      --border-strong: #463a5c;
+      --accent: #a970ff;
+      --accent-strong: #c18aff;
+      --accent-dim: #a970ff1f;
+      --accent-border: #a970ff61;
+      --purple-deep: #6e3cbc;
+      --danger: #e07a8a;
+      --danger-dim: #e07a8a1f;
+      --success: #73c69a;
+      --success-dim: #73c69a1f;
+      color-scheme: dark;
     }
-    .studio-card:hover { transform: translateY(-4px); border-color: var(--accent-cyan); box-shadow: var(--shadow-heavy); }
-    .studio-card .em { font-size: 2.4rem; line-height: 1.2; }
-    .studio-card h3 { margin: 14px 0 6px; font-size: 1.15rem; font-weight: 800; }
-    .studio-card .muted { font-size: 0.85rem; line-height: 1.6; color: var(--text-muted); }
-    .studio-card .size { display: inline-block; margin-top: 12px; padding: 4px 12px; border-radius: 999px;
-      border: 1px solid var(--border-subtle); color: var(--accent-cyan); font-size: 0.75rem; font-weight: 700; }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'IBM Plex Sans Arabic', system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Arabic', sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; }
+
+    /* ===== HEADER ===== */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 16px clamp(20px, 4vw, 48px);
+      background: color-mix(in srgb, var(--bg) 85%, transparent);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .brand .logo-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--accent-dim); border: 1px solid var(--accent-border);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .brand .logo-icon i { font-size: 0.95rem; color: var(--accent-strong); }
+    .brand span { font-size: 1.02rem; font-weight: 700; direction: ltr; }
+
+    .main-nav { display: flex; align-items: center; gap: 4px; }
+    .main-nav a {
+      font-size: 0.9rem; font-weight: 500; color: var(--muted);
+      padding: 9px 16px; border-radius: 100px;
+      transition: color 0.15s ease, background 0.15s ease;
+    }
+    .main-nav a:hover { color: var(--text); }
+    .main-nav a.active { color: var(--text); background: var(--bg-soft); }
+    .main-nav a:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
+
+    .header-search {
+      flex: 1;
+      max-width: 340px;
+      position: relative;
+    }
+    .header-search i {
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      font-size: 0.85rem; color: var(--muted);
+    }
+    .header-search input {
+      width: 100%;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 10px 40px 10px 16px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .header-search input::placeholder { color: var(--muted); }
+    .header-search input:focus { border-color: var(--accent-border); box-shadow: 0 0 0 4px var(--accent-dim); }
+
+    .header-actions { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+    .icon-btn-sm {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: var(--bg-secondary); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted);
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .icon-btn-sm:hover { background: var(--bg-soft); color: var(--text); border-color: var(--border-strong); }
+    .icon-btn-sm:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
+
+    .avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--purple-deep));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82rem; font-weight: 700; color: #09080f;
+      cursor: pointer;
+    }
+    .avatar:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
+
+    /* ===== HERO / WELCOME ===== */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(36px, 5vw, 56px) clamp(20px, 4vw, 48px) clamp(24px, 3vw, 32px);
+    }
+    .hero .mesh {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 10% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 45%),
+        radial-gradient(circle at 90% 100%, color-mix(in srgb, var(--purple-deep) 22%, transparent), transparent 50%);
+      pointer-events: none;
+    }
+    .hero-content { position: relative; z-index: 2; }
+    .hero h1 { font-size: clamp(1.5rem, 2.4vw, 1.9rem); font-weight: 700; margin-bottom: 6px; letter-spacing: -0.01em; }
+    .hero p { font-size: 0.95rem; color: var(--muted); margin-bottom: 22px; }
+
+    .stat-chips { display: flex; gap: 12px; flex-wrap: wrap; }
+    .stat-chip {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--bg-secondary); border: 1px solid var(--border);
+      border-radius: 14px; padding: 12px 18px;
+    }
+    .stat-chip i { font-size: 1.05rem; color: var(--accent-strong); }
+    .stat-chip .num { font-size: 0.95rem; font-weight: 700; }
+    .stat-chip .lbl { font-size: 0.72rem; color: var(--muted); }
+
+    /* ===== SECTION SHELL ===== */
+    .section { padding: 0 clamp(20px, 4vw, 48px); margin-bottom: 40px; }
+
+    /* ===== FILTER BAR ===== */
+    .filter-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .pill-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pill {
+      background: var(--bg-secondary); border: 1px solid var(--border);
+      border-radius: 100px; padding: 8px 16px;
+      font-size: 0.82rem; font-weight: 500; color: var(--muted);
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .pill:hover { color: var(--text); border-color: var(--border-strong); }
+    .pill.active { background: var(--accent); color: #09080f; border-color: var(--accent); font-weight: 600; }
+    .pill:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
+
+    /* ===== TEMPLATE GRID ===== */
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    .is-hidden { display: none; }
+
+    .tpl-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+    }
+    .tpl-card:hover { border-color: var(--border-strong); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.35); }
+
+    .tpl-preview {
+      position: relative;
+      height: 176px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .tpl-preview .device-tag {
+      position: absolute; top: 10px; right: 10px; z-index: 3;
+      font-size: 0.62rem; font-weight: 600; padding: 4px 10px; border-radius: 100px;
+      background: color-mix(in srgb, var(--bg) 65%, transparent);
+      backdrop-filter: blur(10px);
+      display: flex; align-items: center; gap: 5px;
+      color: var(--text);
+    }
+
+    .tpl-overlay {
+      position: absolute; inset: 0;
+      background: color-mix(in srgb, var(--bg) 78%, transparent);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      opacity: 0; transition: opacity 0.2s ease;
+      z-index: 5;
+    }
+    .tpl-card:hover .tpl-overlay, .tpl-card:focus-within .tpl-overlay { opacity: 1; }
+
+    .overlay-btn {
+      border: none; border-radius: 100px; padding: 9px 16px;
+      font-size: 0.8rem; font-weight: 600;
+      display: flex; align-items: center; gap: 6px;
+      transition: transform 0.15s ease;
+    }
+    .overlay-btn:hover { transform: scale(1.05); }
+    .overlay-btn:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+    .overlay-btn.primary { background: var(--accent); color: #09080f; }
+    .overlay-btn.ghost { background: color-mix(in srgb, var(--bg) 40%, transparent); border: 1px solid var(--border-strong); color: var(--text); }
+
+    .tpl-info { padding: 14px 16px; }
+    .tpl-info .tpl-name { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
+    .tpl-info .tpl-meta { display: flex; align-items: center; gap: 8px; font-size: 0.72rem; color: var(--muted); }
+    .tpl-info .tpl-meta .cat-tag { padding: 2px 8px; border-radius: 100px; font-weight: 600; }
+
+    /* Mini mockups built from CSS to represent preview content */
+    .mock-laptop { width: 78%; }
+    .mock-laptop-body { background: #050308; border: 1.5px solid var(--border-strong); border-radius: 8px 8px 2px 2px; padding: 6px; }
+    .mock-laptop-inner { border-radius: 4px; aspect-ratio: 16/10; padding: 8px; display: flex; flex-direction: column; gap: 5px; }
+    .mock-laptop-base { height: 5px; width: 106%; margin-right: -3%; border-radius: 0 0 4px 4px; border: 1.5px solid var(--border-strong); border-top: none; }
+
+    .mock-phone { width: 34%; }
+    .mock-phone-body { background: #050308; border: 1.5px solid var(--border-strong); border-radius: 14px; padding: 5px; aspect-ratio: 9/18; }
+    .mock-phone-inner { border-radius: 10px; height: 100%; padding: 8px 5px; display: flex; flex-direction: column; gap: 4px; }
+    .mock-bar { height: 4px; border-radius: 3px; }
+
+    @media (max-width: 720px) {
+      .main-nav, .header-search { display: none; }
+    }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <header class="dashhead">
-      <a class="brand" href="#/studio"><i class="fas fa-palette"></i> المركزية <b>الحديثة</b></a>
-      <nav class="nav">
-        <a href="../index.html"><i class="fas fa-house"></i> الرئيسية</a>
-        <a href="index.html" class="btn"><i class="fas fa-right-from-bracket"></i> خروج</a>
-      </nav>
-    </header>
-
-    <div style="padding: 26px 0 10px;">
-      <h1 class="greeting">أهلاً بك</h1>
-      <p class="sub">اختر قالباً وابدأ التعديل — كل نص قابل للتحرير، وكل عنصر قابل للنقل والتكبير.</p>
+  <header class="site-header">
+    <div class="brand">
+      <div class="logo-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
+      <span>AnyDesire.Design</span>
     </div>
 
-    <div class="templates-grid" id="studioGrid"></div>
-  </div>
+    <nav class="main-nav">
+      <a href="#" class="active">القوالب</a>
+      <a href="#">تصاميمي</a>
+    </nav>
+
+    <div class="header-search">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="ابحث عن قالب...">
+    </div>
+
+    <div class="header-actions">
+      <button class="icon-btn-sm" aria-label="الإشعارات"><i class="fas fa-bell"></i></button>
+      <div class="avatar" tabindex="0" role="button" aria-label="حسابي">سا</div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="mesh"></div>
+    <div class="hero-content">
+      <h1>أهلًا بعودتك، سارة</h1>
+      <p>جاهزة تصممي حاجة جديدة النهاردة؟</p>
+      <div class="stat-chips">
+        <div class="stat-chip"><i class="fas fa-shapes"></i><div><div class="num" id="tplCount">0</div><div class="lbl">قالب متاح</div></div></div>
+        <div class="stat-chip"><i class="fas fa-folder-open"></i><div><div class="num">12</div><div class="lbl">تصميم محفوظ</div></div></div>
+        <div class="stat-chip"><i class="fas fa-clock-rotate-left"></i><div><div class="num">3</div><div class="lbl">مسودة نشطة</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="filter-bar">
+      <div class="pill-group">
+        <button class="pill active" data-filter="all">الكل</button>
+        <button class="pill" data-filter="story">ستوري 9:16</button>
+        <button class="pill" data-filter="banner">بانر 16:9</button>
+      </div>
+    </div>
+
+    <div class="template-grid" id="templateGrid"></div>
+  </section>
 
   <script>
-    var TEMPLATES = [
-      {
-        id: 'wedding',
-        name: 'بطاقة زفاف',
-        icon: '\uD83D\uDC8D',
-        size: '1080 × 1920',
-        desc: 'دعوة زفاف فاخرة بموديل راقٍ — نص وألوان قابلة للتحرير.',
-        file: '../templates/wedding/wedding.html'
-      },
-      {
-        id: 'story',
-        name: 'ستوري إعلاني',
-        icon: '\uD83D\uDCF1',
-        size: '1080 × 1920',
-        desc: 'ستوري دفتر الديون مع رفع صورة للتطبيق.',
-        file: '../templates/story/story.html'
-      },
-      {
-        id: 'bento',
-        name: 'Bento Board',
-        icon: '\uD83D\uDDC2\uFE0F',
-        size: '1080 × 1500',
-        desc: 'عروض وباقات بأسلوب البن تو.',
-        file: '../templates/bento/bento.html'
-      },
-      {
-        id: 'studio',
-        name: 'سجل الديون',
-        icon: '\uD83D\uDCD2',
-        size: '900 × 1280',
-        desc: 'سجل ذمم سريع وقابل للتعديل.',
-        file: '../templates/debt-ledger/studio.html'
-      },
-      {
-        id: 'windows-1',
-        name: 'Windows 1',
-        icon: '\uD83D\uDDA5\uFE0F',
-        size: '1600 × 900',
-        desc: 'إعلان Bento Grid للموبايل ولوحة التحكم على شاشة الحاسوب.',
-        file: '../templates/windows-1/windows-1.html'
-      },
-      {
-        id: 'windows-2',
-        name: 'Windows 2',
-        icon: '\uD83D\uDDA5\uFE0F',
-        size: '1600 × 900',
-        desc: 'إعلان ثلاثي الأبعاد بشاشة ديسكتوب وبوديوم احترافي.',
-        file: '../templates/windows-2/windows-2.html'
-      },
-      {
-        id: 'phone-1',
-        name: 'Phone 1',
-        icon: '\uD83D\uDCF1',
-        size: '1080 × 1920',
-        desc: 'ستوري بلمسة توركوازية مع صورة التطبيق وشرائح المزايا.',
-        file: '../templates/phone-1/phone-1.html'
-      },
-      {
-        id: 'phone-2',
-        name: 'Phone 2',
-        icon: '\uD83D\uDCF1',
-        size: '1080 × 1920',
-        desc: 'ستوري داكن بتنسيق مضغوط مع رفع صورة التطبيق.',
-        file: '../templates/phone-2/phone-2.html'
+    (function () {
+      var TEMPLATES = [
+        { id: 'wedding', name: 'بطاقة زفاف', size: '1080 × 1920', file: '../templates/wedding/wedding.html', tint: '#f43f5e' },
+        { id: 'story', name: 'ستوري إعلاني', size: '1080 × 1920', file: '../templates/story/story.html', tint: '#a970ff' },
+        { id: 'bento', name: 'Bento Board', size: '1080 × 1500', file: '../templates/bento/bento.html', tint: '#22d3ee' },
+        { id: 'debt-ledger', name: 'سجل الديون', size: '900 × 1280', file: '../templates/debt-ledger/studio.html', tint: '#8b7bff' },
+        { id: 'windows-1', name: 'Windows 1', size: '1600 × 900', file: '../templates/windows-1/windows-1.html', tint: '#73c69a' },
+        { id: 'windows-2', name: 'Windows 2', size: '1600 × 900', file: '../templates/windows-2/windows-2.html', tint: '#e07a8a' },
+        { id: 'phone-1', name: 'Phone 1', size: '1080 × 1920', file: '../templates/phone-1/phone-1.html', tint: '#a970ff' },
+        { id: 'phone-2', name: 'Phone 2', size: '1080 × 1920', file: '../templates/phone-2/phone-2.html', tint: '#73c69a' }
+      ];
+
+      function parseSize(size) {
+        var m = size.match(/(\d+)\s*×\s*(\d+)/);
+        return { w: parseInt(m[1], 10), h: parseInt(m[2], 10) };
       }
-    ];
 
-    var VIEWS = {
-      '#/studio': 'studio'
-    };
+      function ringOf(w, h) {
+        if (Math.abs(w / h - 9 / 16) < 0.01) return 'story';
+        if (Math.abs(w / h - 16 / 9) < 0.01) return 'banner';
+        if (Math.abs(w / h - 1) < 0.01) return 'square';
+        return 'other';
+      }
 
-    function renderStudio() {
-      var grid = document.getElementById('studioGrid');
-      grid.innerHTML = '';
-      TEMPLATES.forEach(function (t) {
-        var a = document.createElement('a');
-        a.className = 'studio-card';
-        a.href = t.file;
-        a.innerHTML =
-          '<div class="em">' + t.icon + '</div>' +
-          '<h3>' + t.name + '</h3>' +
-          '<div class="muted">' + t.desc + '</div>' +
-          '<span class="size">' + t.size + '</span>';
-        grid.appendChild(a);
+      function ratioLabel(w, h) {
+        if (Math.abs(w / h - 9 / 16) < 0.01) return '9:16';
+        if (Math.abs(w / h - 16 / 9) < 0.01) return '16:9';
+        if (Math.abs(w / h - 1) < 0.01) return '1:1';
+        return w + '×' + h;
+      }
+
+      var RING_NAMES = { story: 'ستوري', banner: 'بانر', square: 'مربع', other: 'قالب' };
+
+      function cardHtml(t) {
+        var dims = parseSize(t.size);
+        var ring = ringOf(dims.w, dims.h);
+        var portrait = dims.h > dims.w;
+        var deviceIcon = portrait ? 'fas fa-mobile-screen-button' : 'fas fa-laptop';
+        var ratio = ratioLabel(dims.w, dims.h);
+        var bg = 'linear-gradient(155deg, color-mix(in srgb, ' + t.tint + ' 14%, transparent), #09080f)';
+        var chip = 'background: color-mix(in srgb, ' + t.tint + ' 15%, transparent); color: ' + t.tint;
+
+        var mock;
+        if (portrait) {
+          mock =
+            '<div class="mock-phone"><div class="mock-phone-body"><div class="mock-phone-inner" style="background:#171225;gap:6px">' +
+            '<div class="mock-bar" style="width:60%;background:' + t.tint + '"></div>' +
+            '<div class="mock-bar" style="width:80%;background:var(--border-strong)"></div>' +
+            '<div class="mock-bar" style="width:45%;background:var(--border-strong)"></div>' +
+            '</div></div></div>';
+        } else {
+          mock =
+            '<div class="mock-laptop"><div class="mock-laptop-body"><div class="mock-laptop-inner" style="background:#171225">' +
+            '<div style="display:flex;gap:5px"><span style="width:4px;height:4px;border-radius:50%;background:var(--border-strong)"></span><span style="width:4px;height:4px;border-radius:50%;background:var(--border-strong)"></span></div>' +
+            '<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:5px">' +
+            '<div style="background:' + t.tint + '22;border:1px solid color-mix(in srgb, ' + t.tint + ' 40%, transparent);border-radius:4px"></div>' +
+            '<div style="background:#0f0c18;border-radius:4px"></div>' +
+            '</div></div></div>' +
+            '<div class="mock-laptop-base" style="background:linear-gradient(#171225,#09080f)"></div></div>';
+        }
+
+        return (
+          '<div class="tpl-card" data-size="' + ring + '" data-href="' + t.file + '">' +
+            '<div class="tpl-preview" style="background:' + bg + '">' +
+              '<span class="device-tag"><i class="' + deviceIcon + '" style="color:' + t.tint + '"></i> ' + ratio + '</span>' +
+              mock +
+              '<div class="tpl-overlay">' +
+                '<a class="overlay-btn primary" href="' + t.file + '"><i class="fas fa-pen"></i> استخدم</a>' +
+                '<a class="overlay-btn ghost" href="' + t.file + '"><i class="fas fa-eye"></i></a>' +
+              '</div>' +
+            '</div>' +
+            '<div class="tpl-info">' +
+              '<div class="tpl-name">' + t.name + '</div>' +
+              '<div class="tpl-meta"><span class="cat-tag" style="' + chip + '">' + RING_NAMES[ring] + '</span><span>' + t.size + '</span></div>' +
+            '</div>' +
+          '</div>'
+        );
+      }
+
+      var grid = document.getElementById('templateGrid');
+      grid.innerHTML = TEMPLATES.map(cardHtml).join('');
+      document.getElementById('tplCount').textContent = TEMPLATES.length;
+
+      var pills = document.querySelectorAll('.pill-group .pill');
+      var cards = Array.prototype.slice.call(grid.querySelectorAll('.tpl-card'));
+
+      pills.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          pills.forEach(function (b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          var f = btn.getAttribute('data-filter');
+          cards.forEach(function (c) {
+            c.classList.toggle('is-hidden', f !== 'all' && c.getAttribute('data-size') !== f);
+          });
+        });
       });
-    }
 
-    function route() {
-      var view = VIEWS[location.hash] || 'studio';
-      if (view === 'studio') renderStudio();
-    }
-
-    window.addEventListener('hashchange', route);
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', route);
-    } else {
-      route();
-    }
+      grid.addEventListener('click', function (e) {
+        if (e.target.closest('a')) return;
+        var card = e.target.closest('.tpl-card');
+        if (card && card.dataset.href) window.location.href = card.dataset.href;
+      });
+    })();
   </script>
 
 </body>
