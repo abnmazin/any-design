@@ -26,6 +26,11 @@
       --danger-dim: #e07a8a1f;
       --success: #73c69a;
       --success-dim: #73c69a1f;
+      --text-secondary: #c7c0d9;
+      --text-tertiary: #a9a2c0;
+      --skeleton: rgba(244, 241, 250, 0.18);
+      --skeleton-strong: rgba(244, 241, 250, 0.34);
+      --card-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)), var(--bg-secondary);
       color-scheme: dark;
     }
 
@@ -36,6 +41,7 @@
       font-family: 'IBM Plex Sans Arabic', system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Arabic', sans-serif;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
@@ -62,6 +68,7 @@
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
     }
 
     .brand { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
@@ -142,17 +149,17 @@
     }
     .hero-content { position: relative; z-index: 2; }
     .hero h1 { font-size: clamp(1.5rem, 2.4vw, 1.9rem); font-weight: 700; margin-bottom: 6px; letter-spacing: -0.01em; }
-    .hero p { font-size: 0.95rem; color: var(--muted); margin-bottom: 22px; }
+    .hero p { font-size: 0.95rem; color: rgba(255, 255, 255, 0.62); margin-bottom: 22px; }
 
     .stat-chips { display: flex; gap: 12px; flex-wrap: wrap; }
     .stat-chip {
-      display: flex; align-items: center; gap: 10px;
+      display: flex; align-items: center; gap: 14px;
       background: var(--bg-secondary); border: 1px solid var(--border);
-      border-radius: 14px; padding: 12px 18px;
+      border-radius: 14px; padding: 16px 22px;
     }
-    .stat-chip i { font-size: 1.05rem; color: var(--accent-strong); }
-    .stat-chip .num { font-size: 0.95rem; font-weight: 700; }
-    .stat-chip .lbl { font-size: 0.72rem; color: var(--muted); }
+    .stat-chip i { font-size: 1.15rem; color: var(--accent-strong); }
+    .stat-chip .num { font-size: 1.7rem; font-weight: 800; color: var(--text); line-height: 1.1; }
+    .stat-chip .lbl { font-size: 0.72rem; color: rgba(255, 255, 255, 0.5); }
 
     /* ===== SECTION SHELL ===== */
     .section { padding: 0 clamp(20px, 4vw, 48px); margin-bottom: 40px; }
@@ -167,10 +174,13 @@
       background: var(--bg-secondary); border: 1px solid var(--border);
       border-radius: 100px; padding: 8px 16px;
       font-size: 0.82rem; font-weight: 500; color: var(--muted);
-      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     .pill:hover { color: var(--text); border-color: var(--border-strong); }
-    .pill.active { background: var(--accent); color: #09080f; border-color: var(--accent); font-weight: 600; }
+    .pill.active {
+      background: rgba(168, 85, 247, 0.16); color: #d8b4fe;
+      border-color: rgba(168, 85, 247, 0.3); font-weight: 600;
+    }
     .pill:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
 
     /* ===== TEMPLATE GRID ===== */
@@ -182,14 +192,21 @@
     .is-hidden { display: none; }
 
     .tpl-card {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.07);
       border-radius: 18px;
       overflow: hidden;
-      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
       cursor: pointer;
     }
-    .tpl-card:hover { border-color: var(--border-strong); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.35); }
+    .tpl-card:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-4px);
+      box-shadow: 0 26px 60px rgba(0, 0, 0, 0.55);
+    }
 
     .tpl-preview {
       position: relative;
@@ -228,20 +245,20 @@
     .overlay-btn.ghost { background: color-mix(in srgb, var(--bg) 40%, transparent); border: 1px solid var(--border-strong); color: var(--text); }
 
     .tpl-info { padding: 14px 16px; }
-    .tpl-info .tpl-name { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
-    .tpl-info .tpl-meta { display: flex; align-items: center; gap: 8px; font-size: 0.72rem; color: var(--muted); }
+    .tpl-info .tpl-name { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; color: var(--text-secondary); }
+    .tpl-info .tpl-meta { display: flex; align-items: center; gap: 8px; font-size: 0.72rem; color: var(--text-tertiary); }
     .tpl-info .tpl-meta .cat-tag { padding: 2px 8px; border-radius: 100px; font-weight: 600; }
 
     /* Mini mockups built from CSS to represent preview content */
     .mock-laptop { width: 78%; }
-    .mock-laptop-body { background: #050308; border: 1.5px solid var(--border-strong); border-radius: 8px 8px 2px 2px; padding: 6px; }
+    .mock-laptop-body { background: #050308; border: 1.5px solid var(--skeleton-strong); border-radius: 8px 8px 2px 2px; padding: 6px; }
     .mock-laptop-inner { border-radius: 4px; aspect-ratio: 16/10; padding: 8px; display: flex; flex-direction: column; gap: 5px; }
-    .mock-laptop-base { height: 5px; width: 106%; margin-right: -3%; border-radius: 0 0 4px 4px; border: 1.5px solid var(--border-strong); border-top: none; }
+    .mock-laptop-base { height: 5px; width: 106%; margin-right: -3%; border-radius: 0 0 4px 4px; border: 1.5px solid var(--skeleton-strong); border-top: none; }
 
     .mock-phone { width: 34%; }
-    .mock-phone-body { background: #050308; border: 1.5px solid var(--border-strong); border-radius: 14px; padding: 5px; aspect-ratio: 9/18; }
+    .mock-phone-body { background: #050308; border: 1.5px solid var(--skeleton-strong); border-radius: 14px; padding: 5px; aspect-ratio: 9/18; }
     .mock-phone-inner { border-radius: 10px; height: 100%; padding: 8px 5px; display: flex; flex-direction: column; gap: 4px; }
-    .mock-bar { height: 4px; border-radius: 3px; }
+    .mock-bar { height: 4px; border-radius: 3px; background: var(--skeleton); }
 
     @media (max-width: 720px) {
       .main-nav, .header-search { display: none; }
@@ -343,20 +360,20 @@
         var mock;
         if (portrait) {
           mock =
-            '<div class="mock-phone"><div class="mock-phone-body"><div class="mock-phone-inner" style="background:#171225;gap:6px">' +
+            '<div class="mock-phone"><div class="mock-phone-body"><div class="mock-phone-inner" style="background:#211a38;gap:6px">' +
             '<div class="mock-bar" style="width:60%;background:' + t.tint + '"></div>' +
-            '<div class="mock-bar" style="width:80%;background:var(--border-strong)"></div>' +
-            '<div class="mock-bar" style="width:45%;background:var(--border-strong)"></div>' +
+            '<div class="mock-bar" style="width:80%;background:var(--skeleton)"></div>' +
+            '<div class="mock-bar" style="width:45%;background:var(--skeleton)"></div>' +
             '</div></div></div>';
         } else {
           mock =
-            '<div class="mock-laptop"><div class="mock-laptop-body"><div class="mock-laptop-inner" style="background:#171225">' +
-            '<div style="display:flex;gap:5px"><span style="width:4px;height:4px;border-radius:50%;background:var(--border-strong)"></span><span style="width:4px;height:4px;border-radius:50%;background:var(--border-strong)"></span></div>' +
+            '<div class="mock-laptop"><div class="mock-laptop-body"><div class="mock-laptop-inner" style="background:#211a38">' +
+            '<div style="display:flex;gap:5px"><span style="width:4px;height:4px;border-radius:50%;background:var(--skeleton-strong)"></span><span style="width:4px;height:4px;border-radius:50%;background:var(--skeleton-strong)"></span></div>' +
             '<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:5px">' +
             '<div style="background:' + t.tint + '22;border:1px solid color-mix(in srgb, ' + t.tint + ' 40%, transparent);border-radius:4px"></div>' +
-            '<div style="background:#0f0c18;border-radius:4px"></div>' +
+            '<div style="background:#2a2244;border-radius:4px"></div>' +
             '</div></div></div>' +
-            '<div class="mock-laptop-base" style="background:linear-gradient(#171225,#09080f)"></div></div>';
+            '<div class="mock-laptop-base" style="background:linear-gradient(#211a38,#0b0912)"></div></div>';
         }
 
         return (
