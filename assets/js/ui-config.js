@@ -129,7 +129,28 @@ const STYLE = `
             border: 1px solid rgba(255, 255, 255, 0.18); display: inline-flex;
             align-items: center; justify-content: center; }
         .palette-swatch i { color: #60efff; font-size: 0.85rem; }
+        .palette-swatch.dim { background: rgba(255, 255, 255, 0.06); }
         .palette-name { color: #7893ab; font-size: 0.72rem; }
+
+        /* Color tools (AI + custom) */
+        .color-tools { display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px; }
+        .color-tool-box, .icon-tool-box { background: rgba(10, 22, 40, 0.55); border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+        .color-tool-title, .icon-tool-title { color: #60efff; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.3px;
+            display: flex; align-items: center; gap: 6px; text-transform: uppercase; }
+        .color-tool-title i, .icon-tool-title i { font-size: 0.85rem; }
+        .icon-tool-hint { color: #7893ab; font-size: 0.74rem; line-height: 1.6; margin: 0; }
+        .icon-tool-box .ai-regenerate { font-size: 0.8rem; padding: 8px; }
+        .color-ai-input { width: 100%; min-height: 68px; resize: vertical; background: rgba(10, 22, 40, 0.6);
+            border: 1px solid rgba(96, 239, 255, 0.16); color: #f0f8ff; padding: 10px 12px;
+            border-radius: 10px; font: inherit; font-size: 0.8rem; }
+        .color-ai-input:focus { outline: none; border-color: #60efff; box-shadow: 0 0 0 3px rgba(96, 239, 255, 0.14); }
+        .color-picker-row { display: flex; align-items: center; gap: 10px; }
+        .color-picker-row input[type="color"] { width: 44px; height: 32px; border: 1px solid rgba(96, 239, 255, 0.2);
+            border-radius: 8px; background: rgba(10, 22, 40, 0.6); padding: 2px; cursor: pointer; }
+        .color-picker-row label { color: #7893ab; font-size: 0.72rem; flex: 1; }
+        .color-preview-row { display: flex; gap: 5px; }
+        .color-preview-row .palette-swatch { flex: 1; width: auto; height: 26px; border-radius: 8px; }
 
         /* ---- Top bar ---- */
         .es-export-btn { display: inline-flex; align-items: center; gap: 8px; }
@@ -162,6 +183,7 @@ const STYLE = `
         .editor-page .canvas-stage, .editor-page .story-stage, .editor-page .wedding-stage {
             width: 100%; height: calc(100vh - 60px); min-height: 0; padding: 24px 12px; overflow: hidden;
             display: flex; align-items: center; justify-content: center; }
+        .editor-page .canvas-wrapper, .editor-page .card-frame { flex: 0 0 auto; }
         .editor-page { max-width: 100%; height: 100vh; overflow: hidden; }
         @media (max-width: 640px) { #editorSidebar { width: min(320px, 100vw); } }
     `;
@@ -212,6 +234,13 @@ function contentPaneHtml() {
 
 function brandPaneHtml() {
     return '<div class="cf-section"><div class="cf-section-title">اللوغو</div>'
+        + '<div class="icon-tool-box">'
+        + '<div class="icon-tool-title"><i class="fas fa-wand-magic-sparkles"></i> أيقونة بالوصف</div>'
+        + '<p class="icon-tool-hint">يقرأ نص الصندوق المحدد ويختار أيقونة تناسبه.</p>'
+        + '<button class="ai-action" id="iconAiBtn" type="button"><i class="fas fa-icons"></i> اختيار أيقونة</button>'
+        + '<button class="ai-regenerate" id="iconAiRegenerate" type="button" disabled><i class="fas fa-rotate"></i> إعادة اختيار</button>'
+        + '<div class="ai-status" id="iconAiStatus" aria-live="polite"></div>'
+        + '</div>'
         + '<div class="logo-grid" id="logoGrid"></div>'
         + '<div class="es-hint" style="margin-top:12px;">التصميم مقفل: لا يمكن سحب العناصر أو تغيير أحجامها. غيّر النصوص من نموذج الإعدادات.</div>'
         + '</div>';
@@ -242,7 +271,25 @@ export function buildUI() {
                 <div class="es-body">
                     <div class="es-pane active" data-pane="content">${contentPaneHtml()}</div>
                     <div class="es-pane" data-pane="brand">${brandPaneHtml()}</div>
-                    <div class="es-pane" data-pane="colors"><div class="palette-grid" id="paletteGrid"></div></div>
+                    <div class="es-pane" data-pane="colors"><div class="color-tools">
+                        <div class="color-tool-box">
+                            <div class="color-tool-title"><i class="fas fa-wand-magic-sparkles"></i> ألوان بالوصف</div>
+                            <textarea class="color-ai-input" id="colorAiInput" placeholder="صف ألوان التصميم… مثل: ألوان فاتحة هادئة لتطبيق مطعم راقي" aria-label="وصف الألوان"></textarea>
+                            <button class="ai-action color-ai-btn" id="colorAiBtn" type="button"><i class="fas fa-palette"></i> توليد الألوان</button>
+                            <button class="ai-regenerate color-ai-regenerate" id="colorAiRegenerate" type="button" disabled><i class="fas fa-rotate"></i> إعادة توليد</button>
+                            <div class="color-preview-row" id="colorAiPreview"></div>
+                            <div class="ai-status color-ai-status" id="colorAiStatus" aria-live="polite"></div>
+                        </div>
+                        <div class="color-tool-box">
+                            <div class="color-tool-title"><i class="fas fa-sliders"></i> ألوان مخصصة</div>
+                            <div class="color-picker-row"><label for="customColor1">اللون الأول (داكن)</label><input type="color" id="customColor1" value="#1e3a8a"></div>
+                            <div class="color-picker-row"><label for="customColor2">اللون الثاني (أساسي)</label><input type="color" id="customColor2" value="#60efff"></div>
+                            <div class="color-picker-row"><label for="customColor3">اللون الثالث (فاتح)</label><input type="color" id="customColor3" value="#a5f3fc"></div>
+                            <button class="ai-action color-custom-btn" id="colorCustomBtn" type="button"><i class="fas fa-check"></i> تطبيق الألوان</button>
+                            <div class="color-preview-row" id="colorCustomPreview"></div>
+                        </div>
+                    </div>
+                    <div class="palette-grid" id="paletteGrid"></div></div>
                     <div class="es-pane" data-pane="ai"><div class="ai-pane">
                         <div class="ai-head"><i class="fas fa-robot"></i><h4 class="ai-title">مساعد AI</h4></div>
                         <p class="ai-description">اكتب وصفًا لتصميمك وسيملأ المساعد جميع الحقول النصية تلقائيًا: العنوان، الوصف، البطاقات، وأزرار الدعوة.</p>

@@ -50,9 +50,11 @@ function aiProxyPlugin(env) {
     };
 }
 
-// Server-side proxy for the AI auto-fill feature. The Groq API key lives in
-// .env (git-ignored) and never reaches the browser; the editor calls
-// POST /api/ai/fill with { prompt, schema } and receives { fields }.
+// Server-side proxy for the AI features. The Groq API key lives in .env
+// (git-ignored) and never reaches the browser; the editor calls
+// POST /api/ai/fill with { prompt, schema } and receives { fields },
+// POST /api/ai/colors with { prompt } and receives { colors: [...3 hex...] },
+// or POST /api/ai/icon with { prompt, icons } and receives { icon: "fa-…" }.
 // When the active model is rate-limited, down, or rejects the JSON mode, the
 // proxy automatically moves to the next model in the chain before giving up.
 // Required env vars (see .env):
@@ -71,7 +73,10 @@ function aiProxyMiddleware(apiKey, models) {
 
     return async (req, res, next) => {
         if (req.method !== 'POST') return next();
-        if (req.url.split('?')[0] !== '/api/ai/fill') return next();
+        const path = req.url.split('?')[0];
+        const route = path === '/api/ai/colors' ? 'colors'
+            : (path === '/api/ai/fill' ? 'fill' : (path === '/api/ai/icon' ? 'icon' : null));
+        if (!route) return next();
 
         const json = (code, payload) => {
             res.writeHead(code, { 'content-type': 'application/json', 'cache-control': 'no-store' });
@@ -85,22 +90,32 @@ function aiProxyMiddleware(apiKey, models) {
             return json(400, { error: 'bad_request', message: String(err.message || 'invalid request') });
         }
 
-        let prompt, schema, options;
+        let prompt, schema, options, icons;
         try {
             const parsed = JSON.parse(body || '{}');
             prompt = String(parsed.prompt || '').trim();
             schema = Array.isArray(parsed.schema) ? parsed.schema : [];
             options = parsed.options && typeof parsed.options === 'object' ? parsed.options : {};
+            icons = Array.isArray(parsed.icons) ? parsed.icons : [];
         } catch {
             return json(400, { error: 'bad_request', message: 'invalid JSON body' });
         }
 
         if (!apiKey) return json(503, { error: 'not_configured' });
-        if (!prompt || !schema.length) return json(400, { error: 'bad_request', message: 'prompt and schema are required' });
+        if (!prompt) return json(400, { error: 'bad_request', message: 'prompt is required' });
+        if (route === 'fill' && !schema.length) return json(400, { error: 'bad_request', message: 'schema is required for /api/ai/fill' });
+
+        // Icon-candidate list for the /api/ai/icon route: the model may only
+        // pick one of these codenames, so validate/dedupe here.
+        const iconName = /^[\w-]+$/;
+        const allowedIcons = Array.from(new Set(icons
+            .map((icon) => String(icon).trim().toLowerCase())
+            .filter((icon) => iconName.test(icon))))
+            .slice(0, 400);
 
         // Client-chosen generation settings: temperature seeds creativity, and
-        // the variation number nudges the model toward a fresh copy each run so
-        // "regenerate" produces another context, not a duplicate.
+        // the variation number nudges the model toward a fresh result each run
+        // so "regenerate" produces another output, not a duplicate.
         const temperature = Math.min(1, Math.max(0, Number(options.temperature) || 0.3));
         const variation = Number(options.variation) > 0 ? Number(options.variation) : 1;
 
@@ -119,13 +134,55 @@ function aiProxyMiddleware(apiKey, models) {
             }
         };
 
+        const systemPrompts = {
+            fill: [
+                'You are a design copywriter for Arabic advertising templates.',
+                'You receive a JSON schema describing the fields of the currently open design.',
+                'Each field has bindTo (the field key), label (the human label, Arabic), and value (the current text).',
+                'The user gives a free-form request describing the brand and offer they want.',
+                'Rewrite the field values so the whole design matches the request.',
+                'Return ONLY a valid JSON object with one entry per schema key. The value is a concise, fluent string',
+                'appropriate to that field: titles/headings short, body features a sentence or two, CTA short.',
+                'Keep the Arabic length close to the current value length so the design does not overflow.',
+                'Never invent keys outside the schema. Respond in Arabic unless the request is clearly for another language.',
+                'The variation number changes on every run: when it changed, return distinctly different wording for the same request.',
+            ].join(' '),
+            colors: [
+                'You are a professional color palette designer for Arabic advertising templates.',
+                'The user describes a brand, mood, or design in free-form Arabic.',
+                'Choose exactly 3 harmonious hex colors (#rrggbb) that fit the request: one deep base, one vivid',
+                'accent, and one light highlight.',
+                'Return ONLY a valid JSON object of the form {"colors": ["#111111", "#ff8800", "#ffddaa"]} with exactly 3 entries.',
+                'Prefer colors that work well together on a dark background with white text.',
+                'The variation number changes on every run: when it changed, return a distinct but equally fitting palette.',
+            ].join(' '),
+            icon: [
+                'You are an icon picker for Arabic advertising templates.',
+                'The user gives the current text of a box that sits next to an icon: a card heading, a brand title,',
+                'or a logo name. "icons" is the flat list of allowed FontAwesome codename candidates.',
+                'Choose the single codename from "icons" that best represents the box text (e.g. "دفتر الديون" → "book-open",',
+                '"محفظة" → "wallet", "مطعم" → "utensils").',
+                'Return ONLY a valid JSON object of the form {"icon": "codename-plural"} where the value is one of the',
+                'exact codenames from the allowed list, no "fa-" prefix.',
+                'Pick only from the provided list; never invent a codename.',
+                'The variation number changes on every run: when it changed, return a distinct but still fitting codename.',
+            ].join(' '),
+        };
+        const systemPrompt = systemPrompts[route];
+
+        const toUserContent = () => {
+            const base = { prompt, schema, variation };
+            if (route === 'icon') base.icons = allowedIcons;
+            return JSON.stringify(base);
+        };
+
         const callGroq = async (currentModel, jsonMode) => {
             const payload = {
                 model: currentModel,
                 temperature,
                 messages: [
                     { role: 'system', content: systemPrompt },
-                    { role: 'user', content: JSON.stringify({ prompt, schema, variation }) },
+                    { role: 'user', content: toUserContent() },
                 ],
             };
             // Some models reject the strict json_object schema; try it first,
@@ -141,18 +198,32 @@ function aiProxyMiddleware(apiKey, models) {
             return { status: groqRes.status, groq };
         };
 
-        const systemPrompt = [
-            'You are a design copywriter for Arabic advertising templates.',
-            'You receive a JSON schema describing the fields of the currently open design.',
-            'Each field has bindTo (the field key), label (the human label, Arabic), and value (the current text).',
-            'The user gives a free-form request describing the brand and offer they want.',
-            'Rewrite the field values so the whole design matches the request.',
-            'Return ONLY a valid JSON object with one entry per schema key. The value is a concise, fluent string',
-            'appropriate to that field: titles/headings short, body features a sentence or two, CTA short.',
-            'Keep the Arabic length close to the current value length so the design does not overflow.',
-            'Never invent keys outside the schema. Respond in Arabic unless the request is clearly for another language.',
-            'The variation number changes on every run: when it changed, return distinctly different wording for the same request.',
-        ].join(' ');
+        // Route-specific post-processing: build the accepted payload from the
+        // parsed model JSON, else null.
+        const toPayload = (fields) => {
+            if (route === 'fill') {
+                const allowed = new Set(schema.map((f) => f.bindTo));
+                const safeFields = {};
+                Object.keys(fields).forEach((key) => {
+                    if (allowed.has(key)) safeFields[key] = String(fields[key]).trim();
+                });
+                return Object.keys(safeFields).length ? { fields: safeFields } : null;
+            }
+            if (route === 'colors') {
+                const colors = Array.isArray(fields.colors) ? fields.colors : [];
+                if (colors.length !== 3) return null;
+                const hex6 = /^#[0-9a-fA-F]{6}$/;
+                if (!colors.every((color) => hex6.test(String(color).trim()))) return null;
+                return { colors: colors.map((color) => String(color).trim().toLowerCase()) };
+            }
+            if (route === 'icon') {
+                const allowed = new Set(allowedIcons);
+                const icon = String(fields.icon || '').trim().toLowerCase();
+                if (!allowed.has(icon)) return null;
+                return { icon: 'fa-' + icon };
+            }
+            return null;
+        };
 
         const attempts = [];
         for (const currentModel of models) {
@@ -179,21 +250,13 @@ function aiProxyMiddleware(apiKey, models) {
 
                 const content = groq.choices && groq.choices[0] && groq.choices[0].message && groq.choices[0].message.content;
                 const fields = extractFields(content);
-                if (!fields) {
+                const payload = fields && toPayload(fields);
+                if (!payload) {
                     attempts.push({ model: currentModel, stage: jsonMode ? 'json' : 'plain', status, reason: 'invalid JSON in response' });
                     continue;
                 }
 
-                const allowed = new Set(schema.map((f) => f.bindTo));
-                const safeFields = {};
-                Object.keys(fields).forEach((key) => {
-                    if (allowed.has(key)) safeFields[key] = String(fields[key]).trim();
-                });
-                if (!Object.keys(safeFields).length) {
-                    attempts.push({ model: currentModel, stage: jsonMode ? 'json' : 'plain', status, reason: 'no valid fields returned' });
-                    continue;
-                }
-                return json(200, { fields: safeFields, usedModel: currentModel });
+                return json(200, Object.assign({ usedModel: currentModel }, payload));
             }
         }
 

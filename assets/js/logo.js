@@ -42,6 +42,32 @@ function logoTargets() {
     return Array.from(document.querySelectorAll(LOGO_TARGET_SELECTOR));
 }
 
+// Current icon target (<i> element) for tools that operate on the selection.
+export function getSelectedTarget() {
+    const targets = logoTargets();
+    if (!selectedTarget || !selectedTarget.isConnected) selectedTarget = targets[0] || null;
+    return selectedTarget;
+}
+
+// Compact codenames (no "fa-" prefix) for the AI icon route; scoped to the
+// active category when one is chosen so the model picks within it.
+export function aiIconCatalog() {
+    return LOGO_CATALOG
+        .filter((lg) => selectedCategory === 'all' || lg.category === selectedCategory)
+        .map((lg) => lg.icon.slice(3));
+}
+
+// Apply a catalogue icon (e.g. "fa-wallet") to the selected target and mirror
+// the highlight in the grid, same as clicking a tile.
+export function selectIcon(iconName) {
+    const target = getSelectedTarget();
+    if (!target) return false;
+    target.className = 'fas ' + iconName;
+    document.querySelectorAll('.logo-item').forEach((x) =>
+        x.classList.toggle('active', x.dataset.icon === iconName));
+    return true;
+}
+
 function targetLabel(icon, index) {
     const card = icon.closest('.feature-card');
     if (card) {
@@ -101,8 +127,7 @@ export function renderLogos() {
         item.addEventListener('mousedown', (e) => e.stopPropagation());
         item.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (selectedTarget) selectedTarget.className = 'fas ' + lg.icon;
-            grid.querySelectorAll('.logo-item').forEach((x) => x.classList.toggle('active', x === item));
+            selectIcon(lg.icon);
         });
         items.appendChild(item);
     });
@@ -112,7 +137,8 @@ export function renderLogos() {
 export function syncLogoActive() {
     const first = document.querySelector(LOGO_TARGET_SELECTOR);
     if (!first) return;
+    const classes = new Set(first.className.split(/\s+/));
     document.querySelectorAll('.logo-item').forEach((x) => {
-        x.classList.toggle('active', first.className.includes(x.dataset.icon));
+        x.classList.toggle('active', classes.has(x.dataset.icon));
     });
 }

@@ -28,6 +28,12 @@ const OVERRIDABLE_VARS = Array.from(new Set(
 
 const PALETTES = [
     {
+        id: 'custom',
+        name: 'مخصص',
+        swatches: [],
+        roles: {},
+    },
+    {
         id: 'default',
         name: 'افتراضي',
         swatches: [],
@@ -94,7 +100,7 @@ let currentPaletteId = 'default';
 // Reset whatever palette state was previously applied, then write the current
 // palette's roles onto the canvas root. The default palette only resets so the
 // template's original :root values take effect again.
-function applyRoles(roles) {
+export function applyRoles(roles) {
     const root = canvasRoot();
     if (!root) return;
     OVERRIDABLE_VARS.forEach((name) => root.style.removeProperty(name));
@@ -114,9 +120,22 @@ function applyRoles(roles) {
 
 export function applyPalette(id) {
     const palette = PALETTES.find((p) => p.id === id) || PALETTES[0];
+    if (palette.id === 'custom' && !palette.swatches.length) return;
     currentPaletteId = palette.id;
     applyRoles(palette.roles);
     syncPaletteActive();
+}
+
+// Store a manually picked or AI-generated color set as the "custom" palette,
+// apply it to the canvas, and re-render its card so the swatches show.
+export function applyCustomPalette(swatches, roles) {
+    const custom = PALETTES.find((p) => p.id === 'custom');
+    if (!custom) return;
+    custom.swatches = swatches.slice(0, 3);
+    custom.roles = roles;
+    currentPaletteId = 'custom';
+    applyRoles(roles);
+    renderPalettes();
 }
 
 export function renderPalettes() {
@@ -128,25 +147,38 @@ export function renderPalettes() {
         const card = document.createElement('div');
         card.className = 'palette-card';
         card.dataset.palette = palette.id;
+        const swatches = document.createElement('div');
+        swatches.className = 'palette-swatches';
+        if (palette.id === 'custom' && !palette.swatches.length) {
+            // Empty custom card: three placeholder slots until the user picks
+            // or generates colors.
+            for (let i = 0; i < 3; i++) {
+                const swatch = document.createElement('span');
+                swatch.className = 'palette-swatch dim';
+                swatches.appendChild(swatch);
+            }
+            card.appendChild(swatches);
+            const name = document.createElement('span');
+            name.className = 'palette-name';
+            name.textContent = palette.name;
+            card.appendChild(name);
+            items.appendChild(card);
+            return;
+        }
         if (palette.swatches.length) {
-            const swatches = document.createElement('div');
-            swatches.className = 'palette-swatches';
             palette.swatches.forEach((color) => {
                 const swatch = document.createElement('span');
                 swatch.className = 'palette-swatch';
                 swatch.style.background = color;
                 swatches.appendChild(swatch);
             });
-            card.appendChild(swatches);
         } else {
-            const swatches = document.createElement('div');
-            swatches.className = 'palette-swatches';
             const reset = document.createElement('span');
             reset.className = 'palette-swatch';
             reset.innerHTML = '<i class="fas fa-rotate-left"></i>';
             swatches.appendChild(reset);
-            card.appendChild(swatches);
         }
+        card.appendChild(swatches);
         const name = document.createElement('span');
         name.className = 'palette-name';
         name.textContent = palette.name;

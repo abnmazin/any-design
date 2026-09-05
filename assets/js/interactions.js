@@ -38,6 +38,15 @@ export function updateCanvasScale() {
     const h = wrapper.offsetHeight;
     if (!w || !h) return;
     const drawerW = drawer ? drawer.offsetWidth : 0;
+    // Center the canvas within the area visible beside the fixed drawer, not
+    // across the whole viewport (the drawer overlays the left side).
+    if (drawerW > 0 && drawerW < window.innerWidth) {
+        stage.style.marginLeft = drawerW + 'px';
+        stage.style.width = (window.innerWidth - drawerW) + 'px';
+    } else {
+        stage.style.marginLeft = '';
+        stage.style.width = '';
+    }
     const availW = window.innerWidth - drawerW - 24;
     const availH = window.innerHeight - 60;
     const ratio = Math.min(availW / w, availH / h, 1) * 0.9 * state.userZoom;

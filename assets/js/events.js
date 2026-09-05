@@ -5,27 +5,10 @@
 import { state } from './state.js';
 import { applyZoom, updateCanvasScale, canvasRoot } from './interactions.js';
 import { syncLogoActive, renderLogos } from './logo.js';
+import { initIconTools } from './icon-tools.js';
 import { renderPalettes } from './palettes.js';
+import { initColorTools } from './color-tools.js';
 import { exportCanvas } from './export.js';
-
-// Each tool maps to a sidebar pane. For a strict template generator the
-// panes are the content form (إعدادات التصميم), the brand picker (العلامة),
-// the palette picker (الألوان), and the AI auto-fill.
-const TAB_LABELS = {
-    content: 'إعدادات التصميم',
-    brand: 'العلامة',
-    colors: 'الألوان',
-    ai: 'AI',
-};
-
-function activatePane(pane) {
-    document.querySelectorAll('.es-tab').forEach((tab) => tab.classList.toggle('active', tab.dataset.tab === pane));
-    document.querySelectorAll('.es-pane').forEach((paneEl) =>
-        paneEl.classList.toggle('active', paneEl.dataset.pane === pane));
-    const titleEl = document.getElementById('esTitle');
-    if (titleEl) titleEl.textContent = TAB_LABELS[pane] || pane;
-    if (pane === 'brand') syncLogoActive();
-}
 
 export function bind() {
     // sidebar tabs
@@ -40,9 +23,11 @@ export function bind() {
 
     // brand logo grid
     renderLogos();
+    initIconTools();
 
     // palette picker
     renderPalettes();
+    initColorTools();
 
     // export button (top navbar) triggers the html-to-image PNG capture.
     document.querySelector('.save-btn').addEventListener('click', exportCanvas);
