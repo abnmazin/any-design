@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glass Login — Demo</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(135deg, #050b18 0%, #0a1628 50%, #101f3c 100%);
+      position: relative;
+    }
+
+    /* Animated gradient blobs */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.55;
+      will-change: transform;
+      z-index: 0;
+    }
+    .blob-a {
+      width: 420px;
+      height: 420px;
+      top: -90px;
+      left: -80px;
+      background: radial-gradient(circle at 30% 30%, #0061ff, transparent 70%);
+      animation: drift-a 22s ease-in-out infinite;
+    }
+    .blob-b {
+      width: 360px;
+      height: 360px;
+      bottom: -80px;
+      right: -60px;
+      background: radial-gradient(circle at 60% 40%, #60efff, transparent 70%);
+      animation: drift-b 26s ease-in-out infinite;
+    }
+    .blob-c {
+      width: 300px;
+      height: 300px;
+      top: 40%;
+      left: 55%;
+      background: radial-gradient(circle at 50% 50%, #a970ff, transparent 70%);
+      animation: drift-c 24s ease-in-out infinite;
+    }
+
+    @keyframes drift-a {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(60px, 40px) scale(1.15); }
+      66% { transform: translate(-30px, 90px) scale(0.95); }
+    }
+    @keyframes drift-b {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      40% { transform: translate(-70px, -50px) scale(1.2); }
+      75% { transform: translate(40px, -20px) scale(0.9); }
+    }
+    @keyframes drift-c {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-90px, -70px) scale(1.25); }
+    }
+
+    .demo-badge {
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      z-index: 3;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 0.75rem;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 6px 12px;
+      border-radius: 999px;
+      backdrop-filter: blur(8px);
+    }
+
+    section {
+      position: relative;
+      z-index: 1;
+      max-width: 400px;
+      width: 100%;
+      margin: 0 20px;
+      background-color: transparent;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      border-radius: 20px;
+      backdrop-filter: blur(55px);
+      -webkit-backdrop-filter: blur(55px);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 3rem;
+    }
+
+    form {
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #fff;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .inputbox {
+      position: relative;
+      margin: 30px 0;
+      max-width: 310px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.6);
+      transition: border-color 0.4s ease;
+    }
+    .inputbox:focus-within {
+      border-color: #60efff;
+    }
+
+    .inputbox label {
+      position: absolute;
+      top: 50%;
+      left: 5px;
+      transform: translateY(-50%);
+      color: #fff;
+      font-size: 1rem;
+      pointer-events: none;
+      transition: all 0.5s ease-in-out;
+    }
+
+    .inputbox input:focus ~ label,
+    .inputbox input:not(:placeholder-shown) ~ label {
+      top: -5px;
+      font-size: 0.8rem;
+      color: #60efff;
+    }
+
+    .inputbox input {
+      width: 100%;
+      height: 60px;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      padding: 0 35px 0 5px;
+      color: #fff;
+    }
+
+    .inputbox input::placeholder {
+      color: transparent;
+    }
+
+    .inputbox i {
+      position: absolute;
+      right: 8px;
+      top: 20px;
+      color: #fff;
+      font-size: 1.2rem;
+      transition: color 0.3s ease;
+    }
+    .inputbox:focus-within i {
+      color: #60efff;
+    }
+
+    .forget {
+      margin: 35px 0;
+      font-size: 0.85rem;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .forget label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .forget label input {
+      margin-right: 6px;
+      accent-color: #60efff;
+      width: 14px;
+      height: 14px;
+    }
+
+    .forget a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .forget a:hover {
+      text-decoration: underline;
+    }
+
+    button {
+      width: 100%;
+      height: 44px;
+      border-radius: 40px;
+      background-color: #fff;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #050b18;
+      transition: all 0.4s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: rgba(255, 255, 255, 0.5);
+      color: #0a1628;
+      box-shadow: 0 8px 24px rgba(96, 239, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    button:disabled {
+      opacity: 0.7;
+      cursor: default;
+    }
+
+    .register {
+      font-size: 0.9rem;
+      color: #fff;
+      text-align: center;
+      margin: 25px 0 10px;
+    }
+
+    .register p a {
+      text-decoration: none;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .register p a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      section {
+        padding: 2rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <span class="demo-badge"><i class="fas fa-flask"></i> Standalone demo page</span>
+
+  <div class="blob blob-a"></div>
+  <div class="blob blob-b"></div>
+  <div class="blob blob-c"></div>
+
+  <section>
+    <form id="loginForm" novalidate>
+      <h1>Login</h1>
+
+      <div class="inputbox">
+        <i class="fas fa-envelope"></i>
+        <input type="email" id="email" placeholder=" " required>
+        <label for="email">Email</label>
+      </div>
+
+      <div class="inputbox">
+        <i class="fas fa-lock"></i>
+        <input type="password" id="password" placeholder=" " required>
+        <label for="password">Password</label>
+      </div>
+
+      <div class="forget">
+        <label for="remember"><input type="checkbox" id="remember"> Remember me</label>
+        <a href="#">Forget Password</a>
+      </div>
+
+      <button type="submit" id="submitBtn"><span>Log in</span> <i class="fas fa-arrow-right-to-bracket"></i></button>
+
+      <div class="register">
+        <p>Don't have an account? <a href="#">Register</a></p>
+      </div>
+    </form>
+  </section>
+
+  <script>
+    const formEl = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const emailEl = document.getElementById('email');
+    const passwordEl = document.getElementById('password');
+
+    submitBtn.addEventListener('click', function (event) {
+      event.preventDefault();
+      if (!emailEl.value.trim() || !passwordEl.value.trim()) {
+        submitBtn.innerHTML = '<i class="fas fa-circle-exclamation"></i><span>Fill both fields</span>';
+        return;
+      }
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Signing in…</span>';
+      setTimeout(function () {
+        submitBtn.innerHTML = '<i class="fas fa-circle-check"></i><span>Welcome back!</span>';
+        setTimeout(function () {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span>Log in</span> <i class="fas fa-arrow-right-to-bracket"></i>';
+        }, 1800);
+      }, 1200);
+    });
+  </script>
+</body>
+</html>
