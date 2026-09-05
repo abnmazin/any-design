@@ -1,37 +1,37 @@
 /* ============================================================
-   المركزية الحديثة — الأنماط المشتركة
-   ثيم داكن: أزرق كحلي عميق + سماوي (#0061FF -> #60EFFF)
+   Any Design — الأنماط المشتركة
+   ثيم داكن: بنفسجي AnyDesire (#6E3CBC -> #C18AFF)
    ============================================================ */
 :root {
-  --bg-main: #050b18;
-  --bg-deep: #030711;
-  --bg-surface: #0a1628;
-  --bg-surface-raised: #10213a;
-  --bg-surface-soft: rgba(10, 22, 40, 0.72);
+  --bg-main: #09080f;
+  --bg-deep: #050308;
+  --bg-surface: #100d1a;
+  --bg-surface-raised: #171225;
+  --bg-surface-soft: rgba(16, 13, 26, 0.72);
 
-  --accent-blue: #0061ff;
-  --accent-blue-dark: #0047c7;
-  --accent-cyan: #60efff;
-  --accent-cyan-soft: #b8f8ff;
+  --accent-blue: #6e3cbc;
+  --accent-blue-dark: #542ba0;
+  --accent-cyan: #a970ff;
+  --accent-cyan-soft: #c18aff;
   --gradient-primary: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-cyan) 100%);
 
-  --text-primary: #f0f8ff;
-  --text-secondary: #b6ccdf;
-  --text-muted: #7893ab;
-  --text-disabled: #50677d;
+  --text-primary: #f4f1fa;
+  --text-secondary: #cfc7dd;
+  --text-muted: #a8a1b8;
+  --text-disabled: #6e6590;
 
-  --border-subtle: rgba(96, 239, 255, 0.15);
-  --border-visible: rgba(96, 239, 255, 0.30);
-  --border-focus: rgba(96, 239, 255, 0.75);
+  --border-subtle: rgba(169, 112, 255, 0.18);
+  --border-visible: rgba(169, 112, 255, 0.34);
+  --border-focus: rgba(193, 138, 255, 0.75);
 
-  --shadow-soft: 0 8px 30px rgba(0, 15, 45, 0.35);
-  --shadow-heavy: 0 24px 60px rgba(0, 5, 20, 0.60);
-  --glow-blue: 0 0 24px rgba(0, 97, 255, 0.28);
-  --glow-cyan: 0 0 24px rgba(96, 239, 255, 0.22);
+  --shadow-soft: 0 8px 30px rgba(16, 10, 30, 0.35);
+  --shadow-heavy: 0 24px 60px rgba(0, 0, 10, 0.60);
+  --glow-blue: 0 0 24px rgba(110, 60, 188, 0.28);
+  --glow-cyan: 0 0 24px rgba(169, 112, 255, 0.22);
 
-  --success: #35d49a;
+  --success: #73c69a;
   --warning: #ffc857;
-  --danger: #ff6b7a;
+  --danger: #e07a8a;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -39,9 +39,9 @@
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Cairo', sans-serif;
-  background: radial-gradient(1200px 700px at 85% -10%, rgba(96, 239, 255, 0.10), transparent 60%),
-              radial-gradient(1000px 600px at -10% 110%, rgba(0, 97, 255, 0.12), transparent 55%),
+  font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
+  background: radial-gradient(1200px 700px at 85% -10%, rgba(169, 112, 255, 0.10), transparent 60%),
+              radial-gradient(1000px 600px at -10% 110%, rgba(110, 60, 188, 0.12), transparent 55%),
               var(--bg-main);
   color: var(--text-primary);
   min-height: 100vh;
@@ -72,8 +72,8 @@ button { font-family: inherit; }
   font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.18s ease;
 }
 .btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); transform: translateY(-1px); }
-.btn.primary { background: var(--gradient-primary); border-color: transparent; color: #050b18; }
-.btn.primary:hover { box-shadow: 0 8px 22px rgba(0, 97, 255, 0.45); color: #050b18; }
+.btn.primary { background: var(--gradient-primary); border-color: transparent; color: #09080f; }
+.btn.primary:hover { box-shadow: 0 8px 22px rgba(110, 60, 188, 0.45); color: #09080f; }
 
 /* ---- Cards ---- */
 .card {
@@ -128,7 +128,7 @@ button { font-family: inherit; }
 .editor-top-bar .profile-avatar {
   width: 32px; height: 32px; border-radius: 50%; background: var(--accent-cyan);
   display: flex; align-items: center; justify-content: center;
-  font-weight: bold; color: #050b18; cursor: pointer;
+  font-weight: bold; color: #09080f; cursor: pointer;
 }
 
 /* Dead now that the toolbar is injected/removed by editor-panel.js */
@@ -138,7 +138,7 @@ button { font-family: inherit; }
 }
 .canvas-wrapper { position: relative; overflow: hidden; background: #fff; box-shadow: var(--shadow-heavy); }
 .canvas-wrapper [contenteditable="true"] { outline: none; cursor: text; }
-.canvas-wrapper [contenteditable="true"]:focus { outline: 1px dashed rgba(96, 239, 255, 0.6); }
+.canvas-wrapper [contenteditable="true"]:focus { outline: 1px dashed rgba(169, 112, 255, 0.6); }
 .logo-box i { color: inherit; }
 
 /* ---- Canva-style tool rail (left sidebar) ---- */
