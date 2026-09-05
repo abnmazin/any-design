@@ -5,66 +5,26 @@
 import { state } from './state.js';
 import { applyZoom, updateCanvasScale, canvasRoot } from './interactions.js';
 import { syncLogoActive, renderLogos } from './logo.js';
+import { renderPalettes } from './palettes.js';
 import { exportCanvas } from './export.js';
 
-// Each tool maps to a sidebar pane. For a strict template generator the only
-// panes are the content form (إعدادات التصميم) and the brand picker (العلامة).
-const TOOL_PANES = {
-    content: 'content',
-    brand: 'brand',
-};
-
-const TOOL_LABELS = {
+// Each tool maps to a sidebar pane. For a strict template generator the
+// panes are the content form (إعدادات التصميم), the brand picker (العلامة),
+// the palette picker (الألوان), and the AI auto-fill.
+const TAB_LABELS = {
     content: 'إعدادات التصميم',
     brand: 'العلامة',
+    colors: 'الألوان',
+    ai: 'AI',
 };
-
-function openSidebar() {
-    const sidebar = document.getElementById('editorSidebar');
-    if (sidebar) sidebar.classList.add('is-open');
-}
-
-function closeSidebar() {
-    const sidebar = document.getElementById('editorSidebar');
-    if (sidebar) sidebar.classList.remove('is-open');
-    // Clearing the active tool keeps the rail visually consistent with the
-    // closed state and makes re-clicking the same tool reopen the panel.
-    document.querySelectorAll('.tool-rail button').forEach((b) => b.classList.remove('active'));
-}
 
 function activatePane(pane) {
     document.querySelectorAll('.es-tab').forEach((tab) => tab.classList.toggle('active', tab.dataset.tab === pane));
     document.querySelectorAll('.es-pane').forEach((paneEl) =>
         paneEl.classList.toggle('active', paneEl.dataset.pane === pane));
+    const titleEl = document.getElementById('esTitle');
+    if (titleEl) titleEl.textContent = TAB_LABELS[pane] || pane;
     if (pane === 'brand') syncLogoActive();
-}
-
-function onToolClick(e) {
-    const btn = e.target.closest('.tool-rail button');
-    if (!btn) return;
-    const tool = btn.dataset.tool;
-    if (!tool) return;
-    const pane = TOOL_PANES[tool];
-    const sidebar = document.getElementById('editorSidebar');
-
-    if (btn.classList.contains('active')) {
-        btn.classList.remove('active');
-        closeSidebar();
-        updateCanvasScale();
-        return;
-    }
-
-    document.querySelectorAll('.tool-rail button').forEach((b) => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    if (pane) {
-        document.getElementById('esTitle').textContent = TOOL_LABELS[tool];
-        activatePane(pane);
-        openSidebar();
-    } else {
-        closeSidebar();
-    }
-    updateCanvasScale();
 }
 
 export function bind() {
@@ -81,14 +41,8 @@ export function bind() {
     // brand logo grid
     renderLogos();
 
-    // sidebar close (drawer close button)
-    document.getElementById('esClose').addEventListener('click', () => {
-        closeSidebar();
-        updateCanvasScale();
-    });
-
-    // tool rail (primary navigation)
-    document.querySelector('.tool-rail').addEventListener('click', onToolClick);
+    // palette picker
+    renderPalettes();
 
     // export button (top navbar) triggers the html-to-image PNG capture.
     document.querySelector('.save-btn').addEventListener('click', exportCanvas);
@@ -112,9 +66,6 @@ export function bind() {
     });
 
     // Re-scale the locked preview when the drawer's slide transition completes.
-    document.getElementById('editorSidebar').addEventListener('transitionend', (e) => {
-        if (e.propertyName === 'transform') updateCanvasScale();
-    });
     window.addEventListener('resize', updateCanvasScale);
 
     const initial = canvasRoot();

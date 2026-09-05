@@ -6,6 +6,7 @@ import { buildUI } from './ui-config.js';
 import { bind } from './events.js';
 import { initFormBindings } from './bindings.js';
 import { updateCanvasScale } from './interactions.js';
+import { initAiPane } from './ai-pane.js';
 import { state } from './state.js';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -35,6 +36,7 @@ function inject() {
     buildUI();
     bind();
     initFormBindings();
+    initAiPane();
     initTopBar();
     injectUploadOverlayCss();
     // Wait for webfonts before measuring so the scaled preview reflects the

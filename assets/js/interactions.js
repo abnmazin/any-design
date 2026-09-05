@@ -37,13 +37,8 @@ export function updateCanvasScale() {
     const w = wrapper.offsetWidth;
     const h = wrapper.offsetHeight;
     if (!w || !h) return;
-    // Available viewport space minus the floating rail's footprint and, when
-    // open, the sidebar's width. The rail is a 62px pill 14px from the left edge.
-    const railInset = 14;
-    const railW = 62;
-    const sideGap = 12;
-    const drawerW = drawer && drawer.classList.contains('is-open') ? 300 : 0;
-    const availW = window.innerWidth - railInset - railW - sideGap - drawerW;
+    const drawerW = drawer ? drawer.offsetWidth : 0;
+    const availW = window.innerWidth - drawerW - 24;
     const availH = window.innerHeight - 60;
     const ratio = Math.min(availW / w, availH / h, 1) * 0.9 * state.userZoom;
     state.currentScale = ratio;
