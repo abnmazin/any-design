@@ -230,27 +230,28 @@
     }
     .tpl-thumbnail {
       position: absolute;
-      inset: 10px 14px;
-      width: calc(100% - 28px);
-      height: calc(100% - 20px);
+      left: 50%;
+      top: 50%;
+      width: 1200px;
+      height: 630px;
       border: 0;
       border-radius: 10px;
       background: var(--bg-secondary);
       box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35);
       pointer-events: none;
-      transform: scale(0.92);
+      transform: translate(-50%, -50%) scale(0.24);
       transform-origin: center;
       opacity: 0.94;
     }
     .tpl-thumbnail.portrait {
-      inset: 8px auto;
-      width: 104px;
-      height: calc(100% - 16px);
+      width: 1080px;
+      height: 1920px;
+      transform: translate(-50%, -50%) scale(0.085);
     }
     .tpl-thumbnail.landscape {
-      inset: 20px 12px;
-      width: calc(100% - 24px);
-      height: calc(100% - 40px);
+      width: 1200px;
+      height: 630px;
+      transform: translate(-50%, -50%) scale(0.24);
     }
     .tpl-preview .device-tag {
       position: absolute; top: 10px; right: 10px; z-index: 3;
