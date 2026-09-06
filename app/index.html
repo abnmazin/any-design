@@ -130,7 +130,9 @@
     .laptop {
       position: absolute;
       width: 320px;
-      right: 4%;
+      left: 50%;
+      right: auto;
+      transform: translateX(-42%);
       z-index: 2;
     }
     .laptop-screen {
@@ -168,8 +170,9 @@
       position: absolute;
       width: 128px;
       aspect-ratio: 9 / 19;
-      left: 2%;
-      bottom: -6%;
+      left: auto;
+      right: 3%;
+      bottom: -4%;
       background: #050308;
       border: 2px solid var(--border-strong);
       border-radius: 24px;
@@ -210,8 +213,8 @@
       box-shadow: 0 16px 34px rgba(0,0,0,0.4);
     }
     .device-badge i { color: var(--accent-strong); font-size: 0.85rem; }
-    .badge-laptop { top: -4%; right: -2%; }
-    .badge-phone { bottom: 14%; left: -14%; }
+    .badge-laptop { top: -4%; left: -3%; right: auto; }
+    .badge-phone { bottom: 14%; right: -10%; left: auto; }
 
     /* ===== RIGHT: Auth form ===== */
     .form-panel {
@@ -231,8 +234,9 @@
       background: var(--accent-dim); border: 1px solid var(--accent-border);
       display: flex; align-items: center; justify-content: center;
     }
-    .form-brand .logo-icon i { font-size: 1.1rem; color: var(--accent-strong); }
-    .form-brand span { font-size: 1.12rem; font-weight: 700; color: var(--text); direction: ltr; }
+  .form-brand .logo-icon i { font-size: 1.1rem; color: var(--accent-strong); }
+  .form-brand .brand-icon { width: 34px; height: 34px; display: block; object-fit: contain; flex: 0 0 34px; }
+  .form-brand span { font-size: 1.12rem; font-weight: 700; color: var(--text); direction: ltr; }
 
     .form-heading h2 { font-size: clamp(1.5rem, 2vw, 1.75rem); font-weight: 700; color: var(--text); margin-bottom: 8px; letter-spacing: -0.01em; }
     .form-heading p { font-size: 0.93rem; color: var(--muted); margin-bottom: 32px; }
@@ -407,10 +411,10 @@
 
   <div class="form-panel">
     <div class="form-wrap">
-      <div class="form-brand">
-        <div class="logo-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
-        <span>AnyDesire.Design</span>
-      </div>
+      <a class="form-brand" href="/" aria-label="AnyDesire">
+        <img class="brand-icon" alt="" aria-hidden="true" src="https://anydesire.dev/icon-only.svg">
+        <span>AnyDesire</span>
+      </a>
 
       <div class="form-heading">
         <h2>أهلًا بعودتك</h2>
@@ -422,17 +426,17 @@
         <button type="button" id="tabPhone">رقم الهاتف</button>
       </div>
 
-      <form id="loginForm" novalidate>
+      <form id="loginForm" novalidate aria-label="نموذج تسجيل الدخول">
         <div class="fl-field" id="idField">
-          <input type="text" id="loginId" placeholder=" " autocomplete="username">
+          <input type="text" id="loginId" placeholder=" " autocomplete="username" required aria-describedby="idError">
           <label for="loginId">البريد الإلكتروني</label>
           <div class="error-msg" id="idError">أدخل بريدك الإلكتروني</div>
         </div>
 
         <div class="fl-field" id="passField">
-          <input type="password" id="loginPassword" placeholder=" " autocomplete="current-password">
+          <input type="password" id="loginPassword" placeholder=" " autocomplete="current-password" required aria-describedby="passError">
           <label for="loginPassword">كلمة المرور</label>
-          <div class="error-msg" id="passError">أدخل كلمة المرور</div>
+          <div class="error-msg" id="passError" role="alert">أدخل كلمة المرور</div>
         </div>
 
         <div class="row-between">

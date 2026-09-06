@@ -57,7 +57,10 @@ button { font-family: inherit; }
   display: flex; align-items: center; justify-content: space-between;
   padding: 18px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
-.brand { display: flex; align-items: center; gap: 10px; font-size: 1.25rem; font-weight: 800; }
+.brand { display: inline-flex; align-items: center; gap: 10px; font-size: 1.25rem; font-weight: 800; color: var(--text-primary); }
+.brand-icon { width: 30px; height: 30px; display: block; object-fit: contain; }
+.form-brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text-primary); font-size: 1.25rem; font-weight: 800; text-decoration: none; }
+.form-brand .brand-icon { width: 34px; height: 34px; }
 .brand i { color: var(--accent-cyan); }
 .brand b { color: var(--accent-cyan); font-weight: 800; }
 .nav { display: flex; gap: 22px; align-items: center; font-size: 0.95rem; }
