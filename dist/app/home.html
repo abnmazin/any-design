@@ -77,8 +77,9 @@
       background: var(--accent-dim); border: 1px solid var(--accent-border);
       display: flex; align-items: center; justify-content: center;
     }
-    .brand .logo-icon i { font-size: 0.95rem; color: var(--accent-strong); }
-    .brand span { font-size: 1.02rem; font-weight: 700; direction: ltr; }
+  .brand .logo-icon i { font-size: 0.95rem; color: var(--accent-strong); }
+  .brand .brand-icon { width: 30px; height: 30px; display: block; object-fit: contain; flex: 0 0 30px; }
+  .brand span { font-size: 1.02rem; font-weight: 700; direction: ltr; }
 
     .main-nav { display: flex; align-items: center; gap: 4px; }
     .main-nav a {
@@ -308,7 +309,7 @@
 
   <header class="site-header">
     <a class="brand" href="/" aria-label="AnyDesire">
-      <img class="brand-icon" alt="" aria-hidden="true" src="data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%20role='img'%20aria-label='AnyDesire'%3e%3cdefs%3e%3clinearGradient%20id='anydesire-gradient'%20x1='8'%20y1='56'%20x2='56'%20y2='8'%20gradientUnits='userSpaceOnUse'%3e%3cstop%20stop-color='%236e3cbc'/%3e%3cstop%20offset='1'%20stop-color='%23c18aff'/%3e%3c/linearGradient%3e%3c/defs%3e%3cpath%20fill='url(%23anydesire-gradient)'%20d='M32%204%2038.7%2024.3%2060%2032l-21.3%207.7L32%2060l-6.7-20.3L4%2032l21.3-7.7L32%204Z'/%3e%3cpath%20fill='%23f4f1fa'%20d='m32%2016%202.8%2013.2L48%2032l-13.2%202.8L32%2048l-2.8-13.2L16%2032l13.2-2.8L32%2016Z'/%3e%3c/svg%3e">
+      <img class="brand-icon" alt="" aria-hidden="true" src="https://anydesire.dev/icon-only.svg">
       <span>AnyDesire</span>
     </a>
 
@@ -396,7 +397,7 @@
         var bg = 'linear-gradient(155deg, color-mix(in srgb, ' + t.tint + ' 14%, transparent), #09080f)';
         var chip = 'background: color-mix(in srgb, ' + t.tint + ' 15%, transparent); color: ' + t.tint;
 
-        var mock = '<iframe class="tpl-thumbnail ' + (portrait ? 'portrait' : 'landscape') + '" src="' + t.file + '" title="معاينة ' + t.name + '" loading="lazy" tabindex="-1"></iframe>';
+        var mock = '<iframe class="tpl-thumbnail ' + (portrait ? 'portrait' : 'landscape') + '" src="' + t.file + '" title="معاينة ' + t.name + '" loading="lazy" tabindex="-1" onload="this.contentDocument.head.insertAdjacentHTML(\'beforeend\', \'<style>#editorUI,.preview-toolbar{display:none!important}.editor-page{padding-top:0!important}.canvas-stage,.story-stage,.wedding-stage{height:100vh!important}</style>\')"></iframe>';
 
         return (
           '<div class="tpl-card" data-size="' + ring + '" data-href="' + t.file + '">' +
