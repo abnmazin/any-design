@@ -110,15 +110,16 @@ const STYLE = `
             font-weight: 700; cursor: pointer; transition: all 0.15s ease; }
         .ai-mode:hover { color: #a970ff; border-color: #a970ff; }
         .ai-mode.active { background: #a970ff; border-color: #a970ff; color: #09080f; }
-        .ai-action { width: 100%; border: 0; border-radius: 100px; padding: 10px;
+        .ai-action { width: 100%; min-height: 34px; border: 1px solid rgba(193, 138, 255, 0.35); border-radius: 9px; padding: 7px 10px;
             background: linear-gradient(90deg, #6e3cbc, #a970ff); color: #09080f;
-            font: inherit; font-weight: 800; cursor: pointer; display: inline-flex;
-            align-items: center; justify-content: center; gap: 8px; }
+            font: inherit; font-size: 0.78rem; font-weight: 800; cursor: pointer; display: inline-flex;
+            align-items: center; justify-content: center; gap: 7px; transition: filter 0.15s ease, transform 0.15s ease; }
+        .ai-action:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
         .ai-action:disabled { opacity: 0.5; cursor: default; }
-        .ai-regenerate { width: 100%; border: 1px solid rgba(169, 112, 255, 0.16); border-radius: 100px;
-            padding: 9px; background: rgba(16, 13, 26, 0.6); color: #a970ff; font: inherit;
+        .ai-regenerate { width: 100%; min-height: 32px; border: 1px solid rgba(169, 112, 255, 0.16); border-radius: 9px;
+            padding: 6px 10px; background: rgba(16, 13, 26, 0.6); color: #a970ff; font: inherit;
             font-weight: 700; cursor: pointer; display: inline-flex; align-items: center;
-            justify-content: center; gap: 8px; font-size: 0.82rem; }
+            justify-content: center; gap: 7px; font-size: 0.76rem; transition: background 0.15s ease, border-color 0.15s ease; }
         .ai-regenerate:hover:not(:disabled) { background: rgba(169, 112, 255, 0.12); }
         .ai-regenerate:disabled { opacity: 0.45; cursor: default; }
         .ai-status { font-size: 0.75rem; line-height: 1.6; min-height: 1.4em; padding: 4px 2px; }
