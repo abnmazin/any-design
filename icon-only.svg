@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="AnyDesire">
+  <defs>
+    <linearGradient id="anydesire-gradient" x1="8" y1="56" x2="56" y2="8" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6e3cbc"/>
+      <stop offset="1" stop-color="#c18aff"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#anydesire-gradient)" d="M32 4 38.7 24.3 60 32l-21.3 7.7L32 60l-6.7-20.3L4 32l21.3-7.7L32 4Z"/>
+  <path fill="#f4f1fa" d="m32 16 2.8 13.2L48 32l-13.2 2.8L32 48l-2.8-13.2L16 32l13.2-2.8L32 16Z"/>
+</svg>

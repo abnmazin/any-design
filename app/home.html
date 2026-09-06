@@ -77,8 +77,9 @@
       background: var(--accent-dim); border: 1px solid var(--accent-border);
       display: flex; align-items: center; justify-content: center;
     }
-    .brand .logo-icon i { font-size: 0.95rem; color: var(--accent-strong); }
-    .brand span { font-size: 1.02rem; font-weight: 700; direction: ltr; }
+  .brand .logo-icon i { font-size: 0.95rem; color: var(--accent-strong); }
+  .brand .brand-icon { width: 30px; height: 30px; display: block; object-fit: contain; flex: 0 0 30px; }
+  .brand span { font-size: 1.02rem; font-weight: 700; direction: ltr; }
 
     .main-nav { display: flex; align-items: center; gap: 4px; }
     .main-nav a {
@@ -307,10 +308,10 @@
 <body>
 
   <header class="site-header">
-    <div class="brand">
-      <div class="logo-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
-      <span>AnyDesire.Design</span>
-    </div>
+    <a class="brand" href="/" aria-label="AnyDesire">
+      <img class="brand-icon" alt="" aria-hidden="true" src="/icon-only.svg">
+      <span>AnyDesire</span>
+    </a>
 
     <nav class="main-nav">
       <a href="#" class="active">القوالب</a>

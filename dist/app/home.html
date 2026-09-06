@@ -138,7 +138,8 @@
     .hero {
       position: relative;
       overflow: hidden;
-      padding: clamp(36px, 5vw, 56px) clamp(20px, 4vw, 48px) clamp(24px, 3vw, 32px);
+      padding: clamp(44px, 6vw, 72px) clamp(20px, 4vw, 48px) clamp(34px, 4vw, 48px);
+      background: linear-gradient(180deg, rgba(16, 13, 26, 0.2), rgba(16, 13, 26, 0.72));
     }
     .hero .mesh {
       position: absolute; inset: 0;
@@ -162,17 +163,28 @@
     .stat-chip .lbl { font-size: 0.72rem; color: rgba(255, 255, 255, 0.5); }
 
     /* ===== SECTION SHELL ===== */
-    .section { padding: 0 clamp(20px, 4vw, 48px); margin-bottom: 40px; }
+    .section {
+      padding: clamp(28px, 4vw, 44px) clamp(20px, 4vw, 48px) 72px;
+      margin-bottom: 0;
+      background: linear-gradient(180deg, rgba(16, 13, 26, 0.72), rgba(9, 8, 15, 0.96) 28%, var(--bg) 100%);
+    }
 
     /* ===== FILTER BAR ===== */
     .filter-bar {
       display: flex; align-items: center; justify-content: space-between;
-      gap: 16px; flex-wrap: wrap; margin-bottom: 20px;
+      gap: 16px; flex-wrap: wrap; margin-bottom: 28px;
+      padding: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 18px;
+      background: rgba(23, 18, 37, 0.62);
+      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
     .pill-group { display: flex; gap: 8px; flex-wrap: wrap; }
     .pill {
-      background: var(--bg-secondary); border: 1px solid var(--border);
-      border-radius: 100px; padding: 8px 16px;
+      background: transparent; border: 1px solid transparent;
+      border-radius: 12px; padding: 9px 17px;
       font-size: 0.82rem; font-weight: 500; color: var(--muted);
       transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
@@ -187,7 +199,8 @@
     .template-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 20px;
+      gap: clamp(18px, 2vw, 24px);
+      padding-top: 4px;
     }
     .is-hidden { display: none; }
 
@@ -213,6 +226,32 @@
       height: 176px;
       display: flex; align-items: center; justify-content: center;
       overflow: hidden;
+      isolation: isolate;
+    }
+    .tpl-thumbnail {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 1200px;
+      height: 630px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35);
+      pointer-events: none;
+      transform: translate(-50%, -50%) scale(0.24);
+      transform-origin: center;
+      opacity: 0.94;
+    }
+    .tpl-thumbnail.portrait {
+      width: 1080px;
+      height: 1920px;
+      transform: translate(-50%, -50%) scale(0.085);
+    }
+    .tpl-thumbnail.landscape {
+      width: 1200px;
+      height: 630px;
+      transform: translate(-50%, -50%) scale(0.24);
     }
     .tpl-preview .device-tag {
       position: absolute; top: 10px; right: 10px; z-index: 3;
@@ -268,10 +307,10 @@
 <body>
 
   <header class="site-header">
-    <div class="brand">
-      <div class="logo-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
-      <span>AnyDesire.Design</span>
-    </div>
+    <a class="brand" href="/" aria-label="AnyDesire">
+      <img class="brand-icon" alt="" aria-hidden="true" src="data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%20role='img'%20aria-label='AnyDesire'%3e%3cdefs%3e%3clinearGradient%20id='anydesire-gradient'%20x1='8'%20y1='56'%20x2='56'%20y2='8'%20gradientUnits='userSpaceOnUse'%3e%3cstop%20stop-color='%236e3cbc'/%3e%3cstop%20offset='1'%20stop-color='%23c18aff'/%3e%3c/linearGradient%3e%3c/defs%3e%3cpath%20fill='url(%23anydesire-gradient)'%20d='M32%204%2038.7%2024.3%2060%2032l-21.3%207.7L32%2060l-6.7-20.3L4%2032l21.3-7.7L32%204Z'/%3e%3cpath%20fill='%23f4f1fa'%20d='m32%2016%202.8%2013.2L48%2032l-13.2%202.8L32%2048l-2.8-13.2L16%2032l13.2-2.8L32%2016Z'/%3e%3c/svg%3e">
+      <span>AnyDesire</span>
+    </a>
 
     <nav class="main-nav">
       <a href="#" class="active">القوالب</a>
@@ -357,24 +396,7 @@
         var bg = 'linear-gradient(155deg, color-mix(in srgb, ' + t.tint + ' 14%, transparent), #09080f)';
         var chip = 'background: color-mix(in srgb, ' + t.tint + ' 15%, transparent); color: ' + t.tint;
 
-        var mock;
-        if (portrait) {
-          mock =
-            '<div class="mock-phone"><div class="mock-phone-body"><div class="mock-phone-inner" style="background:#211a38;gap:6px">' +
-            '<div class="mock-bar" style="width:60%;background:' + t.tint + '"></div>' +
-            '<div class="mock-bar" style="width:80%;background:var(--skeleton)"></div>' +
-            '<div class="mock-bar" style="width:45%;background:var(--skeleton)"></div>' +
-            '</div></div></div>';
-        } else {
-          mock =
-            '<div class="mock-laptop"><div class="mock-laptop-body"><div class="mock-laptop-inner" style="background:#211a38">' +
-            '<div style="display:flex;gap:5px"><span style="width:4px;height:4px;border-radius:50%;background:var(--skeleton-strong)"></span><span style="width:4px;height:4px;border-radius:50%;background:var(--skeleton-strong)"></span></div>' +
-            '<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:5px">' +
-            '<div style="background:' + t.tint + '22;border:1px solid color-mix(in srgb, ' + t.tint + ' 40%, transparent);border-radius:4px"></div>' +
-            '<div style="background:#2a2244;border-radius:4px"></div>' +
-            '</div></div></div>' +
-            '<div class="mock-laptop-base" style="background:linear-gradient(#211a38,#0b0912)"></div></div>';
-        }
+        var mock = '<iframe class="tpl-thumbnail ' + (portrait ? 'portrait' : 'landscape') + '" src="' + t.file + '" title="معاينة ' + t.name + '" loading="lazy" tabindex="-1"></iframe>';
 
         return (
           '<div class="tpl-card" data-size="' + ring + '" data-href="' + t.file + '">' +

@@ -130,7 +130,9 @@
     .laptop {
       position: absolute;
       width: 320px;
-      right: 4%;
+      left: 50%;
+      right: auto;
+      transform: translateX(-42%);
       z-index: 2;
     }
     .laptop-screen {
@@ -168,8 +170,9 @@
       position: absolute;
       width: 128px;
       aspect-ratio: 9 / 19;
-      left: 2%;
-      bottom: -6%;
+      left: auto;
+      right: 3%;
+      bottom: -4%;
       background: #050308;
       border: 2px solid var(--border-strong);
       border-radius: 24px;
@@ -210,8 +213,8 @@
       box-shadow: 0 16px 34px rgba(0,0,0,0.4);
     }
     .device-badge i { color: var(--accent-strong); font-size: 0.85rem; }
-    .badge-laptop { top: -4%; right: -2%; }
-    .badge-phone { bottom: 14%; left: -14%; }
+    .badge-laptop { top: -4%; left: -3%; right: auto; }
+    .badge-phone { bottom: 14%; right: -10%; left: auto; }
 
     /* ===== RIGHT: Auth form ===== */
     .form-panel {
@@ -407,10 +410,10 @@
 
   <div class="form-panel">
     <div class="form-wrap">
-      <div class="form-brand">
-        <div class="logo-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
-        <span>AnyDesire.Design</span>
-      </div>
+      <a class="form-brand" href="/" aria-label="AnyDesire">
+        <img class="brand-icon" alt="" aria-hidden="true" src="data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%20role='img'%20aria-label='AnyDesire'%3e%3cdefs%3e%3clinearGradient%20id='anydesire-gradient'%20x1='8'%20y1='56'%20x2='56'%20y2='8'%20gradientUnits='userSpaceOnUse'%3e%3cstop%20stop-color='%236e3cbc'/%3e%3cstop%20offset='1'%20stop-color='%23c18aff'/%3e%3c/linearGradient%3e%3c/defs%3e%3cpath%20fill='url(%23anydesire-gradient)'%20d='M32%204%2038.7%2024.3%2060%2032l-21.3%207.7L32%2060l-6.7-20.3L4%2032l21.3-7.7L32%204Z'/%3e%3cpath%20fill='%23f4f1fa'%20d='m32%2016%202.8%2013.2L48%2032l-13.2%202.8L32%2048l-2.8-13.2L16%2032l13.2-2.8L32%2016Z'/%3e%3c/svg%3e">
+        <span>AnyDesire</span>
+      </a>
 
       <div class="form-heading">
         <h2>أهلًا بعودتك</h2>
