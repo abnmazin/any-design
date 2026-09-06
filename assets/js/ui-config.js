@@ -15,7 +15,7 @@ const STYLE = `
 
         /* ---- Left sidebar (AnyDesire glass / dark purple) ---- */
         #editorSidebar {
-            position: fixed; left: 0; top: 60px; bottom: 0; width: 320px; height: auto;
+            position: fixed; left: 0; top: 60px; bottom: 0; width: 268px; height: auto;
             background: linear-gradient(160deg, rgba(16, 13, 26, 0.92), rgba(9, 8, 15, 0.97));
             border: 1px solid rgba(169, 112, 255, 0.18);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -28,7 +28,7 @@ const STYLE = `
         #editorSidebar.is-open {
             transform: none; opacity: 1; pointer-events: auto; visibility: visible;
         }
-        #editorSidebar .es-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px; }
+        #editorSidebar .es-head { display: flex; align-items: center; gap: 8px; padding: 12px 14px; }
         #editorSidebar .es-title-icon {
             width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0;
             background: rgba(169, 112, 255, 0.14); border: 1px solid rgba(169, 112, 255, 0.4);
@@ -38,13 +38,13 @@ const STYLE = `
         #editorSidebar .es-head h3 { color: #f4f1fa; font-size: 1.05rem; margin: 0; }
         #editorSidebar .es-close { background: none; border: none; color: #a8a1b8; font-size: 1.4rem; cursor: pointer; }
         #editorSidebar .es-close:hover { color: #fff; }
-        #editorSidebar .es-tabs { display: flex; border-bottom: 1px solid rgba(169, 112, 255, 0.1); }
-        #editorSidebar .es-tab { flex: 1; padding: 11px 4px; background: none; border: none; color: #a8a1b8;
+        #editorSidebar .es-tabs { display: flex; padding: 0 8px; border-bottom: 1px solid rgba(169, 112, 255, 0.1); }
+        #editorSidebar .es-tab { flex: 1; padding: 9px 3px; background: none; border: none; color: #a8a1b8;
             font-size: 0.72rem; cursor: pointer; border-bottom: 2px solid transparent; font-family: inherit;
             display: flex; flex-direction: column; align-items: center; gap: 5px; }
         #editorSidebar .es-tab i { font-size: 1rem; }
         #editorSidebar .es-tab.active { color: #a970ff; border-bottom-color: #a970ff; }
-        #editorSidebar .es-body { flex: 1; overflow-y: auto; padding: 16px; }
+        #editorSidebar .es-body { flex: 1; overflow-y: auto; padding: 13px; }
         #editorSidebar .es-body::-webkit-scrollbar { width: 8px; }
         #editorSidebar .es-body::-webkit-scrollbar-thumb { background: rgba(169, 112, 255, 0.25); border-radius: 4px; }
         #editorSidebar .es-pane { display: none; }
@@ -173,14 +173,14 @@ const STYLE = `
         .sidebar-zoom #zoomValue { width: 48px; background: rgba(16, 13, 26, 0.6); border: 1px solid rgba(255, 255, 255, 0.12);
             color: #f4f1fa; text-align: center; border-radius: 7px; font-size: 0.68rem; padding: 4px 0; }
 
-        .editor-top-bar { position: fixed; top: 0; left: 0; right: 0; height: 60px; z-index: 95;
-            display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
-            background: rgba(9, 8, 15, 0.92); border-bottom: 1px solid rgba(169, 112, 255, 0.12);
+        .editor-top-bar { position: fixed; top: 0; left: 0; right: 0; height: 56px; z-index: 95;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 16px 0 18px;
+            background: rgba(9, 8, 15, 0.96); border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
         .editor-top-bar .top-bar-title { color: #f4f1fa; font-weight: 700; font-size: 0.95rem; }
-        .editor-top-bar .top-bar-right, .editor-top-bar .top-bar-left { display: flex; align-items: center; gap: 10px; }
-        .editor-top-bar .btn { border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(16, 13, 26, 0.6);
-            color: #f4f1fa; padding: 8px 14px; border-radius: 100px; font-size: 0.82rem; font-weight: 600;
+        .editor-top-bar .top-bar-right, .editor-top-bar .top-bar-left { display: flex; align-items: center; gap: 8px; }
+        .editor-top-bar .btn { border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.045);
+            color: #f4f1fa; padding: 7px 12px; border-radius: 9px; font-size: 0.78rem; font-weight: 600;
             cursor: pointer; font-family: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 7px; }
         .editor-top-bar .btn:hover { border-color: #a970ff; color: #a970ff; }
         .editor-top-bar .btn.primary { background: linear-gradient(135deg, #6e3cbc, #a970ff); color: #09080f;
