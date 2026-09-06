@@ -397,7 +397,7 @@
         var bg = 'linear-gradient(155deg, color-mix(in srgb, ' + t.tint + ' 14%, transparent), #09080f)';
         var chip = 'background: color-mix(in srgb, ' + t.tint + ' 15%, transparent); color: ' + t.tint;
 
-        var mock = '<iframe class="tpl-thumbnail ' + (portrait ? 'portrait' : 'landscape') + '" src="' + t.file + '" title="معاينة ' + t.name + '" loading="lazy" tabindex="-1"></iframe>';
+        var mock = '<iframe class="tpl-thumbnail ' + (portrait ? 'portrait' : 'landscape') + '" src="' + t.file + '" title="معاينة ' + t.name + '" loading="lazy" tabindex="-1" onload="this.contentDocument.head.insertAdjacentHTML(\'beforeend\', \'<style>#editorUI,.preview-toolbar{display:none!important}.editor-page{padding-top:0!important}.canvas-stage,.story-stage,.wedding-stage{height:100vh!important}</style>\')"></iframe>';
 
         return (
           '<div class="tpl-card" data-size="' + ring + '" data-href="' + t.file + '">' +
