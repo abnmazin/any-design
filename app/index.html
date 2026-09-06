@@ -422,17 +422,17 @@
         <button type="button" id="tabPhone">رقم الهاتف</button>
       </div>
 
-      <form id="loginForm" novalidate>
+      <form id="loginForm" novalidate aria-label="نموذج تسجيل الدخول">
         <div class="fl-field" id="idField">
-          <input type="text" id="loginId" placeholder=" " autocomplete="username">
+          <input type="text" id="loginId" placeholder=" " autocomplete="username" required aria-describedby="idError">
           <label for="loginId">البريد الإلكتروني</label>
           <div class="error-msg" id="idError">أدخل بريدك الإلكتروني</div>
         </div>
 
         <div class="fl-field" id="passField">
-          <input type="password" id="loginPassword" placeholder=" " autocomplete="current-password">
+          <input type="password" id="loginPassword" placeholder=" " autocomplete="current-password" required aria-describedby="passError">
           <label for="loginPassword">كلمة المرور</label>
-          <div class="error-msg" id="passError">أدخل كلمة المرور</div>
+          <div class="error-msg" id="passError" role="alert">أدخل كلمة المرور</div>
         </div>
 
         <div class="row-between">
