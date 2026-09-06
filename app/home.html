@@ -300,12 +300,82 @@
     .mock-phone-inner { border-radius: 10px; height: 100%; padding: 8px 5px; display: flex; flex-direction: column; gap: 4px; }
     .mock-bar { height: 4px; border-radius: 3px; background: var(--skeleton); }
 
+    /* ===== DESIGNS SECTION ===== */
+    .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .section-head h2 { font-size: 1.1rem; font-weight: 700; }
+    .section-head h2 i { margin-left: 8px; }
+    .section-sub { font-size: 0.82rem; color: var(--text-tertiary); }
+
+    .design-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: clamp(18px, 2vw, 24px);
+      padding-top: 4px;
+    }
+    .design-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 18px;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      cursor: pointer;
+    }
+    .design-card:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-4px);
+      box-shadow: 0 26px 60px rgba(0, 0, 0, 0.55);
+    }
+    .design-preview {
+      position: relative; height: 176px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; background: var(--bg-secondary);
+    }
+    .design-preview img { max-width: 82%; max-height: 100%; border-radius: 8px; box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35); }
+    .design-preview .no-thumb { color: var(--text-tertiary); font-size: 0.78rem; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .design-preview .no-thumb i { font-size: 1.4rem; color: var(--accent); }
+    .design-info { padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+    .design-info .design-title { font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .design-info .design-meta { font-size: 0.72rem; color: var(--text-tertiary); }
+    .design-actions { display: flex; gap: 8px; }
+    .design-actions .design-open {
+      flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 7px 10px; border-radius: 100px; font-size: 0.77rem; font-weight: 600;
+      background: var(--accent-dim); color: #d8b4fe; border: 1px solid var(--accent-border);
+      transition: background 0.15s ease;
+    }
+    .design-actions .design-open:hover { background: rgba(168, 85, 247, 0.28); }
+    .design-actions .design-delete { border: none; background: transparent; color: var(--muted); font-size: 0.82rem; padding: 7px 9px; border-radius: 8px; transition: color 0.15s ease, background 0.15s ease; }
+    .design-actions .design-delete:hover { color: var(--danger); background: var(--danger-dim); }
+
+    .empty-designs { margin-top: 8px; padding: 40px 20px; text-align: center; color: var(--muted); font-size: 0.9rem; border: 1px dashed var(--border); border-radius: 18px; }
+    .empty-designs i { margin-left: 6px; color: var(--accent); }
+    .empty-designs a { color: var(--accent-strong); font-weight: 600; }
+
+    /* ===== AVATAR MENU ===== */
+    .avatar-wrap { position: relative; }
+    .avatar-menu {
+      position: absolute; top: calc(100% + 10px); left: 0;
+      min-width: 210px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border); border-radius: 14px;
+      padding: 8px;
+      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.35);
+      z-index: 60;
+    }
+    .avatar-menu .menu-user { display: block; padding: 8px 10px; font-size: 0.82rem; color: var(--text-secondary); border-bottom: 1px solid var(--border); margin-bottom: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .avatar-menu .menu-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border: none; background: transparent; color: var(--muted); font-size: 0.82rem; border-radius: 10px; text-align: right; cursor: pointer; }
+    .avatar-menu .menu-btn:hover { background: var(--danger-dim); color: var(--danger); }
+
     @media (max-width: 720px) {
       .main-nav, .header-search { display: none; }
+      .header-actions .icon-btn-sm { display: none; }
     }
   </style>
 </head>
-<body>
+<body data-auth="required">
 
   <header class="site-header">
     <a class="brand" href="/" aria-label="AnyDesire">
@@ -314,35 +384,41 @@
     </a>
 
     <nav class="main-nav">
-      <a href="#" class="active">القوالب</a>
-      <a href="#">تصاميمي</a>
+      <a href="#templates" class="active">القوالب</a>
+      <a href="#designs">تصاميمي</a>
     </nav>
 
     <div class="header-search">
       <i class="fas fa-search"></i>
-      <input type="text" placeholder="ابحث عن قالب...">
+      <input type="text" id="searchInput" placeholder="ابحث عن قالب أو تصميم...">
     </div>
 
     <div class="header-actions">
       <button class="icon-btn-sm" aria-label="الإشعارات"><i class="fas fa-bell"></i></button>
-      <div class="avatar" tabindex="0" role="button" aria-label="حسابي">سا</div>
+      <div class="avatar-wrap">
+        <div class="avatar" id="userAvatar" tabindex="0" role="button" aria-label="حسابي">…</div>
+        <div class="avatar-menu" id="avatarMenu" hidden>
+          <span class="menu-user" id="menuUser"></span>
+          <button type="button" class="menu-btn" id="logoutBtn"><i class="fas fa-right-from-bracket"></i> تسجيل الخروج</button>
+        </div>
+      </div>
     </div>
   </header>
 
   <section class="hero">
     <div class="mesh"></div>
     <div class="hero-content">
-      <h1>أهلًا بعودتك، سارة</h1>
-      <p>جاهزة تصممي حاجة جديدة النهاردة؟</p>
+      <h1 id="greeting">أهلًا بعودتك</h1>
+      <p>جاهز تصمم حاجة جديدة النهاردة؟</p>
       <div class="stat-chips">
         <div class="stat-chip"><i class="fas fa-shapes"></i><div><div class="num" id="tplCount">0</div><div class="lbl">قالب متاح</div></div></div>
-        <div class="stat-chip"><i class="fas fa-folder-open"></i><div><div class="num">12</div><div class="lbl">تصميم محفوظ</div></div></div>
-        <div class="stat-chip"><i class="fas fa-clock-rotate-left"></i><div><div class="num">3</div><div class="lbl">مسودة نشطة</div></div></div>
+        <div class="stat-chip"><i class="fas fa-folder-open"></i><div><div class="num" id="savedCount">0</div><div class="lbl">تصميم محفوظ</div></div></div>
+        <div class="stat-chip"><i class="fas fa-clock-rotate-left"></i><div><div class="num" id="draftCount">0</div><div class="lbl">مسودة نشطة</div></div></div>
       </div>
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" id="templates">
     <div class="filter-bar">
       <div class="pill-group">
         <button class="pill active" data-filter="all">الكل</button>
@@ -354,6 +430,16 @@
     <div class="template-grid" id="templateGrid"></div>
   </section>
 
+  <section class="section" id="designs">
+    <div class="section-head">
+      <h2><i class="fas fa-folder-open" style="color: var(--accent-strong);"></i> تصاميمي</h2>
+      <span class="section-sub" id="designsSub"></span>
+    </div>
+    <div class="design-grid" id="designsGrid"></div>
+    <p class="empty-designs" id="designsEmpty" hidden><i class="fas fa-inbox"></i> ما عندك تصاميم محفوظة بعد. افتح أي قالب واضغط «حفظ» في المحرر.<a href="#templates"> استكشف القوالب</a></p>
+  </section>
+
+  <script type="module" src="../assets/js/account.js"></script>
   <script>
     (function () {
       var TEMPLATES = [
@@ -400,7 +486,7 @@
         var mock = '<iframe class="tpl-thumbnail ' + (portrait ? 'portrait' : 'landscape') + '" src="' + t.file + '" title="معاينة ' + t.name + '" loading="lazy" tabindex="-1" onload="this.contentDocument.head.insertAdjacentHTML(\'beforeend\', \'<style>#editorUI,.preview-toolbar{display:none!important}.editor-page{padding-top:0!important}.canvas-stage,.story-stage,.wedding-stage{height:100vh!important}</style>\')"></iframe>';
 
         return (
-          '<div class="tpl-card" data-size="' + ring + '" data-href="' + t.file + '">' +
+          '<div class="tpl-card" data-size="' + ring + '" data-name="' + t.name.toLowerCase() + '" data-href="' + t.file + '">' +
             '<div class="tpl-preview" style="background:' + bg + '">' +
               '<span class="device-tag"><i class="' + deviceIcon + '" style="color:' + t.tint + '"></i> ' + ratio + '</span>' +
               mock +
@@ -439,6 +525,110 @@
         if (e.target.closest('a')) return;
         var card = e.target.closest('.tpl-card');
         if (card && card.dataset.href) window.location.href = card.dataset.href;
+      });
+
+      var searchInput = document.getElementById('searchInput');
+      searchInput.addEventListener('input', function () {
+        applySearch(searchInput.value.trim().toLowerCase());
+      });
+      function applySearch(term) {
+        Array.prototype.slice.call(grid.querySelectorAll('.tpl-card')).forEach(function (c) {
+          var nameHit = (c.getAttribute('data-name') || '').indexOf(term) !== -1;
+          c.classList.toggle('is-hidden', Boolean(term) && !nameHit);
+        });
+        Array.prototype.slice.call(document.querySelectorAll('#designsGrid .design-card')).forEach(function (c) {
+          var titleHit = (c.getAttribute('data-title') || '').indexOf(term) !== -1;
+          c.classList.toggle('is-hidden', Boolean(term) && !titleHit);
+        });
+      }
+
+      function escapeHtml(text) {
+        return String(text).replace(/[&<>"']/g, function (ch) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+        });
+      }
+      function formatDate(value) {
+        return new Date(value).toLocaleDateString('ar-EG', { day: 'numeric', month: 'short' });
+      }
+
+      var designsGrid = document.getElementById('designsGrid');
+      function designsChanged(list) {
+        document.getElementById('designsSub').textContent = list.length + ' تصميم';
+        document.getElementById('designsEmpty').hidden = list.length > 0;
+        var weekAgo = Date.now() - 7 * 86400000;
+        document.getElementById('savedCount').textContent = list.length;
+        document.getElementById('draftCount').textContent = list.filter(function (d) {
+          return new Date(d.updated_at).getTime() >= weekAgo;
+        }).length;
+        designsGrid.innerHTML = list.map(designCardHtml).join('');
+      }
+      function designCardHtml(d) {
+        var thumb = d.thumb
+          ? '<img src="' + d.thumb + '" alt="" loading="lazy">'
+          : '<span class="no-thumb"><i class="fas fa-pen-nib"></i>لا صورة مصغرة</span>';
+        return '<div class="design-card" data-id="' + d.id + '" data-title="' + (d.title || '').toLowerCase() + '">'
+          + '<div class="design-preview">' + thumb + '</div>'
+          + '<div class="design-info">'
+          + '<div class="design-title">' + escapeHtml(d.title) + '</div>'
+          + '<div class="design-meta">' + escapeHtml(d.size || 'لمقاس مخصص') + ' · ' + formatDate(d.updated_at) + '</div>'
+          + '<div class="design-actions">'
+          + '<button type="button" class="design-open" data-action="open"><i class="fas fa-pen"></i> فتح</button>'
+          + '<button type="button" class="design-delete" data-action="delete" aria-label="حذف"><i class="fas fa-trash-can"></i></button>'
+          + '</div></div></div>';
+      }
+      function loadDesigns() {
+        if (!window.Supabase) return;
+        var query = window.Supabase.from('designs')
+          .select('id, title, size, thumb, updated_at')
+          .order('updated_at', { ascending: false });
+        var task = Promise.race([
+          query,
+          new Promise(function (resolve) { setTimeout(function () { resolve({ data: [], error: null }); }, 6000); })
+        ]);
+        return task.then(function (res) {
+          designsChanged(res.data || []);
+        }).catch(function () {
+          designsChanged([]);
+        });
+      }
+      designsGrid.addEventListener('click', function (e) {
+        var card = e.target.closest('.design-card');
+        if (!card || !window.Supabase) return;
+        var btn = e.target.closest('button');
+        if (!btn || btn.dataset.action === 'open') {
+          window.location.href = './design.html?id=' + card.dataset.id;
+          return;
+        }
+        if (btn.dataset.action === 'delete' && window.confirm('حذف هذا التصميم نهائيًا؟')) {
+          window.Supabase.from('designs').delete().eq('id', card.dataset.id).then(function (res) {
+            if (!res.error) loadDesigns();
+          });
+        }
+      });
+
+      var userAvatar = document.getElementById('userAvatar');
+      var avatarMenu = document.getElementById('avatarMenu');
+      userAvatar.addEventListener('click', function (e) { e.stopPropagation(); avatarMenu.hidden = !avatarMenu.hidden; });
+      userAvatar.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); avatarMenu.hidden = !avatarMenu.hidden; }
+      });
+      document.addEventListener('click', function (e) {
+        if (!e.target.closest('.avatar-wrap')) avatarMenu.hidden = true;
+      });
+      document.getElementById('logoutBtn').addEventListener('click', function () {
+        window.Account.logout();
+      });
+
+      // account.js is a deferred module — it defines window.Account right
+      // before DOMContentLoaded, so bind the user-rendering block to that event.
+      window.addEventListener('DOMContentLoaded', function () {
+        window.Account.onReady(function (user) {
+          if (!user) return;
+          document.getElementById('greeting').textContent = 'أهلًا بعودتك، ' + user.username;
+          userAvatar.textContent = user.username.slice(0, 2);
+          document.getElementById('menuUser').textContent = user.email || user.username;
+          loadDesigns();
+        });
       });
     })();
   </script>

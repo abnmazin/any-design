@@ -291,6 +291,8 @@ export default defineConfig(({ mode }) => {
                     main: fileURLToPath(new URL('./index.html', import.meta.url)),
                     login: fileURLToPath(new URL('./app/index.html', import.meta.url)),
                     home: fileURLToPath(new URL('./app/home.html', import.meta.url)),
+                    design: fileURLToPath(new URL('./app/design.html', import.meta.url)),
+                    reset: fileURLToPath(new URL('./app/reset.html', import.meta.url)),
                     wedding: fileURLToPath(new URL('./templates/wedding/wedding.html', import.meta.url)),
                     story: fileURLToPath(new URL('./templates/story/story.html', import.meta.url)),
                     bento: fileURLToPath(new URL('./templates/bento/bento.html', import.meta.url)),

@@ -358,13 +358,30 @@
     .signup-line a { color: var(--accent-strong); font-weight: 600; text-decoration: none; }
     .signup-line a:hover { text-decoration: underline; }
 
+    .is-hidden { display: none !important; }
+
+    .form-alert {
+      display: flex; align-items: center; gap: 8px; justify-content: center;
+      margin-top: 18px; padding: 10px 14px; border-radius: 12px;
+      font-size: 0.85rem; line-height: 1.5; text-align: center;
+      background: rgba(248, 113, 113, 0.12); border: 1px solid rgba(248, 113, 113, 0.35);
+      color: #fecaca;
+    }
+    .form-alert.is-success { background: rgba(74, 222, 128, 0.12); border-color: rgba(74, 222, 128, 0.35); color: #bbf7d0; }
+    .btn-login[disabled] { opacity: 0.6; pointer-events: none; }
+
+    .icon-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .icon-row .icon-btn { width: 100%; height: 46px; gap: 10px; margin: 0; }
+
     @media (max-width: 940px) {
       .preview-panel { display: none; }
       .form-panel { flex: 1; }
     }
   </style>
+  <script type="module" crossorigin src="/assets/supabase-client-CvNEpNtI.js"></script>
+  <script type="module" crossorigin src="/assets/account-C3RO-aE-.js"></script>
 </head>
-<body>
+<body data-auth="guest">
 
   <div class="preview-panel">
     <div class="mesh"></div>
@@ -421,102 +438,210 @@
         <p>سجّل دخولك للوصول إلى مكتبة القوالب ومشاريعك المحفوظة</p>
       </div>
 
-      <div class="segmented">
-        <button type="button" class="active" id="tabEmail">البريد الإلكتروني</button>
-        <button type="button" id="tabPhone">رقم الهاتف</button>
+      <div class="segmented" role="tablist" aria-label="المصادقة">
+        <button type="button" class="active" id="segLogin">تسجيل الدخول</button>
+        <button type="button" id="segRegister">إنشاء حساب</button>
       </div>
 
-      <form id="loginForm" novalidate aria-label="نموذج تسجيل الدخول">
+      <form id="authForm" novalidate aria-label="نموذج تسجيل الدخول">
+        <div class="fl-field is-hidden" id="nameField">
+          <input type="text" id="regName" placeholder=" " autocomplete="nickname" aria-describedby="nameError">
+          <label for="regName">اسم المستخدم</label>
+          <div class="error-msg" id="nameError">أدخل اسم مستخدم</div>
+        </div>
+
         <div class="fl-field" id="idField">
-          <input type="text" id="loginId" placeholder=" " autocomplete="username" required aria-describedby="idError">
-          <label for="loginId">البريد الإلكتروني</label>
+          <input type="text" id="authId" placeholder=" " autocomplete="username" required aria-describedby="idError">
+          <label for="authId">البريد الإلكتروني</label>
           <div class="error-msg" id="idError">أدخل بريدك الإلكتروني</div>
         </div>
 
         <div class="fl-field" id="passField">
-          <input type="password" id="loginPassword" placeholder=" " autocomplete="current-password" required aria-describedby="passError">
-          <label for="loginPassword">كلمة المرور</label>
+          <input type="password" id="authPassword" placeholder=" " autocomplete="current-password" required aria-describedby="passError">
+          <label for="authPassword">كلمة المرور</label>
           <div class="error-msg" id="passError" role="alert">أدخل كلمة المرور</div>
         </div>
 
-        <div class="row-between">
+        <div class="row-between" id="metaRow">
           <label class="remember"><input type="checkbox"> تذكرني</label>
           <a href="#" class="forgot-link">نسيت كلمة المرور؟</a>
         </div>
 
-        <button type="submit" class="btn-login">
+        <button type="submit" class="btn-login" id="submitBtn">
           تسجيل الدخول <i class="fas fa-arrow-left"></i>
         </button>
+
+        <div class="form-alert" id="formAlert" role="alert" hidden></div>
       </form>
 
       <div class="divider">أو المتابعة عبر</div>
 
       <div class="icon-row">
-        <div class="icon-btn" tabindex="0"><i class="fab fa-google"></i></div>
-        <div class="icon-btn" tabindex="0"><i class="fab fa-apple"></i></div>
-        <div class="icon-btn" tabindex="0"><i class="fas fa-envelope"></i></div>
+        <button type="button" class="icon-btn" id="googleBtn" tabindex="0"><i class="fab fa-google"></i> Google</button>
+        <button type="button" class="icon-btn" id="githubBtn" tabindex="0"><i class="fab fa-github"></i> GitHub</button>
       </div>
 
-      <div class="signup-line">ليس لديك حساب؟ <a href="#">إنشاء حساب جديد</a></div>
+      <div class="signup-line" id="switchLine">ليس لديك حساب؟ <a href="#" id="switchLink">إنشاء حساب جديد</a></div>
     </div>
   </div>
 
   <script>
     (function () {
-      var tabEmail = document.getElementById('tabEmail');
-      var tabPhone = document.getElementById('tabPhone');
-      var loginId = document.getElementById('loginId');
-      var loginIdLabel = document.querySelector('label[for="loginId"]');
-      var idError = document.getElementById('idError');
-
-      tabEmail.addEventListener('click', function () {
-        tabEmail.classList.add('active');
-        tabPhone.classList.remove('active');
-        loginId.type = 'text';
-        loginId.autocomplete = 'username';
-        loginIdLabel.textContent = 'البريد الإلكتروني';
-        idError.textContent = 'أدخل بريدك الإلكتروني';
-      });
-
-      tabPhone.addEventListener('click', function () {
-        tabPhone.classList.add('active');
-        tabEmail.classList.remove('active');
-        loginId.type = 'tel';
-        loginId.autocomplete = 'tel';
-        loginIdLabel.textContent = 'رقم الهاتف';
-        idError.textContent = 'أدخل رقم هاتفك';
-      });
-
-      var form = document.getElementById('loginForm');
+      var segLogin = document.getElementById('segLogin');
+      var segRegister = document.getElementById('segRegister');
+      var nameField = document.getElementById('nameField');
+      var regName = document.getElementById('regName');
+      var nameError = document.getElementById('nameError');
       var idField = document.getElementById('idField');
+      var authId = document.getElementById('authId');
+      var authIdLabel = document.querySelector('label[for="authId"]');
+      var idError = document.getElementById('idError');
       var passField = document.getElementById('passField');
-      var loginPassword = document.getElementById('loginPassword');
+      var authPassword = document.getElementById('authPassword');
+      var passError = document.getElementById('passError');
+      var metaRow = document.getElementById('metaRow');
+      var forgotLink = document.querySelector('.forgot-link');
+      var submitBtn = document.getElementById('submitBtn');
+      var formAlert = document.getElementById('formAlert');
+      var switchLine = document.getElementById('switchLine');
+      var switchLink = document.getElementById('switchLink');
+      var form = document.getElementById('authForm');
 
-      form.addEventListener('submit', function (e) {
+      var mode = 'login';
+      var windowed = false;
+
+      function resetErrors() {
+        idField.classList.remove('has-error');
+        passField.classList.remove('has-error');
+        nameField.classList.remove('has-error');
+        hideAlert();
+      }
+
+      function showAlert(message, isSuccess) {
+        formAlert.textContent = message;
+        formAlert.classList.toggle('is-success', Boolean(isSuccess));
+        formAlert.hidden = false;
+      }
+
+      function hideAlert() {
+        formAlert.hidden = true;
+      }
+
+      function setMode(newMode) {
+        if (mode === newMode) return;
+        mode = newMode;
+        resetErrors();
+        segLogin.classList.toggle('active', mode === 'login' || mode === 'forgot');
+        segRegister.classList.toggle('active', mode === 'register');
+        nameField.classList.toggle('is-hidden', mode !== 'register');
+        passField.classList.toggle('is-hidden', mode === 'forgot');
+        metaRow.classList.toggle('is-hidden', mode === 'forgot');
+        authPassword.required = mode !== 'forgot';
+        if (mode === 'register') {
+          submitBtn.innerHTML = 'إنشاء الحساب <i class="fas fa-arrow-left"></i>';
+          switchLine.innerHTML = 'لديك حساب بالفعل؟ <a href="#" id="switchLink">تسجيل الدخول</a>';
+        } else if (mode === 'forgot') {
+          submitBtn.innerHTML = 'إرسال رابط الاستعادة <i class="fas fa-arrow-left"></i>';
+          windowed = true;
+        } else {
+          submitBtn.innerHTML = 'تسجيل الدخول <i class="fas fa-arrow-left"></i>';
+          windowed = false;
+          switchLine.innerHTML = 'ليس لديك حساب؟ <a href="#" id="switchLink">إنشاء حساب جديد</a>';
+        }
+        switchLink = document.getElementById('switchLink');
+        switchLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          setMode(mode === 'login' ? 'register' : 'login');
+        });
+      }
+
+      segLogin.addEventListener('click', function () { setMode('login'); });
+      segRegister.addEventListener('click', function () { setMode('register'); });
+      forgotLink.addEventListener('click', function (e) {
         e.preventDefault();
-        var valid = true;
+        setMode('forgot');
+      });
 
-        if (!loginId.value.trim()) {
+      var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      function validate() {
+        var valid = true;
+        if (mode === 'register') {
+          var name = regName.value.trim();
+          if (name.length < 3) {
+            nameField.classList.add('has-error');
+            valid = false;
+          } else {
+            nameField.classList.remove('has-error');
+          }
+        }
+        var idValue = authId.value.trim();
+        if (!EMAIL_RE.test(idValue)) {
           idField.classList.add('has-error');
+          idError.textContent = 'أدخل بريدًا إلكترونيًا صحيحًا';
           valid = false;
         } else {
           idField.classList.remove('has-error');
         }
-
-        if (!loginPassword.value.trim()) {
+        if (mode !== 'forgot' && authPassword.value.length < 6) {
           passField.classList.add('has-error');
+          passError.textContent = 'كلمة المرور 6 أحرف على الأقل';
           valid = false;
         } else {
           passField.classList.remove('has-error');
         }
+        return valid;
+      }
 
-        if (!valid) return;
-        // Hook up real auth submission here.
-        window.location.assign('./home.html');
+      function setBusy(busy) {
+        submitBtn.disabled = busy;
+        if (busy) submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> يرجى الانتظار...';
+        else setMode(mode); // restore the mode's label
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        hideAlert();
+        if (!validate()) return;
+        var email = authId.value.trim();
+        var password = authPassword.value;
+        setBusy(true);
+        var action = mode === 'forgot'
+          ? window.Account.resetPassword(email)
+          : mode === 'register'
+            ? window.Account.register(regName.value.trim(), email, password)
+            : window.Account.login(email, password);
+        action.then(function (result) {
+          setBusy(false);
+          if (!result.ok) {
+            if (result.pendingConfirmation) {
+              showAlert('أُرسلت رسالة تأكيد إلى بريدك. فعّلها ثم سجّل الدخول.', true);
+            } else {
+              showAlert(result.error);
+              return;
+            }
+            setMode('login');
+            return;
+          }
+          // Login succeeded; the gated body already redirects via account.js.
+          if (mode !== 'login' && !windowed) setMode('login');
+          window.location.assign('./home.html');
+        }).catch(function () {
+          setBusy(false);
+          showAlert('تعذّر الاتصال. تحقق من شبكة الإنترنت وأعد المحاولة.');
+        });
       });
 
-      loginId.addEventListener('input', function () { idField.classList.remove('has-error'); });
-      loginPassword.addEventListener('input', function () { passField.classList.remove('has-error'); });
+      authId.addEventListener('input', function () { idField.classList.remove('has-error'); });
+      authPassword.addEventListener('input', function () { passField.classList.remove('has-error'); });
+      regName.addEventListener('input', function () { nameField.classList.remove('has-error'); });
+
+      document.getElementById('googleBtn').addEventListener('click', function () {
+        window.Account.oauth('google');
+      });
+      document.getElementById('githubBtn').addEventListener('click', function () {
+        window.Account.oauth('github');
+      });
     })();
   </script>
 

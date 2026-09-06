@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Any Design — AnyDesire.dev</title>
-  <meta http-equiv="refresh" content="0; url=./app/home.html">
+  <title>AnyDesire.Design — قوالب جاهزة للتصميم</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -24,12 +23,17 @@
     .launch a:hover { text-decoration: underline; }
   </style>
 </head>
-<body>
+<body data-auth="none">
   <div class="launch">
     <div class="logo-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
-    <div>جارٍ فتح مكتبة القوالب…</div>
-    <a href="./app/home.html">افتح الآن</a>
+    <div>جارٍ تحضير مكتبتك…</div>
+    <a href="./app/">افتح الآن</a>
   </div>
-  <script>location.replace('./app/home.html');</script>
+  <script type="module">
+    import './assets/js/account.js';
+    window.Account.onReady(function (user) {
+      window.location.replace(user ? './app/home.html' : './app/index.html');
+    });
+  </script>
 </body>
 </html>

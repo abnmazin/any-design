@@ -31,11 +31,11 @@ async function waitForCanvasAssets(source) {
     ]);
 }
 
-function canvasSource() {
+export function canvasSource() {
     return document.querySelector('.canvas-wrapper, .card-frame');
 }
 
-function isEditorChrome(node) {
+export function isEditorChrome(node) {
     if (!node || !node.classList) return false;
     return node.classList.contains('editor-top-bar')
         || node.classList.contains('tool-rail')
@@ -48,7 +48,7 @@ function isEditorChrome(node) {
 // far smaller than the template's design size (e.g. 1080 -> ~756 on a narrow
 // viewport). Neutralize flex-shrink and the zoom transform to read the true
 // design dimensions, which drive the pixelRatio-scaled export.
-function intrinsicSize(el) {
+export function canvasIntrinsicSize(el) {
     const prior = {
         flex: el.style.flex,
         width: el.style.width,
@@ -79,7 +79,7 @@ export async function exportCanvas() {
     }
     try {
         await waitForCanvasAssets(source);
-        const { width, height } = intrinsicSize(source);
+const { width, height } = canvasIntrinsicSize(source);
         const dataUrl = await toPng(source, {
             pixelRatio: EXPORT_PIXEL_RATIO,
             width,
@@ -110,4 +110,27 @@ export async function exportCanvas() {
             button.innerHTML = SAVE_BTN_INNER;
         }
     }
+}
+
+// Small data-URL thumbnail (e.g. 320px tall) for the designs grid. Does not
+// mutate the canvas: html-to-image clones the source subtree in isolation.
+export async function canvasThumbnailDataUrl(source, maxWidth) {
+    const { width, height } = canvasIntrinsicSize(source);
+    const scale = maxWidth / width;
+    return toPng(source, {
+        pixelRatio: scale,
+        width,
+        height,
+        backgroundColor: null,
+        style: {
+            width: width + 'px',
+            height: height + 'px',
+            flex: '0 0 auto',
+            transform: 'none',
+            transformOrigin: 'top left',
+        },
+        filter: (node) => !isEditorChrome(node),
+        skipFonts: false,
+        cacheBust: false,
+    });
 }

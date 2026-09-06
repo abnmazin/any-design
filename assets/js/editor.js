@@ -7,6 +7,7 @@ import { bind } from './events.js';
 import { initFormBindings } from './bindings.js';
 import { updateCanvasScale } from './interactions.js';
 import { initAiPane } from './ai-pane.js';
+import { initSaveHandler } from './save.js';
 import { state } from './state.js';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -39,6 +40,7 @@ function inject() {
     initAiPane();
     initTopBar();
     injectUploadOverlayCss();
+    initSaveHandler();
     // Wait for webfonts before measuring so the scaled preview reflects the
     // final (web font) layout.
     document.fonts.ready.then(() => updateCanvasScale()).catch(() => updateCanvasScale());

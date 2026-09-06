@@ -201,6 +201,7 @@ const STYLE = `
 const TOP_BAR = `
         <header class="editor-top-bar">
             <div class="top-bar-right">
+                <button class="btn primary save-design-btn es-save-btn" type="button"><i class="fas fa-floppy-disk"></i> حفظ</button>
                 <button class="btn primary save-btn es-export-btn" type="button"><i class="fas fa-download"></i> تصدير</button>
                 <div class="profile-avatar" style="width: 32px; height: 32px; display:flex; align-items:center; justify-content:center; font-weight:bold; color:#09080f; cursor:pointer;">M</div>
             </div>
