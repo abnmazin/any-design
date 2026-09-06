@@ -226,6 +226,31 @@
       height: 176px;
       display: flex; align-items: center; justify-content: center;
       overflow: hidden;
+      isolation: isolate;
+    }
+    .tpl-thumbnail {
+      position: absolute;
+      inset: 10px 14px;
+      width: calc(100% - 28px);
+      height: calc(100% - 20px);
+      border: 0;
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35);
+      pointer-events: none;
+      transform: scale(0.92);
+      transform-origin: center;
+      opacity: 0.94;
+    }
+    .tpl-thumbnail.portrait {
+      inset: 8px auto;
+      width: 104px;
+      height: calc(100% - 16px);
+    }
+    .tpl-thumbnail.landscape {
+      inset: 20px 12px;
+      width: calc(100% - 24px);
+      height: calc(100% - 40px);
     }
     .tpl-preview .device-tag {
       position: absolute; top: 10px; right: 10px; z-index: 3;
@@ -370,24 +395,7 @@
         var bg = 'linear-gradient(155deg, color-mix(in srgb, ' + t.tint + ' 14%, transparent), #09080f)';
         var chip = 'background: color-mix(in srgb, ' + t.tint + ' 15%, transparent); color: ' + t.tint;
 
-        var mock;
-        if (portrait) {
-          mock =
-            '<div class="mock-phone"><div class="mock-phone-body"><div class="mock-phone-inner" style="background:#211a38;gap:6px">' +
-            '<div class="mock-bar" style="width:60%;background:' + t.tint + '"></div>' +
-            '<div class="mock-bar" style="width:80%;background:var(--skeleton)"></div>' +
-            '<div class="mock-bar" style="width:45%;background:var(--skeleton)"></div>' +
-            '</div></div></div>';
-        } else {
-          mock =
-            '<div class="mock-laptop"><div class="mock-laptop-body"><div class="mock-laptop-inner" style="background:#211a38">' +
-            '<div style="display:flex;gap:5px"><span style="width:4px;height:4px;border-radius:50%;background:var(--skeleton-strong)"></span><span style="width:4px;height:4px;border-radius:50%;background:var(--skeleton-strong)"></span></div>' +
-            '<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:5px">' +
-            '<div style="background:' + t.tint + '22;border:1px solid color-mix(in srgb, ' + t.tint + ' 40%, transparent);border-radius:4px"></div>' +
-            '<div style="background:#2a2244;border-radius:4px"></div>' +
-            '</div></div></div>' +
-            '<div class="mock-laptop-base" style="background:linear-gradient(#211a38,#0b0912)"></div></div>';
-        }
+        var mock = '<iframe class="tpl-thumbnail ' + (portrait ? 'portrait' : 'landscape') + '" src="' + t.file + '" title="معاينة ' + t.name + '" loading="lazy" tabindex="-1"></iframe>';
 
         return (
           '<div class="tpl-card" data-size="' + ring + '" data-href="' + t.file + '">' +
