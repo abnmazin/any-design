@@ -69,6 +69,53 @@ export function canvasIntrinsicSize(el) {
     return { width, height };
 }
 
+function inlineComputedStyles(source, clone) {
+    const sourceNodes = [source, ...source.querySelectorAll('*')];
+    const cloneNodes = [clone, ...clone.querySelectorAll('*')];
+    const styleProperties = [
+        'color', 'background', 'background-color', 'background-image', 'border', 'border-radius',
+        'box-shadow', 'font', 'font-family', 'font-size', 'font-weight', 'letter-spacing',
+        'line-height', 'text-align', 'text-shadow', 'opacity', 'display', 'position', 'inset',
+        'width', 'height', 'padding', 'margin', 'gap', 'grid-template-columns', 'grid-template-rows',
+        'align-items', 'justify-content', 'flex-direction', 'flex', 'transform', 'overflow', 'z-index',
+    ];
+
+    sourceNodes.forEach((node, index) => {
+        const target = cloneNodes[index];
+        if (!target || node.nodeType !== Node.ELEMENT_NODE) return;
+        const computed = getComputedStyle(node);
+        styleProperties.forEach((property) => target.style.setProperty(property, computed.getPropertyValue(property)));
+
+        // Font Awesome stores its glyph in ::before. Materialize it as text so
+        // html-to-image does not depend on cross-origin stylesheet rules.
+        const pseudo = getComputedStyle(node, '::before');
+        const glyph = pseudo.content && pseudo.content !== 'none' && pseudo.content !== 'normal'
+            ? pseudo.content.replace(/^['"]|['"]$/g, '') : '';
+        if (glyph && (node.matches('i[class*="fa-"]') || pseudo.fontFamily.toLowerCase().includes('font awesome'))) {
+            const icon = document.createElement('span');
+            icon.textContent = glyph;
+            icon.style.cssText = `font-family:${pseudo.fontFamily};font-size:${pseudo.fontSize};font-weight:${pseudo.fontWeight};font-style:${pseudo.fontStyle};color:${pseudo.color};line-height:${pseudo.lineHeight};display:inline-block;`;
+            target.replaceChildren(icon);
+        }
+    });
+}
+
+function createExportClone(source) {
+    const clone = source.cloneNode(true);
+    inlineComputedStyles(source, clone);
+    clone.style.width = source.offsetWidth + 'px';
+    clone.style.height = source.offsetHeight + 'px';
+    clone.style.flex = '0 0 auto';
+    clone.style.transform = 'none';
+    clone.style.transformOrigin = 'top left';
+    clone.style.position = 'fixed';
+    clone.style.left = '-100000px';
+    clone.style.top = '0';
+    clone.style.pointerEvents = 'none';
+    document.body.appendChild(clone);
+    return clone;
+}
+
 export async function exportCanvas() {
     const source = canvasSource();
     if (!source) return;
@@ -77,21 +124,16 @@ export async function exportCanvas() {
         button.disabled = true;
         button.innerHTML = SAVE_BTN_LOADING;
     }
+    let exportNode;
     try {
         await waitForCanvasAssets(source);
-const { width, height } = canvasIntrinsicSize(source);
-        const dataUrl = await toPng(source, {
+        const { width, height } = canvasIntrinsicSize(source);
+        exportNode = createExportClone(source);
+        const dataUrl = await toPng(exportNode, {
             pixelRatio: EXPORT_PIXEL_RATIO,
             width,
             height,
             backgroundColor: null,
-            style: {
-                width: width + 'px',
-                height: height + 'px',
-                flex: '0 0 auto',
-                transform: 'none',
-                transformOrigin: 'top left',
-            },
             filter: (node) => !isEditorChrome(node),
             skipFonts: false,
             cacheBust: false,
@@ -105,6 +147,7 @@ const { width, height } = canvasIntrinsicSize(source);
     } catch (error) {
         console.error('export failed:', error);
     } finally {
+        if (exportNode) exportNode.remove();
         if (button) {
             button.disabled = false;
             button.innerHTML = SAVE_BTN_INNER;
