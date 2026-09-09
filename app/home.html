@@ -283,6 +283,8 @@
     .overlay-btn:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
     .overlay-btn.primary { background: var(--accent); color: #09080f; }
     .overlay-btn.ghost { background: color-mix(in srgb, var(--bg) 40%, transparent); border: 1px solid var(--border-strong); color: var(--text); }
+    .overlay-btn.danger { background: color-mix(in srgb, var(--danger) 18%, transparent); border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent); color: var(--danger); }
+    .overlay-btn.danger:hover { background: var(--danger); color: #09080f; }
 
     .tpl-info { padding: 14px 16px; }
     .tpl-info .tpl-name { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; color: var(--text-secondary); }
@@ -486,13 +488,14 @@
         var mock = '<iframe class="tpl-thumbnail ' + (portrait ? 'portrait' : 'landscape') + '" src="' + t.file + '" title="معاينة ' + t.name + '" loading="lazy" tabindex="-1" onload="this.contentDocument.head.insertAdjacentHTML(\'beforeend\', \'<style>#editorUI,.preview-toolbar{display:none!important}.editor-page{padding-top:0!important}.canvas-stage,.story-stage,.wedding-stage{height:100vh!important}</style>\')"></iframe>';
 
         return (
-          '<div class="tpl-card" data-size="' + ring + '" data-name="' + t.name.toLowerCase() + '" data-href="' + t.file + '">' +
+          '<div class="tpl-card" data-id="' + t.id + '" data-size="' + ring + '" data-name="' + t.name.toLowerCase() + '" data-href="' + t.file + '">' +
             '<div class="tpl-preview" style="background:' + bg + '">' +
               '<span class="device-tag"><i class="' + deviceIcon + '" style="color:' + t.tint + '"></i> ' + ratio + '</span>' +
               mock +
               '<div class="tpl-overlay">' +
                 '<a class="overlay-btn primary" href="' + t.file + '"><i class="fas fa-pen"></i> استخدم</a>' +
                 '<a class="overlay-btn ghost" href="' + t.file + '"><i class="fas fa-eye"></i></a>' +
+                '<button type="button" class="overlay-btn danger" data-action="delete" data-id="' + t.id + '" data-name="' + t.name + '"><i class="fas fa-trash-can"></i> حذف</button>' +
               '</div>' +
             '</div>' +
             '<div class="tpl-info">' +
@@ -504,28 +507,82 @@
       }
 
       var grid = document.getElementById('templateGrid');
-      grid.innerHTML = TEMPLATES.map(cardHtml).join('');
-      document.getElementById('tplCount').textContent = TEMPLATES.length;
-
       var pills = document.querySelectorAll('.pill-group .pill');
-      var cards = Array.prototype.slice.call(grid.querySelectorAll('.tpl-card'));
+      var deletedIds = {};
+
+      function visibleTemplates() {
+        return TEMPLATES.filter(function (t) { return !deletedIds[t.id]; });
+      }
+
+      function renderTemplateGrid() {
+        var list = visibleTemplates();
+        grid.innerHTML = list.map(cardHtml).join('');
+        document.getElementById('tplCount').textContent = list.length;
+        reapplyPills();
+        applySearch(searchInput.value.trim().toLowerCase());
+      }
+
+      function reapplyPills() {
+        Array.prototype.slice.call(grid.querySelectorAll('.tpl-card')).forEach(function (c) {
+          var pill = null;
+          Array.prototype.slice.call(pills).forEach(function (b) { if (b.classList.contains('active')) pill = b; });
+          var f = pill ? pill.getAttribute('data-filter') : 'all';
+          c.classList.toggle('is-hidden', f !== 'all' && c.getAttribute('data-size') !== f);
+        });
+      }
 
       pills.forEach(function (btn) {
         btn.addEventListener('click', function () {
           pills.forEach(function (b) { b.classList.remove('active'); });
           btn.classList.add('active');
-          var f = btn.getAttribute('data-filter');
-          cards.forEach(function (c) {
-            c.classList.toggle('is-hidden', f !== 'all' && c.getAttribute('data-size') !== f);
-          });
+          reapplyPills();
         });
       });
 
       grid.addEventListener('click', function (e) {
+        var del = e.target.closest('[data-action="delete"]');
+        if (del) { deleteTemplate(del); return; }
         if (e.target.closest('a')) return;
         var card = e.target.closest('.tpl-card');
         if (card && card.dataset.href) window.location.href = card.dataset.href;
       });
+
+      function deleteTemplate(btn) {
+        if (!window.Supabase) return;
+        var id = btn.getAttribute('data-id');
+        var name = btn.getAttribute('data-name');
+        if (!window.confirm('حذف قالب «' + name + '» نهائيًا؟ لا يمكن التراجع عن هذا الحذف.')) return;
+        var task = Promise.race([
+          window.Supabase.from('deleted_templates').insert({ id: id }),
+          new Promise(function (resolve) {
+            setTimeout(function () { resolve({ error: { message: 'انتهت المهلة' } }); }, 6000);
+          })
+        ]);
+        task.then(function (res) {
+          if (res.error) {
+            window.alert('تعذّر حذف القالب. حاول مرة أخرى.');
+            return;
+          }
+          deletedIds[id] = true;
+          renderTemplateGrid();
+        });
+      }
+
+      function loadDeletedTemplates() {
+        if (!window.Supabase) { renderTemplateGrid(); return; }
+        var task = Promise.race([
+          window.Supabase.from('deleted_templates').select('id'),
+          new Promise(function (resolve) {
+            setTimeout(function () { resolve({ data: [], error: null }); }, 6000);
+          })
+        ]);
+        task.then(function (res) {
+          if (!res.error) {
+            (res.data || []).forEach(function (row) { deletedIds[row.id] = true; });
+          }
+          renderTemplateGrid();
+        }).catch(function () { renderTemplateGrid(); });
+      }
 
       var searchInput = document.getElementById('searchInput');
       searchInput.addEventListener('input', function () {
@@ -628,6 +685,7 @@
           userAvatar.textContent = user.username.slice(0, 2);
           document.getElementById('menuUser').textContent = user.email || user.username;
           loadDesigns();
+          loadDeletedTemplates();
         });
       });
     })();

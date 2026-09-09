@@ -22,6 +22,16 @@ editor is plain DOM + vanllla JS with FontAwesome for icons and
   against the dev server (see `tests/`-style CDP harnesses under
   `/tmp/opencode/` for the patterns used to assert drawer/layer behaviour).
 
+## Environment discipline
+
+- Never start a dev server, a static file server, headless Chrome/CDP, or any
+  long-running helper process on the user's machine without a direct order.
+- Never run smoke tests, browser probes, or simulation harnesses without a
+  direct order.
+- When a direct order does require launching such a process, keep every launch
+  (server + browser + probe) inside a single Bash call so nothing is left
+  running between calls, and report how to stop it afterwards.
+
 ## Conventions
 
 - English file/function/comment naming; Arabic only for in-app UI copy.

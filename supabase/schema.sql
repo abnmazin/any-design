@@ -3,6 +3,8 @@
 -- Row Level Security is mandatory: every row is readable/writable only by its
 -- owner (auth.uid()).
 
+-- This file is idempotent: safe to re-run any number of times.
+
 -- Profile per auth user -----------------------------------------------------
 create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
@@ -32,17 +34,41 @@ create index if not exists designs_user_idx on public.designs (user_id);
 alter table public.profiles enable row level security;
 alter table public.designs enable row level security;
 
+drop policy if exists profiles_insert_own on public.profiles;
 create policy profiles_insert_own on public.profiles
   for insert with check (auth.uid() = id);
 
+drop policy if exists profiles_select_own on public.profiles;
 create policy profiles_select_own on public.profiles
   for select using (auth.uid() = id);
 
+drop policy if exists profiles_update_own on public.profiles;
 create policy profiles_update_own on public.profiles
   for update using (auth.uid() = id) with check (auth.uid() = id);
 
+drop policy if exists designs_all_own on public.designs;
 create policy designs_all_own on public.designs
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- Deleted templates (tombstones) --------------------------------------------
+-- Marks a template as permanently removed for every user. Home filters these
+-- out of the gallery. No update/delete policy on purpose: an accidental delete
+-- can only be undone in the SQL editor.
+create table if not exists public.deleted_templates (
+  id text primary key,
+  created_at timestamptz not null default now(),
+  created_by uuid references auth.users (id)
+);
+
+alter table public.deleted_templates enable row level security;
+
+drop policy if exists deleted_templates_select on public.deleted_templates;
+create policy deleted_templates_select on public.deleted_templates
+  for select to authenticated using (true);
+
+drop policy if exists deleted_templates_insert on public.deleted_templates;
+create policy deleted_templates_insert on public.deleted_templates
+  for insert to authenticated with check (true);
 
 -- Touch updated_at on save --------------------------------------------------
 create or replace function public.touch_updated_at()
